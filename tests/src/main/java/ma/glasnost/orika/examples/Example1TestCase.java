@@ -22,15 +22,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.OrikaSystemProperties;
 import ma.glasnost.orika.metadata.Property;
 import ma.glasnost.orika.metadata.TypeFactory;
 import ma.glasnost.orika.property.IntrospectorPropertyResolver;
 import ma.glasnost.orika.property.PropertyResolver;
 import ma.glasnost.orika.test.MappingUtil;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -64,11 +65,11 @@ public class Example1TestCase {
         MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
         
         mapperFactory.classMap(Person.class, PersonDto.class)
-                .field("name.first", "firstName")
-                .field("name.last", "lastName")
-                .field("knownAliases" + NESTED_OPEN + "first" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE)
-                .field("knownAliases" + NESTED_OPEN + "last" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[1]" + NESTED_CLOSE)
-                .byDefault()
+                .fieldAToB("name.first", "firstName")
+                .fieldAToB("name.last", "lastName")
+                .fieldAToB("knownAliases" + NESTED_OPEN + "first" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE)
+                .fieldAToB("knownAliases" + NESTED_OPEN + "last" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[1]" + NESTED_CLOSE)
+                //.byDefault()
                 .register();
         
         MapperFacade mapper = mapperFactory.getMapperFacade();

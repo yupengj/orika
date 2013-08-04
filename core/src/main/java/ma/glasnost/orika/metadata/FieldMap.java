@@ -145,9 +145,16 @@ public class FieldMap implements MappedTypePair<Object, Object> {
         return excluded;
     }
     
+    /**
+     * @return the MappingDirection of this FieldMap
+     */
+    public MappingDirection getDirection() {
+        return mappingDirection;
+    }
+    
     @Override
     public String toString() {
-        return "FieldMap [destination=" + getDestinationExpression() + ", source=" + getSourceExpression() + "]";
+        return "FieldMap:" + mappingDirection + "[destination=" + getDestinationExpression() + ", source=" + getSourceExpression() + "]";
     }
 
 	@Override

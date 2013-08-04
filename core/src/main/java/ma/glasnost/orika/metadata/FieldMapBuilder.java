@@ -226,6 +226,7 @@ public class FieldMapBuilder<A, B> {
         return this;
     }
     
+    
     /**
      * Specify that the converter (which was previously registered with the
      * specified id) should be applied to this specific field mapping.

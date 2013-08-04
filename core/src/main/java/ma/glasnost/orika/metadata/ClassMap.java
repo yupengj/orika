@@ -18,10 +18,15 @@
 
 package ma.glasnost.orika.metadata;
 
+import static ma.glasnost.orika.metadata.FieldMapResult.ActionTaken.MAPPED;
+import static ma.glasnost.orika.metadata.MappingDirection.A_TO_B;
+
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import ma.glasnost.orika.MappedTypePair;
@@ -37,7 +42,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
     
     private final Type<A> aType;
     private final Type<B> bType;
-    private final Set<FieldMap> fieldsMapping;
+    private final Set<FieldMap> fieldMappings;
     private final Set<MapperKey> usedMappers;
     
     private final Mapper<A, B> customizedMapper;
@@ -48,10 +53,9 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
     
     private final Boolean sourcesMappedOnNull;
     private final Boolean destinationsMappedOnNull;
-    private final Set<Expectation> expectations;
     
-    private final Map<FieldMap, FieldMapResult> forwardMappingResult;
-    private final Map<FieldMap, FieldMapResult> reverseMappingResult;
+    private final Map<String, FieldMapResult> forwardMappingResult;
+    private final Map<String, FieldMapResult> reverseMappingResult;
     
     /**
      * Constructs a new ClassMap
@@ -84,14 +88,13 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
      *            the expectations associated with this class-map
      */
     public ClassMap(Type<A> aType, Type<B> bType, Set<FieldMap> fieldsMapping, Mapper<A, B> customizedMapper, Set<MapperKey> usedMappers,
-            String[] constructorA, String[] constructorB, Boolean sourcesMappedOnNull, Boolean destinationsMappedOnNull,
-            Set<Expectation> expectations) {
+            String[] constructorA, String[] constructorB, Boolean sourcesMappedOnNull, Boolean destinationsMappedOnNull) {
         this.aType = aType;
         this.bType = bType;
         
         this.customizedMapper = customizedMapper;
         
-        this.fieldsMapping = Collections.unmodifiableSet(fieldsMapping);
+        this.fieldMappings = Collections.unmodifiableSet(fieldsMapping);
         this.usedMappers = Collections.unmodifiableSet(usedMappers);
         
         this.mapperKey = new MapperKey(aType, bType);
@@ -99,9 +102,8 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
         this.sourcesMappedOnNull = sourcesMappedOnNull;
         this.destinationsMappedOnNull = destinationsMappedOnNull;
         
-        this.forwardMappingResult = new LinkedHashMap<FieldMap, FieldMapResult>();
-        this.reverseMappingResult = new LinkedHashMap<FieldMap, FieldMapResult>();
-        this.expectations = expectations;
+        this.forwardMappingResult = new LinkedHashMap<String, FieldMapResult>();
+        this.reverseMappingResult = new LinkedHashMap<String, FieldMapResult>();
         
         if (constructorA != null) {
             this.constructorA = constructorA.clone();
@@ -130,7 +132,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
         String[] constructorB = this.constructorB == null ? null : this.constructorB.clone();
         
         return new ClassMap<A, B>(aType, bType, fieldsMapping, customizedMapper, usedMappers, constructorA, constructorB,
-                sourcesMappedOnNull, destinationsMappedOnNull, expectations);
+                sourcesMappedOnNull, destinationsMappedOnNull);
     }
     
     /**
@@ -145,7 +147,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
      * @param fieldMap
      */
     public void addFieldMap(FieldMap fieldMap) {
-        fieldsMapping.add(fieldMap);
+        fieldMappings.add(fieldMap);
     }
     
     /**
@@ -166,7 +168,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
      * @return the mapping of fields between the two types of this mapping
      */
     public Set<FieldMap> getFieldsMapping() {
-        return fieldsMapping;
+        return fieldMappings;
     }
     
     /**
@@ -250,24 +252,93 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
     /**
      * @return the forwardMappingResult
      */
-    protected Map<FieldMap, FieldMapResult> getForwardMappingResults() {
+    protected Map<String, FieldMapResult> getForwardMappingResults() {
         return forwardMappingResult;
     }
     
     /**
      * @return the reverseMappingResult
      */
-    protected Map<FieldMap, FieldMapResult> getReverseMappingResults() {
+    protected Map<String, FieldMapResult> getReverseMappingResults() {
         return reverseMappingResult;
     }
     
     /**
      * Evaluates all of the expectations associated with this ClassMap
      */
-    public void assertExpectationsMet() {
-        for (Expectation expectation : expectations) {
-            expectation.evaluate(this);
+    public void evaluateMappingResults() {
+        validate(MappingDirection.A_TO_B);
+        validate(MappingDirection.B_TO_A);
+    }
+    
+    /**
+     * @param direction
+     * @throws FailedExpectationException
+     */
+    public void validate(MappingDirection direction) throws FailedExpectationException {
+        
+        Map<String, Property> remainingExpectedFields = new HashMap<String, Property>();
+        Map<String, Property> remainingExcludedFields = new HashMap<String, Property>();
+        for (FieldMap fieldMap : fieldMappings) {
+            if (direction.includes(fieldMap.getDirection())) {
+                Property src = direction == A_TO_B ? fieldMap.getSource() : fieldMap.getDestination();
+                Property dst = direction == A_TO_B ? fieldMap.getDestination() : fieldMap.getSource();
+                if (fieldMap.isExcluded()) {
+                    remainingExcludedFields.put(dst.getExpression(), dst);
+                } else if (!fieldMap.isIgnored()) {
+                    if (src.getGetter() != null && dst.getSetter() != null) {
+                        remainingExpectedFields.put(dst.getExpression(), dst);
+                    }
+                }
+            }
         }
+        
+        Map<String, FieldMapResult> results = direction == A_TO_B ? getForwardMappingResults() : getReverseMappingResults();
+        for (Entry<String, FieldMapResult> entry : results.entrySet()) {
+            FieldMapResult result = entry.getValue();
+            FieldMap fieldMap = result.getFieldMap();
+            
+            if (remainingExpectedFields.containsKey(fieldMap.getDestinationExpression())) {
+                if (MAPPED != result.getActionTaken()) {
+                    throw failedExpectation("although it was expected to be mapped, '" + fieldMap.getDestinationExpression() + "' was "
+                            + result.getActionTaken().toString().toLowerCase() + " because " + result.getComment(), this,
+                            fieldMap.getSource(), fieldMap.getDestination());
+                }
+                remainingExpectedFields.remove(fieldMap.getDestinationExpression());
+            } else if (remainingExcludedFields.containsKey(fieldMap.getDestinationExpression())) {
+                if (MAPPED == result.getActionTaken()) {
+                    throw failedExpectation("although it was expected to be exluded, '" + fieldMap.getDestinationExpression() + "' was "
+                            + result.getActionTaken().toString().toLowerCase() + (fieldMap.isByDefault() ? " by default" : " explicitly")
+                            + ", by " + result.getComment(), this, fieldMap.getSource(), fieldMap.getDestination());
+                }
+                remainingExcludedFields.remove(fieldMap.getDestinationExpression());
+            } else {
+                if (MAPPED == result.getActionTaken()) {
+                    throw failedExpectation("although it was not expected, '" + fieldMap.getDestinationExpression() + "' was "
+                            + result.getActionTaken().toString().toLowerCase() + (fieldMap.isByDefault() ? " by default" : " explicitly")
+                            + ", by " + result.getComment(), this, fieldMap.getSource(), fieldMap.getDestination());
+                }
+            }
+            
+        }
+    }
+    
+    /**
+     * Constructs a new FailedExpectationException using the provided details
+     * 
+     * @param message
+     * @param classMap
+     * @param source
+     * @param dest
+     * @return
+     */
+    private FailedExpectationException failedExpectation(String message, ClassMap<?, ?> classMap, Property source, Property dest) {
+        FailedExpectationException e = new FailedExpectationException(message);
+        e.setDestinationType(classMap.getBType());
+        e.setSourceType(classMap.getAType());
+        e.setDestinationProperty(dest);
+        e.setSourceProperty(source);
+        return e;
     }
     
     public String toString() {
@@ -304,8 +375,8 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
     }
     
     /**
-     * ReversedClassMapProxy provides access to the details of the specified ClassMap in the reverse
-     * direction
+     * ReversedClassMapProxy provides access to the details of the specified
+     * ClassMap in the reverse direction
      * 
      * @author mattdeboer
      * 
@@ -323,7 +394,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
         private ReversedClassMapProxy(ClassMap<B, A> classMap) {
             super(classMap.getBType(), classMap.getAType(), Collections.<FieldMap> emptySet(), null, Collections.<MapperKey> emptySet(),
                     classMap.getConstructorB(), classMap.getConstructorA(), classMap.destinationsMappedOnNull,
-                    classMap.sourcesMappedOnNull, null);
+                    classMap.sourcesMappedOnNull);
             reverse = classMap;
             reversedFieldsMapping = new LinkedHashSet<FieldMap>();
             for (FieldMap f : reverse.getFieldsMapping()) {
@@ -383,7 +454,7 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
          * 
          * @see ma.glasnost.orika.metadata.ClassMap#assertExpectationsMet()
          */
-        public void assertExpectationsMet() {
+        public void evaluateMappingResults() {
             throw new UnsupportedOperationException();
         }
         
@@ -394,6 +465,22 @@ public class ClassMap<A, B> implements MappedTypePair<A, B> {
          */
         public ClassMap<B, A> flip() {
             return reverse;
+        }
+
+        /* (non-Javadoc)
+         * @see ma.glasnost.orika.metadata.ClassMap#getForwardMappingResults()
+         */
+        @Override
+        protected Map<String, FieldMapResult> getForwardMappingResults() {
+            return reverse.getReverseMappingResults();
+        }
+
+        /* (non-Javadoc)
+         * @see ma.glasnost.orika.metadata.ClassMap#getReverseMappingResults()
+         */
+        @Override
+        protected Map<String, FieldMapResult> getReverseMappingResults() {
+            return reverse.getForwardMappingResults();
         }
     }
     

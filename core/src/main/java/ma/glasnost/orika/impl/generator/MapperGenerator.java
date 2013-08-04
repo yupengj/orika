@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author mattdeboer
  *
  */
-public final class MapperGenerator {
+public final class MapperGenerator extends GeneratorBase {
     
     private static Logger LOGGER = LoggerFactory.getLogger(MapperGenerator.class);
     
@@ -204,34 +204,6 @@ public final class MapperGenerator {
         }
         
         code.addMethod(out.toString());
-    }
-    
-    /**
-     * Generates a comment marking the beginning of code for mapping the specified field
-     * 
-     * @param out the source code output
-     * @param fieldMap the FieldMap for which code is generated
-     * @param code the current context
-     */
-    private void beginMappingField(StringBuilder out, FieldMap fieldMap, SourceCodeContext code) {
-        if (code.writesSourceFiles()) {
-            out.append("\n/* -------------- BEGIN --| " + fieldMap.getSourceExpression() + " => " + 
-                    fieldMap.getDestinationExpression() + " -- */\n");
-        }
-    }
-    
-    /**
-     * Generates a comment marking the end of code for mapping the specified field
-     * 
-     * @param out the source code output
-     * @param fieldMap the FieldMap for which code is generated
-     * @param code the current context
-     */
-    private void endMappingField(StringBuilder out, FieldMap fieldMap, SourceCodeContext code) {
-        if (code.writesSourceFiles()) {
-            out.append("\n/* -------------- END ----| " + fieldMap.getSourceExpression() + " => " + 
-                    fieldMap.getDestinationExpression() + " -- */\n");
-        }
     }
     
     /**

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import ma.glasnost.orika.metadata.FieldMapResult.ActionTaken;
 
-
 /**
  * FieldMapRecorder
  * 
@@ -15,7 +14,7 @@ public class FieldMapRecorder {
     private final StringBuilder logDetails;
     private final boolean isDebugEnabled;
     private final ClassMap<?, ?> classMap;
-    private Map<FieldMap, FieldMapResult> results;
+    private Map<String, FieldMapResult> results;
     private boolean aToB = true;
     
     /**
@@ -23,7 +22,7 @@ public class FieldMapRecorder {
      * @param aToB
      * @param isDebugEnabled
      */
-    public FieldMapRecorder(ClassMap<?,?> classMap, boolean isDebugEnabled) {
+    public FieldMapRecorder(ClassMap<?, ?> classMap, boolean isDebugEnabled) {
         this.logDetails = new StringBuilder();
         this.isDebugEnabled = isDebugEnabled;
         this.classMap = classMap;
@@ -43,7 +42,7 @@ public class FieldMapRecorder {
      * @param description
      */
     public void mapWithDescription(FieldMap fieldMap, String description) {
-        results.put(fieldMap, new FieldMapResult(fieldMap, ActionTaken.MAPPED, description));
+        results.put(fieldMap.getDestinationExpression(), new FieldMapResult(fieldMap, ActionTaken.MAPPED, description));
         if (isDebugEnabled) {
             append(getFieldTag(fieldMap) + description);
         }
@@ -54,7 +53,7 @@ public class FieldMapRecorder {
      * @param reason
      */
     public void excludeWithReason(FieldMap fieldMap, String reason) {
-        results.put(fieldMap, new FieldMapResult(fieldMap, ActionTaken.EXCLUDED, reason));
+        results.put(fieldMap.getDestinationExpression(), new FieldMapResult(fieldMap, ActionTaken.EXCLUDED, reason));
         if (isDebugEnabled) {
             append(getFieldTag(fieldMap) + "excuding because " + reason);
         }
@@ -65,7 +64,7 @@ public class FieldMapRecorder {
      * @param reason
      */
     public void ignoreWithReason(FieldMap fieldMap, String reason) {
-        results.put(fieldMap, new FieldMapResult(fieldMap, ActionTaken.IGNORED, reason));
+        results.put(fieldMap.getDestinationExpression(), new FieldMapResult(fieldMap, ActionTaken.IGNORED, reason));
         if (isDebugEnabled) {
             append(getFieldTag(fieldMap) + "excuding because " + reason);
         }

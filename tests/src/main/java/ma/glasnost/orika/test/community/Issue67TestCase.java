@@ -10,9 +10,10 @@ public class Issue67TestCase {
 
 	@Test
 	public void simpleCase() {
-		MapperFactory factory = new DefaultMapperFactory.Builder().build();
-		factory.registerClassMap(factory.classMap(Bean.class, Bean.class)
-				.byDefault().toClassMap());
+		
+	    MapperFactory factory = new DefaultMapperFactory.Builder().build();
+		factory.classMap(Bean.class, Bean.class)
+				.byDefault().register();
 		MapperFacade mapper = factory.getMapperFacade();
 		Bean bean = new Bean();
 		bean.setSize(20);

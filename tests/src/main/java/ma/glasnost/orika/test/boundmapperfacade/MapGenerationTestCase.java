@@ -11,8 +11,8 @@ import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.MapEntry;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.impl.GeneratedObjectBase;
-import ma.glasnost.orika.impl.util.ClassUtil;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.test.MappingUtil;
 
@@ -54,7 +54,7 @@ public class MapGenerationTestCase {
 	public void testMapToMapGeneration_noSetter() throws Exception {
 		
 		
-		MapperFactory factory = MappingUtil.getMapperFactory();
+		MapperFactory factory = new DefaultMapperFactory.Builder().useStrictValidation(true).build();
 		factory.registerClassMap(
 				factory.classMap(MapWithSetter.class, MapWithoutSetter.class)
 				.field("testScores", "scores").byDefault());

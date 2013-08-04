@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * ObjectFactoryGenerator generates source code which implements an
  * ObjectFactory capable of instantiating a given target type.
  */
-public class ObjectFactoryGenerator {
+public class ObjectFactoryGenerator extends GeneratorBase {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectFactoryGenerator.class);
     
@@ -89,7 +89,6 @@ public class ObjectFactoryGenerator {
                 classMap = classMap.flip();
             }
             
-            
             FieldMapRecorder recorder = new FieldMapRecorder(classMap, LOGGER.isDebugEnabled());
             if (recorder.isDebugEnabled()) {
                 recorder.getLogDetails().append("Generating new object factory for (" + destinationType + ")");
@@ -126,9 +125,12 @@ public class ObjectFactoryGenerator {
         out.append(format("if(s == null) throw new %s(\"source object must be not null\");",
                 IllegalArgumentException.class.getCanonicalName()));
         
-        out.append(addSourceClassConstructor(code, classMap, mappingContext, recorder));
-        
-        out.append(addUnmatchedSourceHandler(code, classMap.getBType(), mappingContext, recorder));
+        if (classMap.getBType().isArray()) {
+            out.append(addArrayClassConstructor(code, classMap, classMap.getFieldsMapping().size()));
+        } else {
+            out.append(addSourceClassConstructor(code, classMap, mappingContext, recorder));
+            out.append(addUnmatchedSourceHandler(code, classMap.getBType(), mappingContext, recorder));
+        }
         
         out.append("\n}");
         
@@ -150,54 +152,54 @@ public class ObjectFactoryGenerator {
         Type<?> sourceType = classMap.getAType();
         Type<?> destinationType = classMap.getBType();
         
-        if (destinationType.isArray()) {
-            out.append(addArrayClassConstructor(code, classMap, classMap.getFieldsMapping().size()));
-        } else {
-            
-            ConstructorMapping<?> constructorMapping = (ConstructorMapping<?>) constructorResolverStrategy.resolve(classMap, destinationType);
-            Constructor<?> constructor = constructorMapping.getConstructor();
-            
-            if (constructor == null) {
-                throw new IllegalArgumentException("no suitable constructors found for " + destinationType);
-            } else if (recorder.isDebugEnabled()) {
-                recorder.append("\n\tUsing constructor: " + constructor);
-            }
-            
-            List<FieldMap> properties = constructorMapping.getMappedFields();
-            Type<?>[] constructorArguments = constructorMapping.getParameterTypes();
-            
-            int argIndex = 0;
-            
-            out.append(format("if (s instanceof %s) {", sourceType.getCanonicalName()));
-            out.append(format("%s source = (%s) s;", sourceType.getCanonicalName(), sourceType.getCanonicalName()));
-            out.append("\ntry {\n");
-            argIndex = 0;
-            
-            for (FieldMap fieldMap : properties) {
-                VariableRef v = new VariableRef(constructorArguments[argIndex], "arg" + argIndex++);
-                VariableRef s = new VariableRef(fieldMap.getSource(), "source");
-                VariableRef destOwner = new VariableRef(fieldMap.getDestination(), "");
-                v.setOwner(destOwner);
-                out.append(statement(v.declare()));
-                out.append(code.mapFields(fieldMap, s, v, destinationType, recorder));
-            }
-            
-            out.append(format("return new %s(", destinationType.getCanonicalName()));
-            for (int i = 0; i < properties.size(); i++) {
-                out.append(format("arg%d", i));
-                if (i < properties.size() - 1) {
-                    out.append(",");
-                }
-            }
-            out.append(");");
-            
-            /*
-             * Any exceptions thrown calling constructors should be propagated
-             */
-            append(out, "\n} catch (java.lang.Exception e) {\n", "if (e instanceof RuntimeException) {\n", "throw (RuntimeException)e;\n",
-                    "} else {", "throw new java.lang.RuntimeException(" + "\"Error while constructing new " + destinationType.getSimpleName()
-                            + " instance\", e);", "\n}\n}\n}");
+        ConstructorMapping<?> constructorMapping = (ConstructorMapping<?>) constructorResolverStrategy.resolve(classMap, destinationType);
+        Constructor<?> constructor = constructorMapping.getConstructor();
+        
+        if (constructor == null) {
+            throw new MappingException("no suitable constructors found for " + destinationType);
+        } else if (recorder.isDebugEnabled()) {
+            recorder.append("\n\tUsing constructor: " + constructor);
         }
+        
+        List<FieldMap> properties = constructorMapping.getMappedFields();
+        Type<?>[] constructorArguments = constructorMapping.getParameterTypes();
+        
+        int argIndex = 0;
+        
+        out.append(format("if (s instanceof %s) {", sourceType.getCanonicalName()));
+        out.append(format("%s source = (%s) s;", sourceType.getCanonicalName(), sourceType.getCanonicalName()));
+        out.append("\ntry {\n");
+        argIndex = 0;
+        
+        for (FieldMap fieldMap : properties) {
+            VariableRef v = new VariableRef(constructorArguments[argIndex], "arg" + argIndex++);
+            VariableRef s = new VariableRef(fieldMap.getSource(), "source");
+            VariableRef destOwner = new VariableRef(fieldMap.getDestination(), "");
+            v.setOwner(destOwner);
+            out.append(statement(v.declare()));
+            
+            beginMappingField(out, fieldMap, code);
+            
+            out.append(code.mapFields(fieldMap, s, v, destinationType, recorder));
+            
+            endMappingField(out, fieldMap, code);
+        }
+        
+        out.append(format("return new %s(", destinationType.getCanonicalName()));
+        for (int i = 0; i < properties.size(); i++) {
+            out.append(format("arg%d", i));
+            if (i < properties.size() - 1) {
+                out.append(",");
+            }
+        }
+        out.append(");");
+        
+        /*
+         * Any exceptions thrown calling constructors should be propagated
+         */
+        append(out, "\n} catch (java.lang.Exception e) {\n", "if (e instanceof RuntimeException) {\n", "throw (RuntimeException)e;\n",
+                "} else {", "throw new java.lang.RuntimeException(" + "\"Error while constructing new " + destinationType.getSimpleName()
+                        + " instance\", e);", "\n}\n}\n}");
         return out.toString();
     }
     
@@ -239,7 +241,7 @@ public class ObjectFactoryGenerator {
      * @return
      */
     private String addArrayClassConstructor(SourceCodeContext code, ClassMap<?, ?> classMap, int size) {
-        return format("if (s instanceof %s) {", classMap.getAType().getCanonicalName()) + "return new "
-                + classMap.getBType().getRawType().getComponentType().getCanonicalName() + "[" + size + "];" + "\n}";
+        return format("return new "
+                + classMap.getBType().getRawType().getComponentType().getCanonicalName() + "[" + size + "];");
     }
 }

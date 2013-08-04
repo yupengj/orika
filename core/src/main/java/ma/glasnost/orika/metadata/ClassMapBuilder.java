@@ -19,11 +19,13 @@
 package ma.glasnost.orika.metadata;
 
 import static ma.glasnost.orika.impl.Specifications.aMultiOccurrenceElementMap;
+import static ma.glasnost.orika.metadata.MappingDirection.A_TO_B;
+import static ma.glasnost.orika.metadata.MappingDirection.BIDIRECTIONAL;
+import static ma.glasnost.orika.metadata.MappingDirection.B_TO_A;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -35,7 +37,6 @@ import ma.glasnost.orika.MappedTypePair;
 import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingException;
-import ma.glasnost.orika.impl.Specifications;
 import ma.glasnost.orika.impl.UtilityResolver;
 import ma.glasnost.orika.impl.util.ClassUtil;
 import ma.glasnost.orika.property.PropertyResolver;
@@ -81,7 +82,7 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
     private final Set<String> propertiesCacheB;
     final private Type<A> aType;
     final private Type<B> bType;
-    final private Set<FieldMap> fieldsMapping;
+    final private Set<FieldMap> fieldMappings;
     
     final private Set<MapperKey> usedMappers;
     private Mapper<A, B> customizedMapper;
@@ -92,7 +93,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
     private final DefaultFieldMapper[] defaults;
     private Boolean sourcesMappedOnNull;
     private Boolean destinationsMappedOnNull;
-    private Set<Expectation> expectations;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassMapBuilder.class);
     
@@ -128,11 +128,10 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
         bProperties = propertyResolver.getProperties(bType);
         propertiesCacheA = new LinkedHashSet<String>();
         propertiesCacheB = new LinkedHashSet<String>();
-        this.expectations = new HashSet<Expectation>();
         
         this.aType = aType;
         this.bType = bType;
-        this.fieldsMapping = new LinkedHashSet<FieldMap>();
+        this.fieldMappings = new LinkedHashSet<FieldMap>();
         this.usedMappers = new LinkedHashSet<MapperKey>();
         
     }
@@ -626,8 +625,8 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
                          * this property is resolved for all types, but can't be
                          * mapped in either direction.
                          */
-                        if (!propertyName.equals("class")) {
-                            fieldMap(propertyName, true).direction(direction).add();
+                        if (!propertyName.equals("class") ) {
+                            fieldMap(propertyName).direction(direction).add();
                         }
                     }
                 } else {
@@ -636,7 +635,7 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
                         String suggestion = defaulter.suggestMappedField(propertyName, prop.getType());
                         if (suggestion != null && getPropertiesForTypeB().contains(suggestion)) {
                             if (!getMappedPropertiesForTypeB().contains(suggestion)) {
-                                fieldMap(propertyName, suggestion, true).direction(direction).add();
+                                fieldMap(propertyName, suggestion).direction(direction).add();
                             }
                         }
                     }
@@ -646,6 +645,7 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
         
         return this;
     }
+    
     
     /**
      * @deprecated use {@link #byDefault(DefaultFieldMapper...)} instead
@@ -718,8 +718,8 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
             LOGGER.debug("ClassMap created:\n\t" + describeClassMap());
         }
         
-        return new ClassMap<A, B>(aType, bType, fieldsMapping, customizedMapper, usedMappers, constructorA, constructorB,
-                sourcesMappedOnNull, destinationsMappedOnNull, expectations);
+        return new ClassMap<A, B>(aType, bType, fieldMappings, customizedMapper, usedMappers, constructorA, constructorB,
+                sourcesMappedOnNull, destinationsMappedOnNull);
     }
     
     /**
@@ -768,7 +768,7 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
     protected String describeClassMap() {
         StringBuilder output = new StringBuilder();
         output.append(getClass().getSimpleName() + ".map(" + aType + ", " + bType + ")");
-        for (FieldMap f : fieldsMapping) {
+        for (FieldMap f : fieldMappings) {
             if (f.isExcluded()) {
                 output.append("\n\t .exclude('" + f.getSourceName() + "')");
             } else {
@@ -929,7 +929,7 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
      * @return the mapped fields for this builder
      */
     protected Set<FieldMap> getMappedFields() {
-        return fieldsMapping;
+        return fieldMappings;
     }
     
     /**
@@ -985,75 +985,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
         this.constructorB = args.clone();
         return this;
     }
-    
-    /**
-     * Sets an expectation about the fields of the generated mapper code
-     * regarding the supplied field names, as to whether they have been mapped
-     * on the A type for this class-map builder<br>
-     * (the reverse direction of the configured ClassMap)<br>
-     * <br>
-     * 
-     * For example,
-     * <code> .expectMappedOnA(Fields.ALL_EXCEPT, "field1", field2") </code>
-     * would set the expectation that all fields for the 'A' type--except
-     * "field1" and "field2"--should be mapped when mapping from B to A (the
-     * reverse direction for the configured ClassMap).<br>
-     * <br>
-     * 
-     * This expectation is evaluated once, at the time the mapper code is
-     * generated; if the expectation is not met, a FailedExpectationException is
-     * thrown with a description of the failed expectation and the relevant
-     * details useful for correcting the problem.
-     * 
-     * @param fieldSet
-     *            the descriptor of the expected fields
-     * @return this ClassMapBuilder
-     */
-    public ClassMapBuilder<A, B> expectMappedOnA(FieldSet fieldSet) {
-        return expect(false, fieldSet);
-    }
-    
-    /**
-     * Sets an expectation about the fields of the generated mapper code
-     * regarding the supplied field names, as to whether they have been mapped
-     * on the B type for this class-map builder<br>
-     * (the forward direction of the configured ClassMap)<br>
-     * <br>
-     * 
-     * For example,
-     * <code> .expectMappedOnB(Fields.ALL_EXCEPT, "field1", field2") </code>
-     * would set the expectation that all fields for the 'B' type--except
-     * "field1" and "field2"--should be mapped when mapping from A to B (the
-     * forward direction for the configured ClassMap).<br>
-     * <em>Note that when <code>ALL_EXCEPT</code> is used, it refers to all fields
-     * that would have been mapped
-     * <br>
-     * 
-     * This expectation is evaluated once, at the time the mapper code is
-     * generated; if the expectation is not met, a FailedExpectationException is
-     * thrown with a description of the failed expectation and the relevant
-     * details useful for correcting the problem.
-     * 
-     * @param fieldSet
-     *            the descriptor of the expected fields
-     * @return this ClassMapBuilder
-     */
-    public ClassMapBuilder<A, B> expectMappedOnB(FieldSet fieldSet) {
-        return expect(true, fieldSet);
-    }
-    
-    /**
-     * @param group
-     * @param aToB
-     * @param fieldNames
-     * @return this ClassMapBuilder
-     */
-    protected ClassMapBuilder<A, B> expect(boolean aToB, FieldSet fieldSet) {
-        Map<String, Property> fields = this.getPropertyExpressions(aToB ? getAType() : getBType());
-        expectations.add(fieldSet.toExpectation(fields, aToB));
-        return this;
-    }
-    
     
     public String toString() {
         return getClass().getSimpleName() + "[" + getAType() + ", " + getBType() + "]";

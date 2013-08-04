@@ -101,6 +101,12 @@ public final class OrikaSystemProperties {
     public static final String MAP_NULLS = "ma.glasnost.orika.mapNulls";
     
     /**
+     * Specifies whether strict validation should be performed against the
+     * generated field mappings
+     */
+    public static final String USE_STRICT_VALIDATION = "ma.glasnost.orika.useStrictValidation";
+    
+    /**
      * Specifies whether to use built-in converters
      * default value is <code>true</code>
      */

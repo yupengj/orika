@@ -12,11 +12,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import ma.glasnost.orika.DefaultFieldMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.builtin.DateToStringConverter;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.test.MappingUtil;
 import ma.glasnost.orika.test.common.types.TestCaseClasses.Author;
@@ -57,7 +58,7 @@ public class ConstructorMappingTestCase {
     public void testSimpleCase() throws Throwable {
     	
         final SimpleDateFormat df = new SimpleDateFormat(DATE_PATTERN);
-        MapperFactory factory = MappingUtil.getMapperFactory();
+        MapperFactory factory = new DefaultMapperFactory.Builder().useStrictValidation(true).build();
         
         factory.classMap(PersonVO.class, Person.class)
                 //.constructorA()
@@ -67,8 +68,6 @@ public class ConstructorMappingTestCase {
                 .byDefault()
                 .register();
         factory.getConverterFactory().registerConverter(DATE_CONVERTER, new DateToStringConverter(DATE_PATTERN));
-        
-        
         
         Person person = new Person();
         person.setFirstName("Abdelkrim");
@@ -96,7 +95,6 @@ public class ConstructorMappingTestCase {
                 .register();
         factory.getConverterFactory().registerConverter(DATE_CONVERTER, new DateToStringConverter(DATE_PATTERN));
         
-      
         Person person = new Person();
         person.setFirstName("Abdelkrim");
         person.setLastName("EL KHETTABI");
@@ -292,7 +290,6 @@ public class ConstructorMappingTestCase {
         Assert.assertEquals(person.getLastName(), vo.getLastName());
         Assert.assertTrue(person.getAge() == vo.getAge());
         Assert.assertEquals("01/01/1980", vo.getDateOfBirth());
-    	
     }
     
     @Test

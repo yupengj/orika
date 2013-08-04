@@ -99,7 +99,18 @@ public class ArrayOrCollectionToCollection extends AbstractSpecification {
             out.append(statement(d.assign(newDest)));
         }
         
-        String mapNull = shouldMapNulls(fieldMap, code) ? format(" else {\n %s;\n}", d.assignIfPossible("null")): "";
+        String mapNull = "";
+        if (shouldMapNulls(fieldMap, code)) {
+            StringBuilder assignNull = new StringBuilder();
+            assignNull.append(" else ");
+            if (d.isNestedProperty()) {
+                assignNull.append(d.ifPathNotNull());
+            }
+            assignNull.append(format(" {\n %s;\n}", d.assignIfPossible("null")));
+            mapNull = assignNull.toString();
+        } 
+        
+        
         
         append(out, "}" + mapNull);
         

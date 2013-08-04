@@ -23,9 +23,11 @@ import static java.lang.System.getProperty;
 import static ma.glasnost.orika.OrikaSystemProperties.MAP_NULLS;
 import static ma.glasnost.orika.OrikaSystemProperties.USE_AUTO_MAPPING;
 import static ma.glasnost.orika.OrikaSystemProperties.USE_BUILTIN_CONVERTERS;
+import static ma.glasnost.orika.OrikaSystemProperties.USE_STRICT_VALIDATION;
 import static ma.glasnost.orika.util.HashMapUtility.getConcurrentLinkedHashMap;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,6 +83,8 @@ import ma.glasnost.orika.util.SortedCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+
 /**
  * The mapper factory is the heart of Orika, a small container where metadata
  * are stored, it's used by other components, to look up for generated mappers,
@@ -97,7 +101,7 @@ public class DefaultMapperFactory implements MapperFactory {
     private final MapperGenerator mapperGenerator;
     private final ObjectFactoryGenerator objectFactoryGenerator;
     
-    private final Map<MapperKey, ClassMap<Object, Object>> classMapRegistry;
+    private final ConcurrentLinkedHashMap<MapperKey, ClassMap<Object, Object>> classMapRegistry;
     private final SortedCollection<Mapper<Object, Object>> mappersRegistry;
     private final MappingContextFactory contextFactory;
     private final MappingContextFactory nonCyclicContextFactory;
@@ -117,6 +121,7 @@ public class DefaultMapperFactory implements MapperFactory {
     
     private final boolean useAutoMapping;
     private final boolean useBuiltinConverters;
+    private final boolean useStrictValidation;
     private volatile boolean isBuilt = false;
     private volatile boolean isBuilding = false;
     
@@ -161,6 +166,7 @@ public class DefaultMapperFactory implements MapperFactory {
         this.objectFactoryGenerator = new ObjectFactoryGenerator(this, builder.constructorResolverStrategy, builder.compilerStrategy);
         this.useAutoMapping = builder.useAutoMapping;
         this.useBuiltinConverters = builder.useBuiltinConverters;
+        this.useStrictValidation = builder.useStrictValidation;
         
         builder.codeGenerationStrategy.setMapperFactory(this);
         
@@ -261,6 +267,11 @@ public class DefaultMapperFactory implements MapperFactory {
          * null.
          */
         protected Boolean mapNulls;
+        /**
+         * The configured value of whether or not to perform strict validation
+         * to verify correctness of the generated mapping
+         */
+        protected Boolean useStrictValidation;
         
         /**
          * Instantiates a new MapperFactoryBuilder
@@ -275,6 +286,7 @@ public class DefaultMapperFactory implements MapperFactory {
             useBuiltinConverters = valueOf(getProperty(USE_BUILTIN_CONVERTERS, "true"));
             useAutoMapping = valueOf(getProperty(USE_AUTO_MAPPING, "true"));
             mapNulls = valueOf(getProperty(MAP_NULLS, "true"));
+            useStrictValidation = valueOf(getProperty(USE_STRICT_VALIDATION, "false"));
         }
         
         /**
@@ -399,6 +411,18 @@ public class DefaultMapperFactory implements MapperFactory {
          */
         public B useBuiltinConverters(boolean useBuiltinConverters) {
             this.useBuiltinConverters = useBuiltinConverters;
+            return self();
+        }
+        
+        /**
+         * Configure whether to use perform strict validation against the
+         * correctness of the generated mappers
+         * 
+         * @param useStrictValidation
+         * @return a reference to <code>this</code> MapperFactoryBuilder
+         */
+        public B useStrictValidation(boolean useStrictValidation) {
+            this.useStrictValidation = useStrictValidation;
             return self();
         }
         
@@ -626,6 +650,9 @@ public class DefaultMapperFactory implements MapperFactory {
                         LOGGER.debug("No mapper registered for " + mapperKey + ": attempting to generate");
                     }
                     final ClassMap<?, ?> classMap = classMap(mapperKey.getAType(), mapperKey.getBType()).byDefault().toClassMap();
+                    
+                    // TODO:
+                    classMapRegistry.put(mapperKey, (ClassMap<Object, Object>) classMap);
                     buildObjectFactories(classMap, context);
                     mapper = buildMapper(classMap, true, context);
                     initializeUsedMappers(classMap);
@@ -810,6 +837,9 @@ public class DefaultMapperFactory implements MapperFactory {
             synchronized (this) {
                 if (!ClassUtil.isConcrete(targetType)) {
                     targetType = (Type<T>) resolveConcreteType(targetType, targetType);
+                    if (targetType == null) {
+                        throw new MappingException("Cannot construct an instance of " + destinationType.getCanonicalName() + ", and no concrete type was registered");
+                    }
                 }
                 
                 Constructor<?>[] constructors = targetType.getRawType().getConstructors();
@@ -943,6 +973,16 @@ public class DefaultMapperFactory implements MapperFactory {
             }
         }
         
+        if (concreteType == null && !Modifier.isInterface(type.getRawType().getModifiers())) {
+            for (Type<?> anInterface: type.getInterfaces()) {
+                Type<?> possibleType = (Type<?>) this.concreteTypeRegistry.get(anInterface.getRawType());
+                if (possibleType != null) {
+                    concreteType = TypeFactory.resolveValueOf(possibleType.getRawType(), anInterface);
+                    break;
+                }
+            }
+        }
+        
         if (concreteType != null && !concreteType.isAssignableFrom(originalType)) {
             if (ClassUtil.isConcrete(originalType)) {
                 concreteType = originalType;
@@ -956,12 +996,14 @@ public class DefaultMapperFactory implements MapperFactory {
                 }
             }
         }
+        
         return concreteType;
     }
     
     @SuppressWarnings("unchecked")
     public synchronized <A, B> void registerClassMap(ClassMap<A, B> classMap) {
-        classMapRegistry.put(new MapperKey(classMap.getAType(), classMap.getBType()), (ClassMap<Object, Object>) classMap);
+        MapperKey key = new MapperKey(classMap.getAType(), classMap.getBType());
+        classMapRegistry.putIfAbsent(key, (ClassMap<Object, Object>) classMap);
         if (isBuilding || isBuilt) {
             MappingContext context = contextFactory.getContext();
             try {
@@ -1003,7 +1045,9 @@ public class DefaultMapperFactory implements MapperFactory {
                     buildObjectFactories(classMap, context);
                     initializeUsedMappers(classMap);
                     
-                    classMap.assertExpectationsMet();
+                    if (useStrictValidation && isExplicitlyRegistered(classMap)) {
+                        classMap.evaluateMappingResults();
+                    }
                 }
                 
             } finally {
@@ -1013,6 +1057,18 @@ public class DefaultMapperFactory implements MapperFactory {
             isBuilt = true;
             isBuilding = false;
         }
+    }
+    
+    /**
+     * Determines whether the specified ClassMap instance was explicitly registered
+     * with this MapperFactory
+     * 
+     * @param classMap
+     * @return
+     */
+    private boolean isExplicitlyRegistered(ClassMap<?, ?> classMap) {
+        Set<Type<?>> types = explicitAToBRegistry.get(classMap.getAType());
+        return types != null && types.contains(classMap.getBType());
     }
     
     public Set<ClassMap<Object, Object>> lookupUsedClassMap(MapperKey mapperKey) {
@@ -1062,11 +1118,27 @@ public class DefaultMapperFactory implements MapperFactory {
         if (classMap.getConstructorA() != null && lookupObjectFactory(aType) == null) {
             GeneratedObjectFactory objectFactory = objectFactoryGenerator.build(aType, bType, context);
             registerObjectFactory(objectFactory, (Type<Object>) aType);
+        } else {
+            try {
+                lookupObjectFactory(aType, bType, context);
+            } catch (MappingException e) {
+                if (useStrictValidation) {
+                    throw e;
+                }
+            }
         }
         
         if (classMap.getConstructorB() != null && lookupObjectFactory(bType) == null) {
             GeneratedObjectFactory objectFactory = objectFactoryGenerator.build(bType, aType, context);
             registerObjectFactory(objectFactory, (Type<Object>) bType);
+        } else {
+            try {
+                lookupObjectFactory(bType, aType, context);
+            } catch (MappingException e) {
+                if (useStrictValidation) {
+                    throw e;
+                }
+            }
         }
     }
     

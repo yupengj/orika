@@ -60,8 +60,8 @@ public class SimpleConstructorResolverStrategy implements ConstructorResolverStr
 	private Paranamer paranamer = new CachingParanamer(new AdaptiveParanamer(new BytecodeReadingParanamer(), new AnnotationParanamer()));
 	
     @SuppressWarnings({ "unchecked" })
-    public <T, A, B> ConstructorMapping<T> resolve(ClassMap<A, B> classMap, Type<T> sourceType) {
-        boolean aToB = classMap.getBType().equals(sourceType);
+    public <T, A, B> ConstructorMapping<T> resolve(ClassMap<A, B> classMap, Type<T> destinationType) {
+        boolean aToB = classMap.getBType().equals(destinationType);
         
         Type<?> targetClass = aToB ? classMap.getBType() : classMap.getAType();
         
@@ -186,7 +186,7 @@ public class SimpleConstructorResolverStrategy implements ConstructorResolverStr
 	         * */
         	
 	        ConstructorMapping<T> defaultMapping = new ConstructorMapping<T>();
-	        defaultMapping.setConstructor(constructors.length == 0 ? null : constructors[0]);
+	        defaultMapping.setConstructor(null);
 	        return defaultMapping;
         }
     }

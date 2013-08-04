@@ -26,6 +26,14 @@ package ma.glasnost.orika.metadata;
  */
 public class ArrayElementProperty extends Property {
     
+    /**
+     * Constructs a new ArrayElementProperty representing the specified index of the provided
+     * Array property
+     * 
+     * @param index
+     * @param propertyType
+     * @param container
+     */
     public ArrayElementProperty(int index, Type<?> propertyType, Property container) {
         super("["+index + "]","["+index + "]","["+index + "]","["+index + "] = %s",propertyType,null, container);
     }
