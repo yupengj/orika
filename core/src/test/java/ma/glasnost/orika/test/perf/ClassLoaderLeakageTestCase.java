@@ -31,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +241,7 @@ public class ClassLoaderLeakageTestCase {
 		final ClassLoader originalTccl = Thread.currentThread()
 				.getContextClassLoader();
 
-		SoftReference<ClassLoader> childLoaderRef = null;
+		WeakReference<ClassLoader> childLoaderRef = null;
 
 		MapperFactory factory = new DefaultMapperFactory.Builder().build();
 
@@ -281,7 +282,7 @@ public class ClassLoaderLeakageTestCase {
 
 			// Now, set the soft reference before our hard references go out of
 			// scope
-			childLoaderRef = new SoftReference<ClassLoader>(childLoader);
+			childLoaderRef = new WeakReference<>(childLoader);
 
 			runnerType = null;
 			childLoader = null;

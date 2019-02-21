@@ -33,11 +33,11 @@
 		<level value="OFF" />
 	</root>
 	
-    <logger name="ma.glasnost.orika.metadata" level="TRACE" additivity="false"> 
+    <logger name="ma.glasnost.orika.metadata" level="WARN" additivity="false">
         <appender-ref ref="STDOUT" /> 
     </logger>
     
-    <logger name="ma.glasnost.orika" level="DEBUG"> 
+    <logger name="ma.glasnost.orika" level="WARN">
         <appender-ref ref="STDOUT" /> 
     </logger>
 

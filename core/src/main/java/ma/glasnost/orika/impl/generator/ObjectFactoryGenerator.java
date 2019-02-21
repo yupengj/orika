@@ -81,7 +81,7 @@ public class ObjectFactoryGenerator {
                 logDetails = null;
             }
 
-            Class<?> neighbor = className.startsWith(packageName) || packageName.isBlank() ? null: type.getRawType();
+            Class<?> neighbor = packageName.isEmpty() || packageName.startsWith("java.") ? null: type.getRawType();
             final var factoryCode = new SourceCodeContext(className, GeneratedObjectFactory.class,
                     neighbor, context, logDetails);
             
