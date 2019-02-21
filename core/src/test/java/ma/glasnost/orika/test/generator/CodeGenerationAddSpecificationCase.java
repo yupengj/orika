@@ -30,33 +30,34 @@ import org.junit.Test;
 
 public class CodeGenerationAddSpecificationCase {
 
-    @Test
-    public void testAddSpecification() {
-        Specification testSpec = new TestSpecification();
-        DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
-        CodeGenerationStrategy codeGenerationStrategy = builder.getCodeGenerationStrategy();
-        codeGenerationStrategy.addSpecification(testSpec, CodeGenerationStrategy.Position.IN_PLACE_OF, Convert.class);
-        DefaultMapperFactory mapperFactory= builder.build();
+  @Test
+  public void testAddSpecification() {
+    Specification testSpec = new TestSpecification();
+    DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
+    CodeGenerationStrategy codeGenerationStrategy = builder.getCodeGenerationStrategy();
+    codeGenerationStrategy.addSpecification(
+        testSpec, CodeGenerationStrategy.Position.IN_PLACE_OF, Convert.class);
+    DefaultMapperFactory mapperFactory = builder.build();
 
-        Assert.assertTrue(codeGenerationStrategy.getSpecifications().contains(testSpec));
+    Assert.assertTrue(codeGenerationStrategy.getSpecifications().contains(testSpec));
+  }
+
+  private class TestSpecification extends Convert {
+    @Override
+    public boolean appliesTo(FieldMap fieldMap) {
+      return super.appliesTo(fieldMap);
     }
 
-    private class TestSpecification extends Convert {
-        @Override
-        public boolean appliesTo(FieldMap fieldMap) {
-            return super.appliesTo(fieldMap);
-        }
-
-        @Override
-        public String generateEqualityTestCode(FieldMap fieldMap, VariableRef source, VariableRef destination,
-                                               SourceCodeContext code) {
-            return super.generateEqualityTestCode(fieldMap, source, destination, code);
-        }
-
-        @Override
-        public String generateMappingCode(FieldMap fieldMap, VariableRef source, VariableRef destination,
-                                          SourceCodeContext code) {
-            return super.generateMappingCode(fieldMap, source, destination, code);
-        }
+    @Override
+    public String generateEqualityTestCode(
+        FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
+      return super.generateEqualityTestCode(fieldMap, source, destination, code);
     }
+
+    @Override
+    public String generateMappingCode(
+        FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
+      return super.generateMappingCode(fieldMap, source, destination, code);
+    }
+  }
 }

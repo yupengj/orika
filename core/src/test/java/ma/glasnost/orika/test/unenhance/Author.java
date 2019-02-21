@@ -18,54 +18,46 @@
 
 package ma.glasnost.orika.test.unenhance;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Author {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-	@Column
-	private String name;
+  @Column private String name;
 
-	@OneToMany
-	private Set<Book> books;
+  @OneToMany private Set<Book> books;
 
-	public Author() {
-		this.books = new HashSet<Book>();
-	}
-	
-	public Set<Book> getBooks() {
-		return books;
-	}
+  public Author() {
+    this.books = new HashSet<Book>();
+  }
 
-	public void setBooks(Set<Book> books) {
-		this.books = books;
-	}
+  public Set<Book> getBooks() {
+    return books;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public void setBooks(Set<Book> books) {
+    this.books = books;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 }

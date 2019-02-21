@@ -22,15 +22,16 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 
 public class MyEnumConverter extends CustomConverter<String, MyEnum> {
-    
-    public MyEnum convert(String source, Type<? extends MyEnum> destinationType, MappingContext context) {
-        if ("un".equals(source)) {
-            return MyEnum.one;
-        }
-        
-        if ("deux".equals(source)) {
-            return MyEnum.two;
-        }
-        return null;
+
+  public MyEnum convert(
+      String source, Type<? extends MyEnum> destinationType, MappingContext context) {
+    if ("un".equals(source)) {
+      return MyEnum.one;
     }
+
+    if ("deux".equals(source)) {
+      return MyEnum.two;
+    }
+    return null;
+  }
 }

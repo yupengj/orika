@@ -18,26 +18,25 @@
 
 package ma.glasnost.orika.impl.generator;
 
-import java.util.List;
-
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.metadata.FieldMap;
 
+import java.util.List;
+
 /**
- * AggregateSpecification encapsulates the logic to generate code for mappings
- * which are applied to collections of FieldMaps together
- * 
- * @author mattdeboer
+ * AggregateSpecification encapsulates the logic to generate code for mappings which are applied to
+ * collections of FieldMaps together
  *
+ * @author mattdeboer
  */
 public interface AggregateSpecification extends BaseSpecification {
-    
-    void setMapperFactory(MapperFactory mapperFactory);
-    
-    /**
-     * @param fieldMappings
-     * @param code
-     * @return
-     */
-    String generateMappingCode(List<FieldMap> fieldMappings, SourceCodeContext code);
+
+  void setMapperFactory(MapperFactory mapperFactory);
+
+  /**
+   * @param fieldMappings
+   * @param code
+   * @return
+   */
+  String generateMappingCode(List<FieldMap> fieldMappings, SourceCodeContext code);
 }

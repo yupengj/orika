@@ -18,6 +18,17 @@
 
 package ma.glasnost.orika.test;
 
+import org.junit.Test;
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.runner.Description;
+import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.ParentRunner;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
+import org.junit.runners.model.TestClass;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
@@ -33,318 +44,279 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.runner.Description;
-import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.ParentRunner;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
-import org.junit.runners.model.TestClass;
-
 /**
- * DynamicSuite resolves and runs a test suite dynamically containing all
- * classes matched by a specified pattern.<br>
- * Use the <code>@RunWith</code> annotation, specifying DyanimcSuite.class as
- * the value in order to run a test class as a dynamic suite. <br>
+ * DynamicSuite resolves and runs a test suite dynamically containing all classes matched by a
+ * specified pattern.<br>
+ * Use the <code>@RunWith</code> annotation, specifying DyanimcSuite.class as the value in order to
+ * run a test class as a dynamic suite. <br>
  * <br>
- * 
- * The pattern may be customized by specifying an value with the
- * <code>TestCasePattern</code> annotation.<br>
+ * The pattern may be customized by specifying an value with the <code>TestCasePattern</code>
+ * annotation.<br>
  * <br>
- * 
- * The tests may also be run as a "scenario" by marking the class with the
- * <code>@Scenario</code> annotation. Running tests as a scenario will cause all
- * of the resolved test cases' methods to be suffixed with the scenario name.<br>
- * This is necessary in case you want to run these tests again, under a new
- * "scenario", since normally, JUnit attempts to avoid running the same test
- * method more than once. <br>
+ * The tests may also be run as a "scenario" by marking the class with the <code>@Scenario</code>
+ * annotation. Running tests as a scenario will cause all of the resolved test cases' methods to be
+ * suffixed with the scenario name.<br>
+ * This is necessary in case you want to run these tests again, under a new "scenario", since
+ * normally, JUnit attempts to avoid running the same test method more than once. <br>
  * <br>
- * The JUnit 4+ <code>@BeforeClass</code> and <code>@AfterClass</code>
- * annotations may used to define setup and tear-down methods to be performed
- * before and after the entire suite, respectively.
- * 
- *
+ * The JUnit 4+ <code>@BeforeClass</code> and <code>@AfterClass</code> annotations may used to
+ * define setup and tear-down methods to be performed before and after the entire suite,
+ * respectively.
  */
 public class DynamicSuite extends ParentRunner<Runner> {
 
-	private static final String DEFAULT_TEST_CASE_PATTERN = ".*TestCase";
+  private static final String DEFAULT_TEST_CASE_PATTERN = ".*TestCase";
+  private final List<Runner> fRunners;
+  private final String name;
+  private final String scenarioName;
 
-	/**
-	 * The <code>TestCasePattern</code> annotation specifies the pattern from
-	 * which test case classes should be matched.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public @interface TestCasePattern {
-		public String value();
-	}
+  public DynamicSuite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
+    this(builder, klass, findTestCases(klass).toArray(new Class<?>[0]));
+  }
 
-	/**
-	 * The <code>Scenario</code> annotation is used to mark the dynamic suite
-	 * with a specific name that should be appended to each executed test name.
-	 * This is useful in the case where you want to create multiple copies of a
-	 * particular dynamic suite definition, but would like to run them with
-	 * slightly different configuration for the entire suite (which could be
-	 * achieved using the <code>@BeforeClass</code> and <code>@AfterClass</code>
-	 * annotations for setup/tear-down of the entire suite).<br>
-	 * <br>
-	 * If the 'name' parameter is not supplied, then the class simpleName is
-	 * used as a default.<br>
-	 * Without the unique scenario name, multiple copies of the tests resolved
-	 * by the suite would not be run as JUnit avoids running the same test more
-	 * than once, where uniqueness based on test name.
-	 * 
-	 * @see @@org.junit.BeforeClass, @org.junit.AfterClass
-	 * 
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public @interface Scenario {
-		public String name() default "";
-	}
+  public DynamicSuite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
+    this(null, builder.runners(null, classes));
+  }
 
-	/**
-	 * Resolves the <code>@Scenario</code> annotation if present; if found, the
-	 * scenario will be given a unique name suffix for all of the tests,
-	 * otherwise, a default scenario is run with no name suffix.
-	 * 
-	 * @param testClass
-	 *            the class which defines the DynamicSuite
-	 * @return
-	 */
-	private static String getScenarioName(TestClass testClass) {
+  protected DynamicSuite(Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+    this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);
+  }
 
-		Scenario s = testClass.getJavaClass().getAnnotation(Scenario.class);
-		String name = null;
-		if (s != null) {
-			name = "".equals(s.name().trim()) ? testClass.getJavaClass()
-					.getSimpleName() : s.name();
-		}
-		return name;
-	}
+  protected DynamicSuite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses)
+      throws InitializationError {
+    this(klass, builder.runners(klass, suiteClasses));
+  }
 
-	/**
-	 * Resolves the test classes that are matched by the specified test pattern.
-	 * 
-	 * @param theClass
-	 *            the root class which defines the DynamicSuite; the
-	 *            <code>@TestCasePattern</code> annotation will be used to
-	 *            determine the pattern of test cases to include, and the root
-	 *            folder will be determined based on the root folder for the
-	 *            class-loader of <code>theClass</code>.
-	 * @param
-	 * @return
-	 */
-	public static List<Class<?>> findTestCases(Class<?> theClass) {
-		List<File> classFolders = new ArrayList<File>();
-		try {
-		    ClassLoader loader = theClass.getClassLoader();
-		    if (loader instanceof URLClassLoader) {
-		        for (URL url: ((URLClassLoader)loader).getURLs()) {
-		            File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
-		            if (file.isDirectory()) {
-		                classFolders.add(file);
-		            }
-		        }
-		    } else {
-		        classFolders.add(new File(URLDecoder.decode(theClass.getResource("/").getFile(), "UTF-8")));
-		    }
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-		String testCaseRegex = getTestCasePattern(theClass);
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		for (File classFolder: classFolders) {
-		    classes.addAll(findTestCases(classFolder, testCaseRegex));
-		}
-		return classes;
-	}
+  // =============================================================================
 
-	private static boolean containsTests(Class<?> testClass) {
-		boolean containsTests = false;
-		for (Method m: testClass.getMethods()) {
-			Test test = m.getAnnotation(Test.class);
-			if (test != null) {
-				containsTests = true;
-				break;
-			}
-			if (m.getName().startsWith("test") 
-					&& Modifier.isPublic(m.getModifiers()) 
-					&& !Modifier.isStatic(m.getModifiers())) {
-				containsTests = true;
-				break;
-			}
-		}
-		return containsTests;
-	}
-	
-	/**
-	 * Resolves the test classes that are matched by the specified test pattern.
-	 * 
-	 * @param classFolder
-	 *            the root folder under which to search for test cases
-	 * @param testCaseRegex
-	 *            the pattern to use when looking for test cases to include;
-	 *            send null to use the value annotated on the class designated
-	 *            by the class parameter.
-	 * @return
-	 */
-	public static List<Class<?>> findTestCases(File classFolder,
-			String testCaseRegex) {
-		try {
-			Pattern testCasePattern = Pattern.compile(testCaseRegex);
+  protected DynamicSuite(Class<?> klass, List<Runner> runners) throws InitializationError {
+    super(klass);
+    try {
+      this.scenarioName = getScenarioName(getTestClass());
 
-			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-			List<Class<?>> testCases = new ArrayList<Class<?>>();
+      if (scenarioName == null) {
+        this.fRunners = runners;
+        this.name = klass.getName();
+      } else {
+        this.name = klass.getName() + "[" + scenarioName + "]";
+        this.fRunners = new ArrayList<Runner>(runners.size());
+        for (Runner runner : runners) {
+          if (!(runner instanceof BlockJUnit4ClassRunner)) {
+            throw new IllegalArgumentException(
+                "Unexpected Runner type: " + runner.getClass().getName());
+          }
+          fRunners.add(
+              new Runner() {
+                @Override
+                public Description getDescription() {
+                  return Description.createSuiteDescription(scenarioName);
+                }
 
-			int classFolderPathLength = classFolder.getAbsolutePath().length();
+                @Override
+                public void run(RunNotifier notifier) {
+                  runner.run(notifier);
+                }
+              });
+        }
+      }
+    } catch (Exception e) {
+      throw new InitializationError(e);
+    }
+  }
 
-			LinkedList<File> stack = new LinkedList<File>();
-			stack.addAll(Arrays.asList(classFolder.listFiles()));
-			File currentDirectory = classFolder;
-			String currentPackage = "";
-			while (!stack.isEmpty()) {
+  /**
+   * Resolves the <code>@Scenario</code> annotation if present; if found, the scenario will be given
+   * a unique name suffix for all of the tests, otherwise, a default scenario is run with no name
+   * suffix.
+   *
+   * @param testClass the class which defines the DynamicSuite
+   * @return
+   */
+  private static String getScenarioName(TestClass testClass) {
 
-				File file = stack.removeFirst();
+    Scenario s = testClass.getJavaClass().getAnnotation(Scenario.class);
+    String name = null;
+    if (s != null) {
+      name = "".equals(s.name().trim()) ? testClass.getJavaClass().getSimpleName() : s.name();
+    }
+    return name;
+  }
 
-				if (file.isDirectory()) {
-					// push
-					stack.addAll(Arrays.asList(file.listFiles()));
-				} else {
-					if (file.getName().endsWith(".class")) {
-						String className = file.getAbsolutePath().replace(
-								classFolder.getAbsolutePath() + File.separator,
-								"");
-						className = className.replaceAll("[\\\\/]", ".")
-								.replace(".class", "");
-						if (testCasePattern.matcher(className).matches()) {
-							if (!currentDirectory.equals(file.getParentFile())) {
-								currentDirectory = file.getParentFile();
-								currentPackage = currentDirectory
-										.getAbsolutePath().substring(
-												classFolderPathLength + 1);
-								currentPackage = currentPackage.replaceAll(
-										"[\\/]", ".");
-							}
-							Class<?> theClass = Class.forName(className, false, tccl);
-							if (containsTests(theClass)) {
-								testCases.add(theClass);
-							}
-						}
-					}
-				}
-			}
+  /**
+   * Resolves the test classes that are matched by the specified test pattern.
+   *
+   * @param theClass the root class which defines the DynamicSuite; the <code>@TestCasePattern
+   *     </code> annotation will be used to determine the pattern of test cases to include, and the
+   *     root folder will be determined based on the root folder for the class-loader of <code>
+   *     theClass</code>.
+   * @param
+   * @return
+   */
+  public static List<Class<?>> findTestCases(Class<?> theClass) {
+    List<File> classFolders = new ArrayList<File>();
+    try {
+      ClassLoader loader = theClass.getClassLoader();
+      if (loader instanceof URLClassLoader) {
+        for (URL url : ((URLClassLoader) loader).getURLs()) {
+          File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+          if (file.isDirectory()) {
+            classFolders.add(file);
+          }
+        }
+      } else {
+        classFolders.add(new File(URLDecoder.decode(theClass.getResource("/").getFile(), "UTF-8")));
+      }
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
+    String testCaseRegex = getTestCasePattern(theClass);
+    List<Class<?>> classes = new ArrayList<Class<?>>();
+    for (File classFolder : classFolders) {
+      classes.addAll(findTestCases(classFolder, testCaseRegex));
+    }
+    return classes;
+  }
 
-			return testCases;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+  private static boolean containsTests(Class<?> testClass) {
+    boolean containsTests = false;
+    for (Method m : testClass.getMethods()) {
+      Test test = m.getAnnotation(Test.class);
+      if (test != null) {
+        containsTests = true;
+        break;
+      }
+      if (m.getName().startsWith("test")
+          && Modifier.isPublic(m.getModifiers())
+          && !Modifier.isStatic(m.getModifiers())) {
+        containsTests = true;
+        break;
+      }
+    }
+    return containsTests;
+  }
 
-	/**
-	 * Resolves a test class pattern (regular expression) which is used to
-	 * resolve the names of classes that will be included in this test suite.
-	 * 
-	 * @param klass
-	 *            the class which defines the DynamicSuite
-	 * @return the compiled Pattern
-	 */
-	private static String getTestCasePattern(Class<?> klass) {
+  /**
+   * Resolves the test classes that are matched by the specified test pattern.
+   *
+   * @param classFolder the root folder under which to search for test cases
+   * @param testCaseRegex the pattern to use when looking for test cases to include; send null to
+   *     use the value annotated on the class designated by the class parameter.
+   * @return
+   */
+  public static List<Class<?>> findTestCases(File classFolder, String testCaseRegex) {
+    try {
+      Pattern testCasePattern = Pattern.compile(testCaseRegex);
 
-		String pattern = DEFAULT_TEST_CASE_PATTERN;
-		TestCasePattern annotation = klass.getAnnotation(TestCasePattern.class);
-		if (annotation != null) {
-			pattern = annotation.value();
-		}
-		return pattern;
-	}
+      ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+      List<Class<?>> testCases = new ArrayList<Class<?>>();
 
-	// =============================================================================
+      int classFolderPathLength = classFolder.getAbsolutePath().length();
 
-	private final List<Runner> fRunners;
-	private final String name;
-	private final String scenarioName;
+      LinkedList<File> stack = new LinkedList<File>();
+      stack.addAll(Arrays.asList(classFolder.listFiles()));
+      File currentDirectory = classFolder;
+      String currentPackage = "";
+      while (!stack.isEmpty()) {
 
-	public DynamicSuite(Class<?> klass, RunnerBuilder builder)
-			throws InitializationError {
-		this(builder, klass, findTestCases(klass).toArray(new Class<?>[0]));
-	}
+        File file = stack.removeFirst();
 
-	public DynamicSuite(RunnerBuilder builder, Class<?>[] classes)
-			throws InitializationError {
-		this(null, builder.runners(null, classes));
-	}
+        if (file.isDirectory()) {
+          // push
+          stack.addAll(Arrays.asList(file.listFiles()));
+        } else {
+          if (file.getName().endsWith(".class")) {
+            String className =
+                file.getAbsolutePath().replace(classFolder.getAbsolutePath() + File.separator, "");
+            className = className.replaceAll("[\\\\/]", ".").replace(".class", "");
+            if (testCasePattern.matcher(className).matches()) {
+              if (!currentDirectory.equals(file.getParentFile())) {
+                currentDirectory = file.getParentFile();
+                currentPackage =
+                    currentDirectory.getAbsolutePath().substring(classFolderPathLength + 1);
+                currentPackage = currentPackage.replaceAll("[\\/]", ".");
+              }
+              Class<?> theClass = Class.forName(className, false, tccl);
+              if (containsTests(theClass)) {
+                testCases.add(theClass);
+              }
+            }
+          }
+        }
+      }
 
-	protected DynamicSuite(Class<?> klass, Class<?>[] suiteClasses)
-			throws InitializationError {
-		this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);
-	}
+      return testCases;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-	protected DynamicSuite(RunnerBuilder builder, Class<?> klass,
-			Class<?>[] suiteClasses) throws InitializationError {
-		this(klass, builder.runners(klass, suiteClasses));
-	}
+  /**
+   * Resolves a test class pattern (regular expression) which is used to resolve the names of
+   * classes that will be included in this test suite.
+   *
+   * @param klass the class which defines the DynamicSuite
+   * @return the compiled Pattern
+   */
+  private static String getTestCasePattern(Class<?> klass) {
 
-	protected DynamicSuite(Class<?> klass, List<Runner> runners)
-			throws InitializationError {
-		super(klass);
-		try {
-			this.scenarioName = getScenarioName(getTestClass());
+    String pattern = DEFAULT_TEST_CASE_PATTERN;
+    TestCasePattern annotation = klass.getAnnotation(TestCasePattern.class);
+    if (annotation != null) {
+      pattern = annotation.value();
+    }
+    return pattern;
+  }
 
-			if (scenarioName == null) {
-				this.fRunners = runners;
-				this.name = klass.getName();
-			} else {
-				this.name = klass.getName() + "[" + scenarioName + "]";
-				this.fRunners = new ArrayList<Runner>(runners.size());
-				for (Runner runner : runners) {
-					if (!(runner instanceof BlockJUnit4ClassRunner)) {
-						throw new IllegalArgumentException(
-								"Unexpected Runner type: "
-										+ runner.getClass().getName());
-					}
-					fRunners.add(new Runner() {
-						@Override public Description getDescription() {
-							return Description.createSuiteDescription(scenarioName);
-						}
+  @Override
+  protected String getName() {
+    return name;
+  }
 
-						@Override public void run(RunNotifier notifier) {
-							runner.run(notifier);
-						}
-					});
-				}
-			}
-		} catch (Exception e) {
-			throw new InitializationError(e);
-		}
+  @Override
+  protected List<Runner> getChildren() {
+    return fRunners;
+  }
 
-	}
+  @Override
+  protected Description describeChild(Runner child) {
+    return child.getDescription();
+  }
 
-	@Override
-	protected String getName() {
-		return name;
-	}
+  @Override
+  protected void runChild(Runner runner, final RunNotifier notifier) {
+    runner.run(notifier);
+  }
 
-	@Override
-	protected List<Runner> getChildren() {
-		return fRunners;
-	}
+  /**
+   * The <code>TestCasePattern</code> annotation specifies the pattern from which test case classes
+   * should be matched.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.TYPE)
+  public @interface TestCasePattern {
+    public String value();
+  }
 
-	@Override
-	protected Description describeChild(Runner child) {
-		return child.getDescription();
-	}
-
-	@Override
-	protected void runChild(Runner runner, final RunNotifier notifier) {
-		runner.run(notifier);
-	}
-
-
+  /**
+   * The <code>Scenario</code> annotation is used to mark the dynamic suite with a specific name
+   * that should be appended to each executed test name. This is useful in the case where you want
+   * to create multiple copies of a particular dynamic suite definition, but would like to run them
+   * with slightly different configuration for the entire suite (which could be achieved using the
+   * <code>@BeforeClass</code> and <code>@AfterClass</code> annotations for setup/tear-down of the
+   * entire suite).<br>
+   * <br>
+   * If the 'name' parameter is not supplied, then the class simpleName is used as a default.<br>
+   * Without the unique scenario name, multiple copies of the tests resolved by the suite would not
+   * be run as JUnit avoids running the same test more than once, where uniqueness based on test
+   * name.
+   *
+   * @see @@org.junit.BeforeClass, @org.junit.AfterClass
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.TYPE)
+  public @interface Scenario {
+    public String name() default "";
+  }
 }

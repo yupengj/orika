@@ -18,19 +18,23 @@
 package ma.glasnost.orika.metadata;
 
 /**
- * ListElementProperty is a special Property instance used to represent a value
- * which associated with a particular index in a list.
- * 
- * @author matt.deboer@gmail.com
- *
+ * ListElementProperty is a special Property instance used to represent a value which associated
+ * with a particular index in a list.
  */
 public class ArrayElementProperty extends Property {
-    
-    public ArrayElementProperty(int index, Type<?> propertyType, Property container) {
-        super("["+index + "]","["+index + "]","["+index + "]","["+index + "] = %s",propertyType,null, container);
-    }
-    
-    public boolean isArrayElement() {
-        return true;
-    }
+
+  public ArrayElementProperty(int index, Type<?> propertyType, Property container) {
+    super(
+        "[" + index + "]",
+        "[" + index + "]",
+        "[" + index + "]",
+        "[" + index + "] = %s",
+        propertyType,
+        null,
+        container);
+  }
+
+  public boolean isArrayElement() {
+    return true;
+  }
 }

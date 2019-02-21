@@ -17,58 +17,58 @@
  */
 package ma.glasnost.orika.test.community;
 
-import org.junit.Assert;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Copying objects works only first time.
- * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/19">https://code.google.com/archive/p/orika/</a>
  *
+ * <p>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/19">https://code.google.com/archive/p/orika/</a>
  */
 public class Issue19TestCase {
-	
-	@Test
-	public void test() {
-		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-		A a = new A();
-		a.setAttribute("attribute");
-		
-		B b = new B();
-		mapperFactory.getMapperFacade().map(a, b);
-		Assert.assertEquals(a.getAttribute(),b.getAttribute());
-		
-		B b1 = new B();
-		mapperFactory.getMapperFacade().map(a, b1);
-		Assert.assertEquals(a.getAttribute(),b1.getAttribute());
-	}
-	
-	static public class A {
-		private String attribute;
-		
-		public String getAttribute() {
-			return attribute;
-		}
-		
-		public void setAttribute(String attribute) {
-			this.attribute = attribute;
-		}
-	}
-	
-	static public class B {
-		private String attribute;
-		
-		public String getAttribute() {
-			return attribute;
-		}
-		
-		public void setAttribute(String attribute) {
-			this.attribute = attribute;
-		}
-	}
+  @Test
+  public void test() {
+    MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+    A a = new A();
+    a.setAttribute("attribute");
+
+    B b = new B();
+    mapperFactory.getMapperFacade().map(a, b);
+    Assert.assertEquals(a.getAttribute(), b.getAttribute());
+
+    B b1 = new B();
+    mapperFactory.getMapperFacade().map(a, b1);
+    Assert.assertEquals(a.getAttribute(), b1.getAttribute());
+  }
+
+  public static class A {
+    private String attribute;
+
+    public String getAttribute() {
+      return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+      this.attribute = attribute;
+    }
+  }
+
+  public static class B {
+    private String attribute;
+
+    public String getAttribute() {
+      return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+      this.attribute = attribute;
+    }
+  }
 }

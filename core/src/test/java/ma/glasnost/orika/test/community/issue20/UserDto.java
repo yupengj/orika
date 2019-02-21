@@ -17,48 +17,48 @@
  */
 package ma.glasnost.orika.test.community.issue20;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 public class UserDto extends BaseDto {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
-	// private String password;
-	private UserGroupDto group;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-	public UserDto() {
-	}
+  private String name;
+  // private String password;
+  private UserGroupDto group;
 
-	public UserDto(String name, UserGroupDto group) {
-		this.name = name;
-		this.group = group;
-	}
+  public UserDto() {}
 
-	public String getName() {
-		return name;
-	}
+  public UserDto(String name, UserGroupDto group) {
+    this.name = name;
+    this.group = group;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public UserGroupDto getGroup() {
-		return group;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setGroup(UserGroupDto group) {
-		this.group = group;
-	}
+  public UserGroupDto getGroup() {
+    return group;
+  }
 
-	@Override
-	public String toString() {
-		return "UserDto{" + "name='" + name + '\'' +
-		// ", password='" + password + '\'' +
-				"} " + super.toString();
-	}
+  public void setGroup(UserGroupDto group) {
+    this.group = group;
+  }
+
+  @Override
+  public String toString() {
+    return "UserDto{"
+        + "name='"
+        + name
+        + '\''
+        +
+        // ", password='" + password + '\'' +
+        "} "
+        + super.toString();
+  }
 }

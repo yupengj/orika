@@ -23,22 +23,20 @@ import org.hibernate.cfg.Configuration;
 
 public final class HibernateUtil {
 
-	private HibernateUtil() {
+  public static final SessionFactory sessionFactory;
 
-	}
+  static {
+    try {
+      sessionFactory = new Configuration().configure().buildSessionFactory();
+    } catch (Throwable ex) {
+      System.err.println("Initial SessionFactory creation failed." + ex);
+      throw new ExceptionInInitializerError(ex);
+    }
+  }
 
-	public static final SessionFactory sessionFactory;
+  private HibernateUtil() {}
 
-	static {
-		try {
-			sessionFactory = new Configuration().configure().buildSessionFactory();
-		} catch (Throwable ex) {
-			System.err.println("Initial SessionFactory creation failed." + ex);
-			throw new ExceptionInInitializerError(ex);
-		}
-	}
-
-	public static SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
+  public static SessionFactory getSessionFactory() {
+    return sessionFactory;
+  }
 }

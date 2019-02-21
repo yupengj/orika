@@ -18,28 +18,21 @@
 
 package ma.glasnost.orika;
 
-
-/**
- * PropertyNotFoundException signifies that a property could not be
- * found for a given type
- */
+/** PropertyNotFoundException signifies that a property could not be found for a given type */
 public class PropertyNotFoundException extends MappingException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @param message
-     */
-    public PropertyNotFoundException(String message) {
-        super(message);
-    }
-    
-    /**
-	 * @param expr
-	 * @param type
-	 */
-	public PropertyNotFoundException(String expr, java.lang.reflect.Type type) {
-		super(expr + " does not belong to " + type);
-	}
+  /** @param message */
+  public PropertyNotFoundException(String message) {
+    super(message);
+  }
 
+  /**
+   * @param expr
+   * @param type
+   */
+  public PropertyNotFoundException(String expr, java.lang.reflect.Type type) {
+    super(expr + " does not belong to " + type);
+  }
 }

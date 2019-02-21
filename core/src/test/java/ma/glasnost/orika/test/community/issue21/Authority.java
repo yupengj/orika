@@ -17,27 +17,20 @@
  */
 package ma.glasnost.orika.test.community.issue21;
 
-import ma.glasnost.orika.test.community.issue21.BaseEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @Entity
 public class Authority extends BaseEntity {
   private String name;
   private String caption;
   private Set<Authority> children;
 
-  public Authority() {
-  }
+  public Authority() {}
 
   public Authority(String name) {
     this.name = name;
@@ -61,29 +54,29 @@ public class Authority extends BaseEntity {
     this.caption = caption;
   }
 
-
-
-
   @ManyToMany
   public Set<Authority> getChildren() {
     return children;
-  }
-
-  public void addChild(Authority authority){
-    children.add(authority);
   }
 
   public void setChildren(Set<Authority> children) {
     this.children = children;
   }
 
+  public void addChild(Authority authority) {
+    children.add(authority);
+  }
+
   @Override
   public String toString() {
-    return "Authority{" +
-      "name='" + name + '\'' +
-      ", caption='" + caption + '\'' +
-      "} " + super.toString();
+    return "Authority{"
+        + "name='"
+        + name
+        + '\''
+        + ", caption='"
+        + caption
+        + '\''
+        + "} "
+        + super.toString();
   }
 }
-
-

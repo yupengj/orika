@@ -34,10 +34,8 @@ public final class ExceptionUtil {
           "javassist.",
           "com.thoughtworks.paranamer.");
 
+  private ExceptionUtil() {}
 
-  private ExceptionUtil() {
-
-  }
   /**
    * Tests whether the passed throwable was originated by orika mapper code.
    *

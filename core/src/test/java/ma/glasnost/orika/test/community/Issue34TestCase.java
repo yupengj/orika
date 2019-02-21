@@ -17,94 +17,93 @@
  */
 package ma.glasnost.orika.test.community;
 
-import static org.junit.Assert.assertEquals;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.unenhance.HibernateUnenhanceStrategy;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * The mapper create a child's instance instead of a parent's instance.
+ *
  * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/34">https://code.google.com/archive/p/orika/</a>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/34">https://code.google.com/archive/p/orika/</a>
  * @author Dmitriy Khomyakov
  */
 public class Issue34TestCase {
-    
-    @Test
-    public void testDefaultMapping() {
-        DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
-        builder.unenhanceStrategy(new HibernateUnenhanceStrategy());
-        MapperFactory mapperFactory = builder.build();
-        
-        MapperFacade mapperFacade = mapperFactory.getMapperFacade();
-        
-        Entity entity = new Entity("small data", "big data");
-        
-        Child child = mapperFacade.map(entity, Child.class);
-        assertEquals(child.getClass(), Child.class);
-        
-        Parent parent = mapperFacade.map(entity, Parent.class);// orika returns
-                                                               // expensive
-                                                               // object
-        assertEquals(Parent.class, parent.getClass());
-        
+
+  @Test
+  public void testDefaultMapping() {
+    DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
+    builder.unenhanceStrategy(new HibernateUnenhanceStrategy());
+    MapperFactory mapperFactory = builder.build();
+
+    MapperFacade mapperFacade = mapperFactory.getMapperFacade();
+
+    Entity entity = new Entity("small data", "big data");
+
+    Child child = mapperFacade.map(entity, Child.class);
+    assertEquals(child.getClass(), Child.class);
+
+    Parent parent = mapperFacade.map(entity, Parent.class); // orika returns
+    // expensive
+    // object
+    assertEquals(Parent.class, parent.getClass());
+  }
+
+  public static class Entity {
+    private String light;
+    private String expensive;
+
+    public Entity(String light, String expensive) {
+      this.light = light;
+      this.expensive = expensive;
     }
-    
-    public static class Entity {
-        private String light;
-        private String expensive;
-        
-        public Entity(String light, String expensive) {
-            this.light = light;
-            this.expensive = expensive;
-        }
-        
-        public Entity() {
-        }
-        
-        public String getLight() {
-            return light;
-        }
-        
-        public void setLight(String light) {
-            this.light = light;
-        }
-        
-        public String getExpensive() {
-            return expensive;
-        }
-        
-        public void setExpensive(String expensive) {
-            this.expensive = expensive;
-        }
+
+    public Entity() {}
+
+    public String getLight() {
+      return light;
     }
-    
-    public static class Parent {
-        private String light;
-        
-        public String getLight() {
-            return light;
-        }
-        
-        public void setLight(String light) {
-            this.light = light;
-        }
+
+    public void setLight(String light) {
+      this.light = light;
     }
-    
-    public static class Child extends Parent {
-        private String expensive;
-        
-        public String getExpensive() {
-            return expensive;
-        }
-        
-        public void setExpensive(String expensive) {
-            this.expensive = expensive;
-        }
+
+    public String getExpensive() {
+      return expensive;
     }
-    
+
+    public void setExpensive(String expensive) {
+      this.expensive = expensive;
+    }
+  }
+
+  public static class Parent {
+    private String light;
+
+    public String getLight() {
+      return light;
+    }
+
+    public void setLight(String light) {
+      this.light = light;
+    }
+  }
+
+  public static class Child extends Parent {
+    private String expensive;
+
+    public String getExpensive() {
+      return expensive;
+    }
+
+    public void setExpensive(String expensive) {
+      this.expensive = expensive;
+    }
+  }
 }

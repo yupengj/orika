@@ -18,32 +18,26 @@
 
 package types;
 
-
 import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.test.MappingUtil;
 import ma.glasnost.orika.test.common.types.TestCaseClasses.BookDTO;
 
 public class Runner {
 
-	public static void run(MapperFactory mapperFactory) {
-		
-		
-		mapperFactory.classMap(BookHidden.class, BookDTO.class).byDefault().register();
-		
-		AuthorHidden author = new AuthorHidden();
-		author.setName("Chuck Testa");
-		
-		BookHidden book = new BookHidden();
-		book.setAuthor(author);
-		
-		mapperFactory.getMapperFacade().map(book, BookDTO.class);
-		
-	}
-	
-	
-	public void test() {
-		run(MappingUtil.getMapperFactory());
-	}
-	
+  public static void run(MapperFactory mapperFactory) {
+
+    mapperFactory.classMap(BookHidden.class, BookDTO.class).byDefault().register();
+
+    AuthorHidden author = new AuthorHidden();
+    author.setName("Chuck Testa");
+
+    BookHidden book = new BookHidden();
+    book.setAuthor(author);
+
+    mapperFactory.getMapperFacade().map(book, BookDTO.class);
+  }
+
+  public void test() {
+    run(MappingUtil.getMapperFactory());
+  }
 }

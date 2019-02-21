@@ -17,57 +17,51 @@
  */
 package ma.glasnost.orika.test.converter;
 
-import org.junit.Assert;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.builtin.FromStringConverter;
 import ma.glasnost.orika.test.MappingUtil;
-
+import org.junit.Assert;
 import org.junit.Test;
 
+/** */
+public class FromStringConverterTestCase {
 
-/**
- *
- */
-public class FromStringConverterTestCase  {
+  @Test
+  public void testConvertToEnum() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.getConverterFactory().registerConverter(new FromStringConverter());
+    MapperFacade mapper = factory.getMapperFacade();
 
-	@Test
-	public void testConvertToEnum() {
-		MapperFactory factory = MappingUtil.getMapperFactory();
-		factory.getConverterFactory().registerConverter(new FromStringConverter());
-		MapperFacade mapper = factory.getMapperFacade();
-		
-		Fruit fruit = mapper.map("TOMATO", Fruit.class);
-		Assert.assertEquals(Fruit.TOMATO, fruit);
-		
-	}
-	
-	@Test
-	public void testConvertToPrimitive() {
-		
-		MapperFactory factory = MappingUtil.getMapperFactory();
-		factory.getConverterFactory().registerConverter(new FromStringConverter());
-		MapperFacade mapper = factory.getMapperFacade();
-		
-		int age = mapper.map("21", int.class);
-		Assert.assertEquals(21, age);
-	}
-	
-	@Test
-	public void testConvertToWrapper() {
-		MapperFactory factory = MappingUtil.getMapperFactory();
-		factory.getConverterFactory().registerConverter(new FromStringConverter());
-		MapperFacade mapper = factory.getMapperFacade();
-		
-		Integer age = mapper.map("21", Integer.class);
-		Assert.assertEquals(Integer.valueOf(21), age);
-	}
-	
-	enum Fruit {
-		APPLE,
-		ORANGE,
-		BANANA,
-		TOMATO
-	}
-	
+    Fruit fruit = mapper.map("TOMATO", Fruit.class);
+    Assert.assertEquals(Fruit.TOMATO, fruit);
+  }
+
+  @Test
+  public void testConvertToPrimitive() {
+
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.getConverterFactory().registerConverter(new FromStringConverter());
+    MapperFacade mapper = factory.getMapperFacade();
+
+    int age = mapper.map("21", int.class);
+    Assert.assertEquals(21, age);
+  }
+
+  @Test
+  public void testConvertToWrapper() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.getConverterFactory().registerConverter(new FromStringConverter());
+    MapperFacade mapper = factory.getMapperFacade();
+
+    Integer age = mapper.map("21", Integer.class);
+    Assert.assertEquals(Integer.valueOf(21), age);
+  }
+
+  enum Fruit {
+    APPLE,
+    ORANGE,
+    BANANA,
+    TOMATO
+  }
 }

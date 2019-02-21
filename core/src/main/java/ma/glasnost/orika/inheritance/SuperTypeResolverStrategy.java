@@ -21,32 +21,24 @@ package ma.glasnost.orika.inheritance;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * This strategy is used by the super-type resolver to 
- * determine when and how to lookup a super-type, and and
- * also provides decision as to whether the super-type is
- * accepted.
- * 
- * @author matt.deboer@gmail.com
+ * This strategy is used by the super-type resolver to determine when and how to lookup a
+ * super-type, and and also provides decision as to whether the super-type is accepted.
  */
 public interface SuperTypeResolverStrategy {
-	
-    /**
-     * @param type
-     * @return true if the proposed super-type is acceptable
-     */
-    boolean accept(Type<?> type);
-    
-    /**
-     * 
-     * @param type
-     * @return true if a super-type should be looked up for the proposed type; 
-     * false signifies that the class should be returned as-is.
-     */
-    boolean shouldLookupSuperType(Type<?> type);
-    
-    /**
-     * @return true if a super class(es) should be looked-up first before
-     * trying interfaces
-     */
-    boolean shouldPreferClassOverInterface();
+
+  /**
+   * @param type
+   * @return true if the proposed super-type is acceptable
+   */
+  boolean accept(Type<?> type);
+
+  /**
+   * @param type
+   * @return true if a super-type should be looked up for the proposed type; false signifies that
+   *     the class should be returned as-is.
+   */
+  boolean shouldLookupSuperType(Type<?> type);
+
+  /** @return true if a super class(es) should be looked-up first before trying interfaces */
+  boolean shouldPreferClassOverInterface();
 }

@@ -23,24 +23,22 @@ import ma.glasnost.orika.test.unenhance.SuperTypeTestCaseClasses.Book;
 
 public class BookHidden implements Book {
 
-	private String title;
-	private Author author;
-	
-	
-	public String getTitle() {
-		return title;
-	}
+  private String title;
+  private Author author;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public Author getAuthor() {
-		return author;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public void setAuthor(Author author) {
-		this.author = author;
-	}
+  public Author getAuthor() {
+    return author;
+  }
 
+  public void setAuthor(Author author) {
+    this.author = author;
+  }
 }

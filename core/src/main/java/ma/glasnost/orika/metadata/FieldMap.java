@@ -22,221 +22,247 @@ import ma.glasnost.orika.MappedTypePair;
 import ma.glasnost.orika.impl.Specifications.Specification;
 
 public class FieldMap implements MappedTypePair<Object, Object> {
-    
-    private final Property source;
-    private final Property destination;
-    private final Property aInverse;
-    private final Property bInverse;
-    private final MappingDirection mappingDirection;
-    private final boolean excluded;
-    private final String converterId;
-    private final boolean byDefault;
-    private final String sourceExpression;
-    private final String destinationExpression;
-    private final Boolean sourceMappedOnNull;
-    private final Boolean destinationMappedOnNull;
-    
-    public FieldMap(Property a, Property b, Property aInverse, Property bInverse, MappingDirection mappingDirection, boolean excluded,
-            String converterId, boolean byDefault, Boolean sourceMappedOnNull, Boolean destinationMappedOnNull) {
-        this.source = a;
-        this.destination = b;
-        this.aInverse = aInverse;
-        this.bInverse = bInverse;
-        this.mappingDirection = mappingDirection;
-        this.converterId = converterId;
-        this.excluded = excluded;
-        this.byDefault = byDefault;
-        this.sourceMappedOnNull = sourceMappedOnNull;
-        this.destinationMappedOnNull = destinationMappedOnNull;
-        this.sourceExpression = this.source.getExpression();
-        this.destinationExpression = this.destination.getExpression();
+
+  private final Property source;
+  private final Property destination;
+  private final Property aInverse;
+  private final Property bInverse;
+  private final MappingDirection mappingDirection;
+  private final boolean excluded;
+  private final String converterId;
+  private final boolean byDefault;
+  private final String sourceExpression;
+  private final String destinationExpression;
+  private final Boolean sourceMappedOnNull;
+  private final Boolean destinationMappedOnNull;
+
+  public FieldMap(
+      Property a,
+      Property b,
+      Property aInverse,
+      Property bInverse,
+      MappingDirection mappingDirection,
+      boolean excluded,
+      String converterId,
+      boolean byDefault,
+      Boolean sourceMappedOnNull,
+      Boolean destinationMappedOnNull) {
+    this.source = a;
+    this.destination = b;
+    this.aInverse = aInverse;
+    this.bInverse = bInverse;
+    this.mappingDirection = mappingDirection;
+    this.converterId = converterId;
+    this.excluded = excluded;
+    this.byDefault = byDefault;
+    this.sourceMappedOnNull = sourceMappedOnNull;
+    this.destinationMappedOnNull = destinationMappedOnNull;
+    this.sourceExpression = this.source.getExpression();
+    this.destinationExpression = this.destination.getExpression();
+  }
+
+  public FieldMap copy() {
+
+    return new FieldMap(
+        copy(source),
+        copy(destination),
+        copy(aInverse),
+        copy(bInverse),
+        mappingDirection,
+        excluded,
+        converterId,
+        byDefault,
+        sourceMappedOnNull,
+        destinationMappedOnNull);
+  }
+
+  private Property copy(Property property) {
+    return property != null ? property.copy() : null;
+  }
+
+  public Property getSource() {
+    return source;
+  }
+
+  public Property getDestination() {
+    return destination;
+  }
+
+  public MappingDirection getDirection() {
+    return mappingDirection;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Type<Object> getAType() {
+    return (Type<Object>) getSource().getType();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Type<Object> getBType() {
+    return (Type<Object>) getDestination().getType();
+  }
+
+  String getSourceName() {
+    return source.getExpression();
+  }
+
+  String getDestinationName() {
+    return destination.getExpression();
+  }
+
+  public String getSourceExpression() {
+    return sourceExpression;
+  }
+
+  public String getDestinationExpression() {
+    return destinationExpression;
+  }
+
+  /**
+   * @return the sourceMappedOnNull; can be null, which indicates no preference and that the global
+   *     value should be used.
+   */
+  public Boolean isSourceMappedOnNull() {
+    return sourceMappedOnNull;
+  }
+
+  /**
+   * @return destinationMappedOnNull; can be null, which indicates no preference and that the global
+   *     value should be used.
+   */
+  public Boolean isDestinationMappedOnNull() {
+    return destinationMappedOnNull;
+  }
+
+  public Property getInverse() {
+    return bInverse;
+  }
+
+  public boolean isIgnored() {
+    return MappingDirection.B_TO_A == mappingDirection;
+  }
+
+  public FieldMap flip() {
+    return new FieldMap(
+        destination,
+        source,
+        bInverse,
+        aInverse,
+        mappingDirection.flip(),
+        excluded,
+        converterId,
+        byDefault,
+        destinationMappedOnNull,
+        sourceMappedOnNull);
+  }
+
+  public boolean is(Specification specification) {
+    return specification.apply(this);
+  }
+
+  public boolean have(Specification specification) {
+    return specification.apply(this);
+  }
+
+  public String getConverterId() {
+    return converterId;
+  }
+
+  public boolean isByDefault() {
+    return byDefault;
+  }
+
+  public boolean isExcluded() {
+    return excluded;
+  }
+
+  @Override
+  public String toString() {
+    String direction;
+    switch (mappingDirection) {
+      case BIDIRECTIONAL:
+        direction = " <-> ";
+        break;
+      case A_TO_B:
+        direction = " --> ";
+        break;
+      case B_TO_A:
+        direction = " <-- ";
+        break;
+      default:
+        direction = "";
+        break;
     }
-    
-    public FieldMap copy() {
-        
-        return new FieldMap(copy(source), copy(destination), copy(aInverse), copy(bInverse), mappingDirection, excluded, converterId,
-                byDefault, sourceMappedOnNull, destinationMappedOnNull);
+    return "FieldMap(" + getSourceExpression() + direction + getDestinationExpression() + ")";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((aInverse == null) ? 0 : aInverse.hashCode());
+    result = prime * result + ((bInverse == null) ? 0 : bInverse.hashCode());
+    result = prime * result + ((converterId == null) ? 0 : converterId.hashCode());
+    result = prime * result + ((destination == null) ? 0 : destination.hashCode());
+    result = prime * result + (excluded ? 1231 : 1237);
+    result = prime * result + ((mappingDirection == null) ? 0 : mappingDirection.hashCode());
+    result = prime * result + ((source == null) ? 0 : source.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
-    private Property copy(Property property) {
-        return property != null ? property.copy() : null;
+    if (obj == null) {
+      return false;
     }
-    
-    public Property getSource() {
-        return source;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-    
-    public Property getDestination() {
-        return destination;
+    FieldMap other = (FieldMap) obj;
+    if (aInverse == null) {
+      if (other.aInverse != null) {
+        return false;
+      }
+    } else if (!aInverse.equals(other.aInverse)) {
+      return false;
     }
-    
-    public MappingDirection getDirection() {
-        return mappingDirection;
+    if (bInverse == null) {
+      if (other.bInverse != null) {
+        return false;
+      }
+    } else if (!bInverse.equals(other.bInverse)) {
+      return false;
     }
-    
-    @SuppressWarnings("unchecked")
-    public Type<Object> getAType() {
-        return (Type<Object>) getSource().getType();
+    if (converterId == null) {
+      if (other.converterId != null) {
+        return false;
+      }
+    } else if (!converterId.equals(other.converterId)) {
+      return false;
     }
-    
-    @SuppressWarnings("unchecked")
-    public Type<Object> getBType() {
-        return (Type<Object>) getDestination().getType();
+    if (destination == null) {
+      if (other.destination != null) {
+        return false;
+      }
+    } else if (!destination.equals(other.destination)) {
+      return false;
     }
-    
-    String getSourceName() {
-        return source.getExpression();
+    if (excluded != other.excluded) {
+      return false;
     }
-    
-    String getDestinationName() {
-        return destination.getExpression();
+    if (mappingDirection != other.mappingDirection) {
+      return false;
     }
-    
-    public String getSourceExpression() {
-        return sourceExpression;
+    if (source == null) {
+      if (other.source != null) {
+        return false;
+      }
+    } else if (!source.equals(other.source)) {
+      return false;
     }
-    
-    public String getDestinationExpression() {
-        return destinationExpression;
-    }
-    
-    /**
-     * @return the sourceMappedOnNull; can be null, which indicates no
-     *         preference and that the global value should be used.
-     */
-    public Boolean isSourceMappedOnNull() {
-        return sourceMappedOnNull;
-    }
-    
-    /**
-     * @return destinationMappedOnNull; can be null, which indicates no
-     *         preference and that the global value should be used.
-     */
-    public Boolean isDestinationMappedOnNull() {
-        return destinationMappedOnNull;
-    }
-    
-    public Property getInverse() {
-        return bInverse;
-    }
-    
-    public boolean isIgnored() {
-        return MappingDirection.B_TO_A == mappingDirection;
-    }
-    
-    public FieldMap flip() {
-        return new FieldMap(destination, source, bInverse, aInverse, mappingDirection.flip(), excluded, converterId, byDefault,
-                destinationMappedOnNull, sourceMappedOnNull);
-    }
-    
-    public boolean is(Specification specification) {
-        return specification.apply(this);
-    }
-    
-    public boolean have(Specification specification) {
-        return specification.apply(this);
-    }
-    
-    public String getConverterId() {
-        return converterId;
-    }
-    
-    public boolean isByDefault() {
-        return byDefault;
-    }
-    
-    public boolean isExcluded() {
-        return excluded;
-    }
-    
-    @Override
-    public String toString() {
-        String direction;
-        switch (mappingDirection) {
-        case BIDIRECTIONAL:
-            direction = " <-> ";
-            break;
-        case A_TO_B:
-            direction = " --> ";
-            break;
-        case B_TO_A:
-            direction = " <-- ";
-            break;
-        default:
-            direction = "";
-            break;
-        }
-        return "FieldMap(" + getSourceExpression() + direction + getDestinationExpression() + ")";
-    }
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aInverse == null) ? 0 : aInverse.hashCode());
-        result = prime * result + ((bInverse == null) ? 0 : bInverse.hashCode());
-        result = prime * result + ((converterId == null) ? 0 : converterId.hashCode());
-        result = prime * result + ((destination == null) ? 0 : destination.hashCode());
-        result = prime * result + (excluded ? 1231 : 1237);
-        result = prime * result + ((mappingDirection == null) ? 0 : mappingDirection.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
-        return result;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        FieldMap other = (FieldMap) obj;
-        if (aInverse == null) {
-            if (other.aInverse != null) {
-                return false;
-            }
-        } else if (!aInverse.equals(other.aInverse)) {
-            return false;
-        }
-        if (bInverse == null) {
-            if (other.bInverse != null) {
-                return false;
-            }
-        } else if (!bInverse.equals(other.bInverse)) {
-            return false;
-        }
-        if (converterId == null) {
-            if (other.converterId != null) {
-                return false;
-            }
-        } else if (!converterId.equals(other.converterId)) {
-            return false;
-        }
-        if (destination == null) {
-            if (other.destination != null) {
-                return false;
-            }
-        } else if (!destination.equals(other.destination)) {
-            return false;
-        }
-        if (excluded != other.excluded) {
-            return false;
-        }
-        if (mappingDirection != other.mappingDirection) {
-            return false;
-        }
-        if (source == null) {
-            if (other.source != null) {
-                return false;
-            }
-        } else if (!source.equals(other.source)) {
-            return false;
-        }
-        return true;
-    }
-    
+    return true;
+  }
 }

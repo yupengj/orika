@@ -18,56 +18,50 @@
 
 package ma.glasnost.orika.test.converter;
 
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.test.MappingUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.test.MappingUtil;
-
 public class ConverterTestCase {
-    
-    @Test
-    public void testConvertLongString() {
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        
-        factory.getConverterFactory().registerConverter(new LongToStringConverter());
-        
-        factory.classMap(A.class, B.class).field("id", "string")
-               .register();
 
-        
-        A source = new A();
-        source.setId(42L);
-        
-        B destination = factory.getMapperFacade().map(source, B.class);
-        
-        Assert.assertEquals("42", destination.getString());
-        
+  @Test
+  public void testConvertLongString() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+
+    factory.getConverterFactory().registerConverter(new LongToStringConverter());
+
+    factory.classMap(A.class, B.class).field("id", "string").register();
+
+    A source = new A();
+    source.setId(42L);
+
+    B destination = factory.getMapperFacade().map(source, B.class);
+
+    Assert.assertEquals("42", destination.getString());
+  }
+
+  public static class A {
+    private Long id;
+
+    public Long getId() {
+      return id;
     }
-    
-    public static class A {
-        private Long id;
-        
-        public Long getId() {
-            return id;
-        }
-        
-        public void setId(Long id) {
-            this.id = id;
-        }
-        
+
+    public void setId(Long id) {
+      this.id = id;
     }
-    
-    public static class B {
-        private String string;
-        
-        public String getString() {
-            return string;
-        }
-        
-        public void setString(String string) {
-            this.string = string;
-        }
-        
+  }
+
+  public static class B {
+    private String string;
+
+    public String getString() {
+      return string;
     }
+
+    public void setString(String string) {
+      this.string = string;
+    }
+  }
 }

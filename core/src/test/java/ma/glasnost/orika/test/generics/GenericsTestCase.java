@@ -1,19 +1,19 @@
 /*
  * Orika - simpler, better and faster Java bean mapping
  *
- *  Copyright (C) 2011-2019 Orika authors
+ * Copyright (C) 2011-2013 Orika authors
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package ma.glasnost.orika.test.generics;
@@ -82,14 +82,14 @@ public class GenericsTestCase {
         
         // If we explicitly declare the generic type for the source object,
         // we can successfully register the class map
-        Type<EntityGeneric<NestedKey<Long>>> sourceType = new TypeBuilder<EntityGeneric<NestedKey<Long>>>() {}.build();
+        var sourceType = new TypeBuilder<EntityGeneric<NestedKey<Long>>>() {}.build();
         factory.registerClassMap(factory.classMap(sourceType, EntityLong.class).field("id.key", "id").toClassMap());
         
         MapperFacade mapperFacade = factory.getMapperFacade();
         
-        EntityGeneric<NestedKey<Long>> sourceObject = new EntityGeneric<NestedKey<Long>>();
+        var sourceObject = new EntityGeneric<NestedKey<Long>>();
         
-        NestedKey<Long> key = new NestedKey<Long>();
+        NestedKey<Long> key = new NestedKey<>();
         key.setKey(42L);
         sourceObject.setId(key);
         Type<EntityLong> _Entity_Long = TypeFactory.valueOf(EntityLong.class);
@@ -116,15 +116,15 @@ public class GenericsTestCase {
     @Test
     public void testMappingParameterizedTypes() {
         
-        Type<TestEntry<Holder<Long>, Holder<String>>> fromType = new TypeBuilder<TestEntry<Holder<Long>, Holder<String>>>() {}.build();
-        Type<OtherTestEntry<Container<String>, Container<String>>> toType = new TypeBuilder<OtherTestEntry<Container<String>, Container<String>>>() {}.build();
+        var fromType = new TypeBuilder<TestEntry<Holder<Long>, Holder<String>>>() {}.build();
+        var toType = new TypeBuilder<OtherTestEntry<Container<String>, Container<String>>>() {}.build();
         
         MapperFactory factory = MappingUtil.getMapperFactory();
         
-        TestEntry<Holder<Long>, Holder<String>> fromObject = new TestEntry<Holder<Long>, Holder<String>>();
-        fromObject.setKey(new Holder<Long>());
+        var fromObject = new TestEntry<Holder<Long>, Holder<String>>();
+        fromObject.setKey(new Holder<>());
         fromObject.getKey().setHeld(Long.valueOf(42L));
-        fromObject.setValue(new Holder<String>());
+        fromObject.setValue(new Holder<>());
         fromObject.getValue().setHeld("What is the meaning of life?");
         
         factory.registerClassMap(
@@ -151,18 +151,15 @@ public class GenericsTestCase {
     @Test
     public void testMappingParameterizedTypes2() {
        
-        Type<Entry<Container<Holder<Long>>, Envelope<Container<String>>>> fromType = 
-                new TypeBuilder<Entry<Container<Holder<Long>>, Envelope<Container<String>>>>() {}.build();
-        Type<Entry<Holder<String>, Container<String>>> toType = 
-                new TypeBuilder<Entry<Holder<String>, Container<String>>>() {}.build();
+        var fromType = new TypeBuilder<Entry<Container<Holder<Long>>, Envelope<Container<String>>>>() {}.build();
+        var toType = new TypeBuilder<Entry<Holder<String>, Container<String>>>() {}.build();
         
         MapperFactory factory = MappingUtil.getMapperFactory();
         
         // Construct our elaborate 'fromObject'
-        Entry<Container<Holder<Long>>, Envelope<Container<String>>> fromObject = 
-                new Entry<Container<Holder<Long>>, Envelope<Container<String>>>();
-        Container<Holder<Long>> container = new Container<Holder<Long>>();
-        Holder<Long> holder = new Holder<Long>();
+        var fromObject = new Entry<Container<Holder<Long>>, Envelope<Container<String>>>();
+        var container = new Container<Holder<Long>>();
+        var holder = new Holder<Long>();
         holder.setHeld(Long.valueOf(42L));
         container.setContained(holder);
         fromObject.setKey(container);
@@ -196,21 +193,21 @@ public class GenericsTestCase {
     @Test
     public void testMultipleMappingsForParameterizedTypes() {
         
-        Type<TestEntry<Holder<Long>, Holder<String>>> fromType = new TypeBuilder<TestEntry<Holder<Long>, Holder<String>>>() {}.build();
-        Type<OtherTestEntry<Container<String>, Container<String>>> toType_1 = new TypeBuilder<OtherTestEntry<Container<String>, Container<String>>>() {}.build();
-        Type<OtherTestEntry<Container<Long>, Container<String>>> toType_2 = new TypeBuilder<OtherTestEntry<Container<Long>, Container<String>>>() {}.build();
+        var fromType = new TypeBuilder<TestEntry<Holder<Long>, Holder<String>>>() {}.build();
+        var toType_1 = new TypeBuilder<OtherTestEntry<Container<String>, Container<String>>>() {}.build();
+        var toType_2 = new TypeBuilder<OtherTestEntry<Container<Long>, Container<String>>>() {}.build();
         
-        Type<Container<Long>> _Container_Long = toType_2.getNestedType(0);
-        Type<Holder<String>> _Holder_String = fromType.getNestedType(1);
-        Type<Container<String>> _Container_String = toType_1.getNestedType(0);
-        Type<Holder<Long>> _Holder_Long = fromType.getNestedType(0);
+        var _Container_Long = toType_2.getNestedType(0);
+        var _Holder_String = fromType.getNestedType(1);
+        var _Container_String = toType_1.getNestedType(0);
+        var _Holder_Long = fromType.getNestedType(0);
         
         MapperFactory factory = MappingUtil.getMapperFactory();
         
         TestEntry<Holder<Long>, Holder<String>> fromObject = new TestEntry<Holder<Long>, Holder<String>>();
-        fromObject.setKey(new Holder<Long>());
+        fromObject.setKey(new Holder<>());
         fromObject.getKey().setHeld(Long.valueOf(42L));
-        fromObject.setValue(new Holder<String>());
+        fromObject.setValue(new Holder<>());
         fromObject.getValue().setHeld("What is the meaning of life?");
         
         /*

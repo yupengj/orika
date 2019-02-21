@@ -18,36 +18,33 @@
 
 package ma.glasnost.orika.test.unenhance;
 
-
-
 public class BookDTO {
 
-	private Long id;
-	private String title;
-	private AuthorDTO author;
+  private Long id;
+  private String title;
+  private AuthorDTO author;
 
-	public String getTitle() {
-		return title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public AuthorDTO getAuthor() {
-		return author;
-	}
+  public AuthorDTO getAuthor() {
+    return author;
+  }
 
-	public void setAuthor(AuthorDTO author) {
-		this.author = author;
-	}
+  public void setAuthor(AuthorDTO author) {
+    this.author = author;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+  public void setId(Long id) {
+    this.id = id;
+  }
 }

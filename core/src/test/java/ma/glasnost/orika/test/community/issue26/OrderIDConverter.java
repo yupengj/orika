@@ -22,14 +22,15 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 
 public class OrderIDConverter extends CustomConverter<Long, OrderID> {
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
-     * ma.glasnost.orika.metadata.Type)
-     */
-    public OrderID convert(Long source, Type<? extends OrderID> destinationType, MappingContext context) {
-        return new OrderID(source);
-    }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
+   * ma.glasnost.orika.metadata.Type)
+   */
+  public OrderID convert(
+      Long source, Type<? extends OrderID> destinationType, MappingContext context) {
+    return new OrderID(source);
+  }
 }

@@ -18,49 +18,43 @@
 
 package ma.glasnost.orika.impl.generator;
 
+import ma.glasnost.orika.Filter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ma.glasnost.orika.Filter;
-
-/**
- * 
- * @author matt.deboer@gmail.com
- *
- */
+/** */
 public class UsedFiltersContext {
-    
-    private Map<Filter<Object, Object>,Integer> usedFilters = new HashMap<Filter<Object, Object>,Integer>();
-    private int usedTypeIndex = 0;
-    
-    /**
-     * @param filter
-     * @return the index of the specified filter in the array of filters used by 
-     * the associated mapping object
-     */
+
+  private Map<Filter<Object, Object>, Integer> usedFilters = new HashMap<>();
+  private int usedTypeIndex = 0;
+
+  /**
+   * @param filter
+   * @return the index of the specified filter in the array of filters used by the associated
+   *     mapping object
+   */
+  @SuppressWarnings("unchecked")
+  public int getIndex(Filter<?, ?> filter) {
+    if (filter == null) {
+      throw new NullPointerException("type must not be null");
+    }
+    Integer index = usedFilters.get(filter);
+    if (index == null) {
+      index = Integer.valueOf(usedTypeIndex++);
+      usedFilters.put((Filter<Object, Object>) filter, index);
+    }
+    return index;
+  }
+
+  /** @return the array of filters used by the associated mapping object */
+  public Filter<Object, Object>[] toArray() {
     @SuppressWarnings("unchecked")
-    public int getIndex(Filter<?, ?> filter) {
-        if (filter==null) {
-            throw new NullPointerException("type must not be null");
-        }
-        Integer index = usedFilters.get(filter);
-        if (index == null) {
-            index = Integer.valueOf(usedTypeIndex++);
-            usedFilters.put((Filter<Object, Object>)filter, index);
-        }
-        return index;
+    Filter<Object, Object>[] filters = new Filter[usedFilters.size()];
+    for (Entry<Filter<Object, Object>, Integer> entry : usedFilters.entrySet()) {
+      filters[entry.getValue()] = entry.getKey();
     }
-    
-    /**
-     * @return the array of filters used by the associated mapping object
-     */
-    public Filter<Object, Object>[] toArray() {
-        @SuppressWarnings("unchecked")
-        Filter<Object, Object>[] filters = new Filter[usedFilters.size()];
-        for (Entry<Filter<Object, Object>, Integer> entry: usedFilters.entrySet()) {
-            filters[entry.getValue()] = entry.getKey();
-        }
-        return filters;
-    }
+    return filters;
+  }
 }

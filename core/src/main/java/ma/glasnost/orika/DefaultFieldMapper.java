@@ -21,18 +21,15 @@ package ma.glasnost.orika;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * Provides a generic mapping suggestion mechanism to provide 
- * help with guessing default mappings of fields when a straight
- * equivalent name match is not found
- * 
- * @author matt.deboer@gmail.com
+ * Provides a generic mapping suggestion mechanism to provide help with guessing default mappings of
+ * fields when a straight equivalent name match is not found
  */
 public interface DefaultFieldMapper {
-	
-	/**
-	 * @param fromProperty
-	 * @return a suggested optional mapping name for the given property,
-	 * or <code>null</code> if no suggestion for the given property
-	 */
-	String suggestMappedField(String fromProperty, Type<?> fromPropertyType);
+
+  /**
+   * @param fromProperty
+   * @return a suggested optional mapping name for the given property, or <code>null</code> if no
+   *     suggestion for the given property
+   */
+  String suggestMappedField(String fromProperty, Type<?> fromPropertyType);
 }

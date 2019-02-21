@@ -22,27 +22,28 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * CopyByReferenceConverter handles conversion of Orika's built-in immutable
- * types, as well as anything-to-Object, and primitive to Wrapper conversions<br>
- * 
- * @author matt.deboer@gmail.com
- * 
+ * CopyByReferenceConverter handles conversion of Orika's built-in immutable types, as well as
+ * anything-to-Object, and primitive to Wrapper conversions<br>
  */
 public class CopyByReferenceConverter extends BuiltinCustomConverter<Object, Object> {
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ma.glasnost.orika.Converter#canConvert(ma.glasnost.orika.metadata.Type,
-     * ma.glasnost.orika.metadata.Type)
-     */
-    public boolean canConvert(Type<?> sourceType, Type<?> destinationType) {
 
-        return (sourceType.isImmutable() && (sourceType.equals(destinationType) || sourceType.isWrapperFor(destinationType) || destinationType.isWrapperFor(sourceType)));
-    }
-    
-    public Object convert(Object source, Type<? extends Object> destinationType, MappingContext context) {
-        return source;
-    }
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * ma.glasnost.orika.Converter#canConvert(ma.glasnost.orika.metadata.Type,
+   * ma.glasnost.orika.metadata.Type)
+   */
+  public boolean canConvert(Type<?> sourceType, Type<?> destinationType) {
+
+    return (sourceType.isImmutable()
+        && (sourceType.equals(destinationType)
+            || sourceType.isWrapperFor(destinationType)
+            || destinationType.isWrapperFor(sourceType)));
+  }
+
+  public Object convert(
+      Object source, Type<? extends Object> destinationType, MappingContext context) {
+    return source;
+  }
 }

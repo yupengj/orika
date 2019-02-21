@@ -23,117 +23,116 @@ import ma.glasnost.orika.metadata.Type;
 
 public class MappingException extends RuntimeException {
 
-	private static final long serialVersionUID = -1485137975363692382L;
+  private static final long serialVersionUID = -1485137975363692382L;
 
-	private Property sourceProperty;
-	private Property destinationProperty;
-	private Class<?> sourceClass;
-	private Type<?> sourceType;
-	private Type<?> destinationType;
-	private MappingStrategy mappingStrategy;
-	private String stateReport;
-	
-	public MappingException(Throwable e) {
-		super(e);
-	}
+  private Property sourceProperty;
+  private Property destinationProperty;
+  private Class<?> sourceClass;
+  private Type<?> sourceType;
+  private Type<?> destinationType;
+  private MappingStrategy mappingStrategy;
+  private String stateReport;
 
-	public MappingException(String message) {
-		super(message);
-	}
-	
-	public MappingException(String message, Throwable e) {
-		super(message, e);
-	}
+  public MappingException(Throwable e) {
+    super(e);
+  }
 
-	public String getLocalizedMessage() {
-		
-		StringBuilder message = new StringBuilder();
-		if (sourceClass != null) {
-			message.append("\nsourceClass = " + sourceClass);
-		}
-		if (sourceType != null) {
-			message.append("\nsourceType = " + sourceType.toFullyQualifiedString());
-		}
-		if (sourceProperty != null) {
-			message.append("\nsourceProperty = " + sourceProperty);
-		}
-		if (destinationType != null) {
-			message.append("\ndestinationType = " + destinationType.toFullyQualifiedString());
-		}
-		if (destinationProperty != null) {
-			message.append("\ndestinationProperty = " + destinationProperty);
-		}
-		if (mappingStrategy != null) {
-			message.append("\nresolvedStrategy = " + mappingStrategy);
-		}
-		if (message.length() > 0) {
-			message.insert(0, "While attempting the following mapping:");
-			message.append("\nError occurred: ");
-		}
-		
-		message.append(super.getLocalizedMessage());
-		
-		if (stateReport != null) {
-			message.append(stateReport);
-		}
-		
-		return message.toString();
-	}
-	
-	public Property getSourceProperty() {
-		return sourceProperty;
-	}
+  public MappingException(String message) {
+    super(message);
+  }
 
-	public void setSourceProperty(Property sourceProperty) {
-		this.sourceProperty = sourceProperty;
-	}
+  public MappingException(String message, Throwable e) {
+    super(message, e);
+  }
 
-	public Property getDestinationProperty() {
-		return destinationProperty;
-	}
+  public String getLocalizedMessage() {
 
-	public void setDestinationProperty(Property destinationProperty) {
-		this.destinationProperty = destinationProperty;
-	}
+    StringBuilder message = new StringBuilder();
+    if (sourceClass != null) {
+      message.append("\nsourceClass = " + sourceClass);
+    }
+    if (sourceType != null) {
+      message.append("\nsourceType = " + sourceType.toFullyQualifiedString());
+    }
+    if (sourceProperty != null) {
+      message.append("\nsourceProperty = " + sourceProperty);
+    }
+    if (destinationType != null) {
+      message.append("\ndestinationType = " + destinationType.toFullyQualifiedString());
+    }
+    if (destinationProperty != null) {
+      message.append("\ndestinationProperty = " + destinationProperty);
+    }
+    if (mappingStrategy != null) {
+      message.append("\nresolvedStrategy = " + mappingStrategy);
+    }
+    if (message.length() > 0) {
+      message.insert(0, "While attempting the following mapping:");
+      message.append("\nError occurred: ");
+    }
 
-	public Type<?> getSourceType() {
-		return sourceType;
-	}
+    message.append(super.getLocalizedMessage());
 
-	public void setSourceType(Type<?> sourceType) {
-		this.sourceType = sourceType;
-	}
+    if (stateReport != null) {
+      message.append(stateReport);
+    }
 
-	public Type<?> getDestinationType() {
-		return destinationType;
-	}
+    return message.toString();
+  }
 
-	public void setDestinationType(Type<?> destinationType) {
-		this.destinationType = destinationType;
-	}
+  public Property getSourceProperty() {
+    return sourceProperty;
+  }
 
-	public Class<?> getSourceClass() {
-		return sourceClass;
-	}
+  public void setSourceProperty(Property sourceProperty) {
+    this.sourceProperty = sourceProperty;
+  }
 
-	public void setSourceClass(Class<?> sourceClass) {
-		this.sourceClass = sourceClass;
-	}
-	
-	public MappingStrategy getMappingStrategy() {
-		return mappingStrategy;
-	}
+  public Property getDestinationProperty() {
+    return destinationProperty;
+  }
 
-	public void setMappingStrategy(MappingStrategy mappingStrategy) {
-		this.mappingStrategy = mappingStrategy;
-	}
+  public void setDestinationProperty(Property destinationProperty) {
+    this.destinationProperty = destinationProperty;
+  }
 
-	public void setStateReport(String stateReport) {
-		this.stateReport = stateReport;
-	}
-	
-	public boolean containsStateReport() {
-		return this.stateReport != null;
-	}
-	
+  public Type<?> getSourceType() {
+    return sourceType;
+  }
+
+  public void setSourceType(Type<?> sourceType) {
+    this.sourceType = sourceType;
+  }
+
+  public Type<?> getDestinationType() {
+    return destinationType;
+  }
+
+  public void setDestinationType(Type<?> destinationType) {
+    this.destinationType = destinationType;
+  }
+
+  public Class<?> getSourceClass() {
+    return sourceClass;
+  }
+
+  public void setSourceClass(Class<?> sourceClass) {
+    this.sourceClass = sourceClass;
+  }
+
+  public MappingStrategy getMappingStrategy() {
+    return mappingStrategy;
+  }
+
+  public void setMappingStrategy(MappingStrategy mappingStrategy) {
+    this.mappingStrategy = mappingStrategy;
+  }
+
+  public void setStateReport(String stateReport) {
+    this.stateReport = stateReport;
+  }
+
+  public boolean containsStateReport() {
+    return this.stateReport != null;
+  }
 }

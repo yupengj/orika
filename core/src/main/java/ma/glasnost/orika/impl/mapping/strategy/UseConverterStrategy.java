@@ -18,50 +18,50 @@
 
 package ma.glasnost.orika.impl.mapping.strategy;
 
-import java.util.Map;
-
 import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.unenhance.UnenhanceStrategy;
 
-/**
- *
- * @author matt.deboer@gmail.com
- * @author elaatifi@gmail.com
- */
+import java.util.Map;
+
+/** @author elaatifi@gmail.com */
 public class UseConverterStrategy extends AbstractMappingStrategy {
-    
-    private final Converter<Object, Object> converter;
-    private final UnenhanceStrategy unenhancer;
-    
-    /**
-     * Creates a new instance of UseConverterStrategy
-     * 
-     * @param sourceType
-     * @param destinationType
-     * @param converter
-     * @param unenhancer
-     */
-    public UseConverterStrategy(Type<Object> sourceType, Type<Object> destinationType, Converter<Object, Object> converter,
-            UnenhanceStrategy unenhancer) {
-        super(sourceType, destinationType);
-        this.converter = converter;
-        this.unenhancer = unenhancer;
+
+  private final Converter<Object, Object> converter;
+  private final UnenhanceStrategy unenhancer;
+
+  /**
+   * Creates a new instance of UseConverterStrategy
+   *
+   * @param sourceType
+   * @param destinationType
+   * @param converter
+   * @param unenhancer
+   */
+  public UseConverterStrategy(
+      Type<Object> sourceType,
+      Type<Object> destinationType,
+      Converter<Object, Object> converter,
+      UnenhanceStrategy unenhancer) {
+    super(sourceType, destinationType);
+    this.converter = converter;
+    this.unenhancer = unenhancer;
+  }
+
+  public Object map(Object sourceObject, Object destinationObject, MappingContext context) {
+    context.beginMapping(sourceType, sourceObject, destinationType, destinationObject);
+    try {
+      return converter.convert(
+          unenhancer.unenhanceObject(sourceObject, sourceType), destinationType, context);
+    } finally {
+      context.endMapping();
     }
-    
-    public Object map(Object sourceObject, Object destinationObject, MappingContext context) {
-        context.beginMapping(sourceType, sourceObject, destinationType, destinationObject);
-        try {
-            return converter.convert(unenhancer.unenhanceObject(sourceObject, sourceType), destinationType, context);
-        } finally {
-            context.endMapping();
-        }
-    }
-    
-    @Override
-    protected void describeMembers(Map<String, Object> members) {
-        members.put("converter", converter);
-        members.put("unenhancer", unenhancer);
-    }
+  }
+
+  @Override
+  protected void describeMembers(Map<String, Object> members) {
+    members.put("converter", converter);
+    members.put("unenhancer", unenhancer);
+  }
 }

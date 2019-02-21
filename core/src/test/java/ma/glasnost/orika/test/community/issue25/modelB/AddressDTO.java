@@ -19,50 +19,54 @@ package ma.glasnost.orika.test.community.issue25.modelB;
 
 import java.io.Serializable;
 
-public class  AddressDTO implements Serializable {
+public class AddressDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8573731692897972845L;
-	
-	private Long idNumber;
-	private String street = null;
-	private Long postalcode = null;
-	private String comment = null;
-	private Character land = null;
-	public Long getIdNumber() {
-		return idNumber;
-	}
-	public void setIdNumber(Long idNumber) {
-		this.idNumber = idNumber;
-	}
-	public String getStreet() {
-		return street;
-	}
-	public void setStreet(String street) {
-		this.street = street;
-	}
-	public Long getPostalcode() {
-		return postalcode;
-	}
-	public void setPostalcode(Long postalcode) {
-		this.postalcode = postalcode;
-	}
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-	public Character getLand() {
-		return land;
-	}
-	public void setLand(Character land) {
-		this.land = land;
-	}
-	
-	
-	
-	
+  /** */
+  private static final long serialVersionUID = -8573731692897972845L;
+
+  private Long idNumber;
+  private String street = null;
+  private Long postalcode = null;
+  private String comment = null;
+  private Character land = null;
+
+  public Long getIdNumber() {
+    return idNumber;
+  }
+
+  public void setIdNumber(Long idNumber) {
+    this.idNumber = idNumber;
+  }
+
+  public String getStreet() {
+    return street;
+  }
+
+  public void setStreet(String street) {
+    this.street = street;
+  }
+
+  public Long getPostalcode() {
+    return postalcode;
+  }
+
+  public void setPostalcode(Long postalcode) {
+    this.postalcode = postalcode;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public Character getLand() {
+    return land;
+  }
+
+  public void setLand(Character land) {
+    this.land = land;
+  }
 }

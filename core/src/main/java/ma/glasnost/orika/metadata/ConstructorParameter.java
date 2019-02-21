@@ -24,41 +24,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ConstructorParameter proxies a constructor parameter of a given name and type
- * which appears in one or more constructors as a Property
- * 
+ * ConstructorParameter proxies a constructor parameter of a given name and type which appears in
+ * one or more constructors as a Property
+ *
  * @author mattdeboer
- * 
  */
 public class ConstructorParameter extends Property {
-    
-    private final Map<Constructor<?>, Integer> owningConstructors;
-    
-    /**
-     * @param name
-     * @param type
-     * @param constructors
-     */
-    public ConstructorParameter(String name, Type<?> type, Map<Constructor<?>, Integer> constructors) {
-        super(name, name, null, null, type, null, null);
-        
-        if (constructors == null) {
-            this.owningConstructors = Collections.emptyMap();
-        } else {
-            this.owningConstructors = new HashMap<Constructor<?>, Integer>(constructors);
-        }
+
+  private final Map<Constructor<?>, Integer> owningConstructors;
+
+  /**
+   * @param name
+   * @param type
+   * @param constructors
+   */
+  public ConstructorParameter(
+      String name, Type<?> type, Map<Constructor<?>, Integer> constructors) {
+    super(name, name, null, null, type, null, null);
+
+    if (constructors == null) {
+      this.owningConstructors = Collections.emptyMap();
+    } else {
+      this.owningConstructors = new HashMap<Constructor<?>, Integer>(constructors);
     }
-    
-    /**
-     * Get the index within the specified constructor at which this parameter
-     * occurs.
-     * 
-     * @param constructor
-     * @return the argument index of this parameter within the specified
-     *         constructor, or <code>null</code> if this parameter is not found
-     *         within the specified constructor
-     */
-    public Integer getArgumentIndex(Constructor<?> constructor) {
-        return owningConstructors.get(constructor);
-    }
+  }
+
+  /**
+   * Get the index within the specified constructor at which this parameter occurs.
+   *
+   * @param constructor
+   * @return the argument index of this parameter within the specified constructor, or <code>null
+   *     </code> if this parameter is not found within the specified constructor
+   */
+  public Integer getArgumentIndex(Constructor<?> constructor) {
+    return owningConstructors.get(constructor);
+  }
 }

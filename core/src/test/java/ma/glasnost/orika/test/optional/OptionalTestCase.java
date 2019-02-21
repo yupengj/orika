@@ -32,54 +32,56 @@ import static org.junit.Assert.assertFalse;
 
 public class OptionalTestCase {
 
-    @Test
-    public void testMappingIgnoresEmptyOptionalInDestination() {
-        final String expected = "initial";
+  @Test
+  public void testMappingIgnoresEmptyOptionalInDestination() {
+    final String expected = "initial";
 
-        final Source source = new Source();
-        source.setS(Optional.of(expected));
+    final Source source = new Source();
+    source.setS(Optional.of(expected));
 
-        final Destination actual = getMapperFacade().map(source, Destination.class);
+    final Destination actual = getMapperFacade().map(source, Destination.class);
 
-        assertEquals(expected, actual.getS().get());
+    assertEquals(expected, actual.getS().get());
+  }
+
+  @Test
+  public void testMappingMapEmptyToEmpty() {
+    final Destination actual = getMapperFacade().map(new Source(), Destination.class);
+
+    assertFalse(actual.getS().isPresent());
+  }
+
+  private MapperFacade getMapperFacade() {
+    final MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
+    mapperFactory
+        .getConverterFactory()
+        .registerConverter(
+            new OptionalConverter<>(
+                TypeFactory.valueOf(String.class), TypeFactory.valueOf(String.class)));
+    return mapperFactory.getMapperFacade();
+  }
+
+  public static class Source {
+    private Optional<String> s = Optional.empty();
+
+    public Optional<String> getS() {
+      return s;
     }
 
-    @Test
-    public void testMappingMapEmptyToEmpty() {
-        final Destination actual = getMapperFacade().map(new Source(), Destination.class);
+    public void setS(final Optional<String> s) {
+      this.s = s;
+    }
+  }
 
-        assertFalse(actual.getS().isPresent());
+  public static class Destination {
+    private Optional<String> s = Optional.empty();
+
+    public Optional<String> getS() {
+      return s;
     }
 
-    private MapperFacade getMapperFacade() {
-        final MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
-        mapperFactory.getConverterFactory()
-                .registerConverter(new OptionalConverter<>(TypeFactory.valueOf(String.class), TypeFactory.valueOf(String.class)));
-        return mapperFactory.getMapperFacade();
+    public void setS(final Optional<String> s) {
+      this.s = s;
     }
-
-    public static class Source {
-        private Optional<String> s = Optional.empty();
-
-        public Optional<String> getS() {
-            return s;
-        }
-
-        public void setS(final Optional<String> s) {
-            this.s = s;
-        }
-    }
-
-    public static class Destination {
-        private Optional<String> s = Optional.empty();
-
-        public Optional<String> getS() {
-            return s;
-        }
-
-        public void setS(final Optional<String> s) {
-            this.s = s;
-        }
-    }
-
+  }
 }

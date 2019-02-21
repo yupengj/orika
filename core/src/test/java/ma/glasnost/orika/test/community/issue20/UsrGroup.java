@@ -17,26 +17,20 @@
  */
 package ma.glasnost.orika.test.community.issue20;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @Entity
 public class UsrGroup extends BaseEntity {
   private String name;
   private String caption;
   private Set<User> users;
 
-  public UsrGroup() {
-  }
-
+  public UsrGroup() {}
 
   public UsrGroup(String name) {
     this.name = name;
@@ -69,16 +63,21 @@ public class UsrGroup extends BaseEntity {
     this.users = users;
   }
 
-  public void addUser(User user){
+  public void addUser(User user) {
     getUsers().add(user);
     user.setGroup(this);
   }
 
   @Override
   public String toString() {
-    return "UserGroup{" +
-      "name='" + name + '\'' +
-      ", caption='" + caption + '\'' +
-      "} " + super.toString();
+    return "UserGroup{"
+        + "name='"
+        + name
+        + '\''
+        + ", caption='"
+        + caption
+        + '\''
+        + "} "
+        + super.toString();
   }
 }

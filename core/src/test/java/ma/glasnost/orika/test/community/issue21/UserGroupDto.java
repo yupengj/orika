@@ -19,44 +19,39 @@ package ma.glasnost.orika.test.community.issue21;
 
 import java.util.Set;
 
-/**
- * 
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 public class UserGroupDto extends BaseDto {
-	private String name;
-	private Set<UserDto> users;
+  private String name;
+  private Set<UserDto> users;
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Set<UserDto> getUsers() {
-		return users;
-	}
+  public Set<UserDto> getUsers() {
+    return users;
+  }
 
-	public void setUsers(Set<UserDto> users) {
-		this.users = users;
-	}
+  public void setUsers(Set<UserDto> users) {
+    this.users = users;
+  }
 
-	public void addUser(UserDto user) {
-		getUsers().add(user);
-		user.setGroup(this);
-	}
+  public void addUser(UserDto user) {
+    getUsers().add(user);
+    user.setGroup(this);
+  }
 
-	public void removeUser(UserDto user) {
-		getUsers().remove(user);
-		user.setGroup(this);
-	}
+  public void removeUser(UserDto user) {
+    getUsers().remove(user);
+    user.setGroup(this);
+  }
 
-	@Override
-	public String toString() {
-		return "UserGroupDto{" + "name='" + name + '\'' + ", users=" + users
-				+ "} " + super.toString();
-	}
+  @Override
+  public String toString() {
+    return "UserGroupDto{" + "name='" + name + '\'' + ", users=" + users + "} " + super.toString();
+  }
 }

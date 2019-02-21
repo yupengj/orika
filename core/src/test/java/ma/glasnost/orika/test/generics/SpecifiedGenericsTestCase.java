@@ -25,39 +25,34 @@ import org.junit.Test;
 
 import java.beans.IntrospectionException;
 
-/**
- * Test to show odd behavior with specified generic types
- */
+/** Test to show odd behavior with specified generic types */
 public class SpecifiedGenericsTestCase {
-	@Test
-	public void testSpecifiedGeneric() throws IntrospectionException {
-		MapperFacade mapperFacade = MappingUtil.getMapperFactory()
-				.getMapperFacade();
-		Source source = new Source();
-		source.setFoo("Hello");
-		Destination destination = mapperFacade.map(source, Destination.class);
-		Assert.assertEquals(source.getFoo(), destination.getFoo());
-	}
+  @Test
+  public void testSpecifiedGeneric() throws IntrospectionException {
+    MapperFacade mapperFacade = MappingUtil.getMapperFactory().getMapperFacade();
+    Source source = new Source();
+    source.setFoo("Hello");
+    Destination destination = mapperFacade.map(source, Destination.class);
+    Assert.assertEquals(source.getFoo(), destination.getFoo());
+  }
 
-	public static class Base<T> {
-		protected T foo;
+  public static class Base<T> {
+    protected T foo;
 
-		public T getFoo() {
-			return this.foo;
-		}
+    public T getFoo() {
+      return this.foo;
+    }
+  }
 
-	}
+  public static class Source extends Base<String> {
+    public void setFoo(String t) {
+      this.foo = t;
+    }
+  }
 
-	public static class Source extends Base<String> {
-		public void setFoo(String t) {
-			this.foo = t;
-		}
-	}
-
-	public static class Destination extends Base<String> {
-		public void setFoo(String t) {
-			this.foo = t;
-		}
-	}
-
+  public static class Destination extends Base<String> {
+    public void setFoo(String t) {
+      this.foo = t;
+    }
+  }
 }

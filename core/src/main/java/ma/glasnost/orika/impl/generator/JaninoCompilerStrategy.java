@@ -52,6 +52,32 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
     iClassLoader = new ClassLoaderIClassLoader(aggregatedClassLoader);
   }
 
+  /**
+   * A java.lang.IllegalAccessException is thrown when one attempts to access a method or member
+   * that visibility qualifiers do not allow. Typical examples are attempting to access private or
+   * protected methods or instance variables. Another common example is accessing package protected
+   * methods or members from a class that appears to be in the correct package, but is really not
+   * due to caller and callee classes being loaded by different class loaders.
+   *
+   * <p>Loads a class file by {@code java.lang.invoke.MethodHandles.Lookup}. It is obtained by using
+   * {@code neighbor}.
+   *
+   * @param neighbor
+   * @param bcode byte array (bytecode)
+   * @return
+   */
+  public static Class<?> toClass(Class<?> neighbor, byte[] bcode) {
+    try {
+      JaninoCompilerStrategy.class.getModule().addReads(neighbor.getModule());
+      MethodHandles.Lookup lookup = MethodHandles.lookup();
+      MethodHandles.Lookup prvlookup = MethodHandles.privateLookupIn(neighbor, lookup);
+      return prvlookup.defineClass(bcode);
+    } catch (IllegalAccessException | IllegalArgumentException e) {
+      throw new MappingException(
+          e.getMessage() + ": " + neighbor.getName() + " has no permission to define the class", e);
+    }
+  }
+
   @Override
   public Class<?> compileClass(SourceCodeContext sourceCode) throws SourceCodeGenerationException {
     Scanner scanner;
@@ -188,32 +214,6 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
 
     public Class<?> defineClass(String name, byte[] b) {
       return defineClass(name, b, 0, b.length);
-    }
-  }
-
-  /**
-   * A java.lang.IllegalAccessException is thrown when one attempts to access a method or member
-   * that visibility qualifiers do not allow. Typical examples are attempting to access private or
-   * protected methods or instance variables. Another common example is accessing package protected
-   * methods or members from a class that appears to be in the correct package, but is really not
-   * due to caller and callee classes being loaded by different class loaders.
-   *
-   * <p>Loads a class file by {@code java.lang.invoke.MethodHandles.Lookup}. It is obtained by using
-   * {@code neighbor}.
-   *
-   * @param neighbor
-   * @param bcode byte array (bytecode)
-   * @return
-   */
-  public static Class<?> toClass(Class<?> neighbor, byte[] bcode) {
-    try {
-      JaninoCompilerStrategy.class.getModule().addReads(neighbor.getModule());
-      MethodHandles.Lookup lookup = MethodHandles.lookup();
-      MethodHandles.Lookup prvlookup = MethodHandles.privateLookupIn(neighbor, lookup);
-      return prvlookup.defineClass(bcode);
-    } catch (IllegalAccessException | IllegalArgumentException e) {
-      throw new MappingException(
-          e.getMessage() + ": " + neighbor.getName() + " has no permission to define the class", e);
     }
   }
 

@@ -24,31 +24,35 @@ import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.unenhance.UnenhanceStrategy;
 
 /**
- * InstantiateByDefaultAndUseCustomMapperStrategy uses a custom mapper and creates instances
- * using the default constructor for the destination type.
- *
+ * InstantiateByDefaultAndUseCustomMapperStrategy uses a custom mapper and creates instances using
+ * the default constructor for the destination type.
  */
 public class InstantiateByDefaultAndUseCustomMapperStrategy extends UseCustomMapperStrategy {
-    
-    /**
-     * Creates a new instance of InstantiateByDefaultAndUseCustomMapperStrategy
-     * 
-     * @param sourceType
-     * @param destinationType
-     * @param customMapper
-     * @param unenhancer
-     */
-    public InstantiateByDefaultAndUseCustomMapperStrategy(Type<Object> sourceType, Type<Object> destinationType, Mapper<Object, Object> customMapper, UnenhanceStrategy unenhancer) {
-    	super(sourceType, destinationType, customMapper, unenhancer);
-    }
 
-    protected Object getInstance(Object sourceObject, Object destinationObject, MappingContext context) {
-    	try {
-            return destinationType.getRawType().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+  /**
+   * Creates a new instance of InstantiateByDefaultAndUseCustomMapperStrategy
+   *
+   * @param sourceType
+   * @param destinationType
+   * @param customMapper
+   * @param unenhancer
+   */
+  public InstantiateByDefaultAndUseCustomMapperStrategy(
+      Type<Object> sourceType,
+      Type<Object> destinationType,
+      Mapper<Object, Object> customMapper,
+      UnenhanceStrategy unenhancer) {
+    super(sourceType, destinationType, customMapper, unenhancer);
+  }
+
+  protected Object getInstance(
+      Object sourceObject, Object destinationObject, MappingContext context) {
+    try {
+      return destinationType.getRawType().newInstance();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

@@ -17,110 +17,95 @@
  */
 package ma.glasnost.orika;
 
-
 /**
- * BoundMapperFacade represents a caching mapper configuration
- * which is bound to a given pair of types.
- * 
- * @author matt.deboer@gmail.com
- * 
+ * BoundMapperFacade represents a caching mapper configuration which is bound to a given pair of
+ * types.
  */
 public interface BoundMapperFacade<A, B> extends MappedTypePair<A, B> {
-    
-    /**
-     * Generates a new instance of the 'B' type based on the specified
-     * instance of 'A' 
-     * 
-     * @param instanceA
-     * @return
-     */
-    B map(A instanceA);
-    
-    /**
-     * Generates a new instance of the 'B' type based on the specified
-     * instance of 'A' 
-     * 
-     * @param instanceA
-     * @param context
-     * @return
-     */
-    B map(A instanceA, MappingContext context);
-    
-    /**
-     * Generates a new instance of the 'A' type based on the specified
-     * instance of 'B' 
-     * 
-     * @param instanceB
-     * @return
-     */
-    A mapReverse(B instanceB);
-    
-    /**
-     * Generates a new instance of the 'A' type based on the specified
-     * instance of 'B' 
-     * 
-     * @param instanceB
-     * @param context
-     * @return
-     */
-    A mapReverse(B instanceB, MappingContext context);
-    
-    /**
-     * 
-     * Maps properties (in place) from the instance of 'A' to the provided
-     * instance of 'B' 
-     * 
-     * @param instanceA
-     * @param instanceB
-     */
-    B map(A instanceA, B instanceB);
-    
-    /**
-     * 
-     * Maps properties (in place) from the instance of 'A' to the provided
-     * instance of 'B' 
-     * 
-     * @param instanceA
-     * @param instanceB
-     * @param context
-     */
-    B map(A instanceA, B instanceB, MappingContext context);
-    
-    /**
-     * Maps properties (in place) from the instance of 'B' to the provided
-     * instance of 'A'
-     * 
-     * @param instanceB
-     * @param instanceA
-     */
-    A mapReverse(B instanceB, A instanceA);
-    
-    /**
-     * Maps properties (in place) from the instance of 'B' to the provided
-     * instance of 'A'
-     * 
-     * @param instanceB
-     * @param instanceA
-     * @param context
-     */
-    A mapReverse(B instanceB, A instanceA, MappingContext context);
-    
-    
-    /**
-     * Returns a new instance of type B, using source instance of A for context
-     * 
-     * @param source
-     * @param context
-     * @return
-     */
-    B newObject(A source, MappingContext context);
-     
-    /**
-     * Returns a new instance of type A, using source instance of B for context
-     * 
-     * @param source
-     * @param context
-     * @return
-     */
-    A newObjectReverse(B source, MappingContext context);
+
+  /**
+   * Generates a new instance of the 'B' type based on the specified instance of 'A'
+   *
+   * @param instanceA
+   * @return
+   */
+  B map(A instanceA);
+
+  /**
+   * Generates a new instance of the 'B' type based on the specified instance of 'A'
+   *
+   * @param instanceA
+   * @param context
+   * @return
+   */
+  B map(A instanceA, MappingContext context);
+
+  /**
+   * Generates a new instance of the 'A' type based on the specified instance of 'B'
+   *
+   * @param instanceB
+   * @return
+   */
+  A mapReverse(B instanceB);
+
+  /**
+   * Generates a new instance of the 'A' type based on the specified instance of 'B'
+   *
+   * @param instanceB
+   * @param context
+   * @return
+   */
+  A mapReverse(B instanceB, MappingContext context);
+
+  /**
+   * Maps properties (in place) from the instance of 'A' to the provided instance of 'B'
+   *
+   * @param instanceA
+   * @param instanceB
+   */
+  B map(A instanceA, B instanceB);
+
+  /**
+   * Maps properties (in place) from the instance of 'A' to the provided instance of 'B'
+   *
+   * @param instanceA
+   * @param instanceB
+   * @param context
+   */
+  B map(A instanceA, B instanceB, MappingContext context);
+
+  /**
+   * Maps properties (in place) from the instance of 'B' to the provided instance of 'A'
+   *
+   * @param instanceB
+   * @param instanceA
+   */
+  A mapReverse(B instanceB, A instanceA);
+
+  /**
+   * Maps properties (in place) from the instance of 'B' to the provided instance of 'A'
+   *
+   * @param instanceB
+   * @param instanceA
+   * @param context
+   */
+  A mapReverse(B instanceB, A instanceA, MappingContext context);
+
+  /**
+   * Returns a new instance of type B, using source instance of A for context
+   *
+   * @param source
+   * @param context
+   * @return
+   */
+  B newObject(A source, MappingContext context);
+
+  /**
+   * Returns a new instance of type A, using source instance of B for context
+   *
+   * @param source
+   * @param context
+   * @return
+   */
+  A newObjectReverse(B source, MappingContext context);
 }

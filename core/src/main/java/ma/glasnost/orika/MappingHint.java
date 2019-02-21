@@ -20,44 +20,34 @@ package ma.glasnost.orika;
 
 import ma.glasnost.orika.metadata.Type;
 
-
 /**
- * Provides a generic mapping suggestion mechanism to provide 
- * help with guessing default mappings of fields when a straight
- * equivalent name match is not found
- * 
+ * Provides a generic mapping suggestion mechanism to provide help with guessing default mappings of
+ * fields when a straight equivalent name match is not found
+ *
  * @deprecated use ma.glasnost.orika.DefaultFieldMapper instead
- * @author matt.deboer@gmail.com
  */
 @Deprecated
 public interface MappingHint {
-	
-	/**
-	 * @param fromProperty
-	 * @param fromPropertyType
-	 * @return a suggested optional mapping name for the given property,
-	 * or <code>null</code> if no suggestion for the given property
-	 */
-	String suggestMappedField(String fromProperty, Class<?> fromPropertyType);
-	
-	
-	/**
-	 * DefaultFieldMappingConverter provided back-compatibility support for
-	 * MappingHint
-	 * 
-	 * @author matt.deboer@gmail.com
-	 */
-	class DefaultFieldMappingConverter implements DefaultFieldMapper {
 
-		private MappingHint delegate;
-		public DefaultFieldMappingConverter(MappingHint delegate) {
-			this.delegate = delegate;
-		}
-		
-		public String suggestMappedField(String fromProperty,
-				Type<?> fromPropertyType) {
-			return this.delegate.suggestMappedField(fromProperty, fromPropertyType.getRawType());
-		}
-	}
-	
+  /**
+   * @param fromProperty
+   * @param fromPropertyType
+   * @return a suggested optional mapping name for the given property, or <code>null</code> if no
+   *     suggestion for the given property
+   */
+  String suggestMappedField(String fromProperty, Class<?> fromPropertyType);
+
+  /** DefaultFieldMappingConverter provided back-compatibility support for MappingHint */
+  class DefaultFieldMappingConverter implements DefaultFieldMapper {
+
+    private MappingHint delegate;
+
+    public DefaultFieldMappingConverter(MappingHint delegate) {
+      this.delegate = delegate;
+    }
+
+    public String suggestMappedField(String fromProperty, Type<?> fromPropertyType) {
+      return this.delegate.suggestMappedField(fromProperty, fromPropertyType.getRawType());
+    }
+  }
 }

@@ -28,57 +28,62 @@ import ma.glasnost.orika.metadata.TypeFactory;
  */
 abstract class BuiltinBidirectionalConverter<C, D> extends BidirectionalConverter<C, D> {
 
-	private final String description;
-	private volatile Reversed<D, C> reversed;
-	
-	public BuiltinBidirectionalConverter() {
-	    super();
-	    String srcName = TypeFactory.nameOf(sourceType, destinationType);
-	    String dstName = TypeFactory.nameOf(destinationType, sourceType); 
-	    description = "builtin:" + getClass().getSimpleName() + "<"
-        + srcName + ", " + dstName + ">";
-	}
-	
-	public BidirectionalConverter<D, C> reverse() {
-	    if (reversed == null) {
-	        synchronized(this) {
-	            if (reversed == null) {
-	                reversed = new Reversed<D, C>(this);
-	            }
-	        }
-	    }
-	    return reversed;
-	}
+  private final String description;
+  private volatile Reversed<D, C> reversed;
 
-	public String toString() {
-		return description;
-	}
+  public BuiltinBidirectionalConverter() {
+    super();
+    String srcName = TypeFactory.nameOf(sourceType, destinationType);
+    String dstName = TypeFactory.nameOf(destinationType, sourceType);
+    description = "builtin:" + getClass().getSimpleName() + "<" + srcName + ", " + dstName + ">";
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-
-		BuiltinBidirectionalConverter<?, ?> that = (BuiltinBidirectionalConverter<?, ?>) o;
-
-		return description != null ? description.equals(that.description) : that.description == null;
-	}
-
-	private static class Reversed<D, C> extends BidirectionalConverter.Reversed<D, C> {
-
-	    private final String description;
-	    
-        public Reversed(BidirectionalConverter<C, D> bidi) {
-            super(bidi);
-            String srcName = TypeFactory.nameOf(getAType(), getBType());
-            String dstName = TypeFactory.nameOf(getBType(), getAType());
-            description = "builtin:reversed:" + bidi.getClass().getSimpleName() + "<"
-            + srcName + ", " + dstName + ">";
+  public BidirectionalConverter<D, C> reverse() {
+    if (reversed == null) {
+      synchronized (this) {
+        if (reversed == null) {
+          reversed = new Reversed<D, C>(this);
         }
-	    
-        public String toString() {
-            return description;
-        }
-	}
+      }
+    }
+    return reversed;
+  }
+
+  public String toString() {
+    return description;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+
+    BuiltinBidirectionalConverter<?, ?> that = (BuiltinBidirectionalConverter<?, ?>) o;
+
+    return description != null ? description.equals(that.description) : that.description == null;
+  }
+
+  private static class Reversed<D, C> extends BidirectionalConverter.Reversed<D, C> {
+
+    private final String description;
+
+    public Reversed(BidirectionalConverter<C, D> bidi) {
+      super(bidi);
+      String srcName = TypeFactory.nameOf(getAType(), getBType());
+      String dstName = TypeFactory.nameOf(getBType(), getAType());
+      description =
+          "builtin:reversed:"
+              + bidi.getClass().getSimpleName()
+              + "<"
+              + srcName
+              + ", "
+              + dstName
+              + ">";
+    }
+
+    public String toString() {
+      return description;
+    }
+  }
 }

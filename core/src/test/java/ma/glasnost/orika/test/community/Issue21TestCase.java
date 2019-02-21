@@ -42,187 +42,176 @@ import java.io.Serializable;
 import static org.junit.Assert.*;
 /**
  * NPE when collection is changed.
+ *
  * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/21">https://code.google.com/archive/p/orika/</a>
- * 
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/21">https://code.google.com/archive/p/orika/</a>
  * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- * 
- * TODO: this particular test case is imported AS-IS, but should probably
- * be trimmed down to the specific issue of concern here which is:
- * 
- * Reuse of the same MappingStrategy over map(source) and map(source, dest)
- * is not valid, since the mapping strategy implementations are distinguished
- * by whether or not they instantiate or map in place (among other things).
- * This means that the MappingStrategyKey needs to reflect whether or not
- * the destination object is provided, since a different strategy must be
- * used...
- * 
- * 
+ *     <p>TODO: this particular test case is imported AS-IS, but should probably be trimmed down to
+ *     the specific issue of concern here which is:
+ *     <p>Reuse of the same MappingStrategy over map(source) and map(source, dest) is not valid,
+ *     since the mapping strategy implementations are distinguished by whether or not they
+ *     instantiate or map in place (among other things). This means that the MappingStrategyKey
+ *     needs to reflect whether or not the destination object is provided, since a different
+ *     strategy must be used...
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:Issue21TestCase-context.xml")
 @Transactional
 @DirtiesContext
 public class Issue21TestCase {
-    
-	@Autowired
-	private SessionFactory sessionFactory;
-	private Serializable user1Id;
-	private Serializable user2Id;
-	private MapperFacade mapperFacade;
-	private Serializable groupId;
-	private Serializable adminAuthotityId;
 
-	private final Logger log = LoggerFactory.getLogger(Issue21TestCase.class);
+  private final Logger log = LoggerFactory.getLogger(Issue21TestCase.class);
+  @Autowired private SessionFactory sessionFactory;
+  private Serializable user1Id;
+  private Serializable user2Id;
+  private MapperFacade mapperFacade;
+  private Serializable groupId;
+  private Serializable adminAuthotityId;
 
-	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
-	}
+  protected Session getSession() {
+    return sessionFactory.getCurrentSession();
+  }
 
-	@Before
-	public void init() {
-		UserGroup group = new UserGroup("main");
-		groupId = getSession().save(group);
+  @Before
+  public void init() {
+    UserGroup group = new UserGroup("main");
+    groupId = getSession().save(group);
 
-		User user1 = new User("User1");
-		user1Id = getSession().save(user1);
+    User user1 = new User("User1");
+    user1Id = getSession().save(user1);
 
-		User user2 = new User("user2");
-		user2Id = getSession().save(user2);
+    User user2 = new User("user2");
+    user2Id = getSession().save(user2);
 
-		group.addUser(user1);
-		group.addUser(user2);
+    group.addUser(user1);
+    group.addUser(user2);
 
-		Authority adminAuthority = new Authority("admin");
-		adminAuthotityId = getSession().save(adminAuthority);
+    Authority adminAuthority = new Authority("admin");
+    adminAuthotityId = getSession().save(adminAuthority);
 
-		DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
-		builder.unenhanceStrategy(new HibernateUnenhanceStrategy());
-		MapperFactory factory = builder.build();
-		mapperFacade = factory.getMapperFacade();
+    DefaultMapperFactory.Builder builder = new DefaultMapperFactory.Builder();
+    builder.unenhanceStrategy(new HibernateUnenhanceStrategy());
+    MapperFactory factory = builder.build();
+    mapperFacade = factory.getMapperFacade();
 
-		getSession().flush();
-		getSession().clear();
-	}
+    getSession().flush();
+    getSession().clear();
+  }
 
-	@Test
-	public void testMapUser() {
-		User user1 = (User) getSession().load(User.class, user1Id);
-		User user2 = (User) getSession().load(User.class, user2Id);
-		assertNotNull(user1);
-		for (int i = 0; i < 100; i++) {
-			UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
-			assertEquals(userDto1.getName(), user1.getName());
+  @Test
+  public void testMapUser() {
+    User user1 = (User) getSession().load(User.class, user1Id);
+    User user2 = (User) getSession().load(User.class, user2Id);
+    assertNotNull(user1);
+    for (int i = 0; i < 100; i++) {
+      UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
+      assertEquals(userDto1.getName(), user1.getName());
 
-			UserDto userDto2 = mapperFacade.map(user2, UserDto.class);
-			assertEquals(userDto2.getName(), user2.getName());
+      UserDto userDto2 = mapperFacade.map(user2, UserDto.class);
+      assertEquals(userDto2.getName(), user2.getName());
 
-			assertTrue(user1.getGroup().getUsers().contains(user2));
-		}
-	}
+      assertTrue(user1.getGroup().getUsers().contains(user2));
+    }
+  }
 
-	@Test
-	public void testChangeAuthoritiesOfUser() {
-		addAuthority();
-		getSession().flush();
-		getSession().clear();
-		removeAuthority();
-	}
+  @Test
+  public void testChangeAuthoritiesOfUser() {
+    addAuthority();
+    getSession().flush();
+    getSession().clear();
+    removeAuthority();
+  }
 
-	private void addAuthority() {
-		User user1 = (User) getSession().load(User.class, user1Id);
-		UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
+  private void addAuthority() {
+    User user1 = (User) getSession().load(User.class, user1Id);
+    UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
 
-		log.debug("\n\n old userTO = " + userDto1);
+    log.debug("\n\n old userTO = " + userDto1);
 
-		Authority authority = (Authority) getSession().load(Authority.class,
-				adminAuthotityId);
-		AuthorityDto authorityDto = mapperFacade.map(authority,
-				AuthorityDto.class);
-		assertFalse(userDto1.getAuthorities().contains(authorityDto));
+    Authority authority = (Authority) getSession().load(Authority.class, adminAuthotityId);
+    AuthorityDto authorityDto = mapperFacade.map(authority, AuthorityDto.class);
+    assertFalse(userDto1.getAuthorities().contains(authorityDto));
 
-		userDto1.getAuthorities().add(authorityDto);
-		Assert.assertNotNull(user1);
-		mapperFacade.map(userDto1, user1, TypeFactory.valueOf(UserDto.class),
-				TypeFactory.valueOf(User.class));
+    userDto1.getAuthorities().add(authorityDto);
+    Assert.assertNotNull(user1);
+    mapperFacade.map(
+        userDto1, user1, TypeFactory.valueOf(UserDto.class), TypeFactory.valueOf(User.class));
 
-		assertTrue(user1.getAuthorities().contains(authority));
-	}
+    assertTrue(user1.getAuthorities().contains(authority));
+  }
 
-	private void removeAuthority() {
-		User user1 = (User) getSession().load(User.class, user1Id);
-		UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
+  private void removeAuthority() {
+    User user1 = (User) getSession().load(User.class, user1Id);
+    UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
 
-		log.debug("\n\n old userTO = " + userDto1);
+    log.debug("\n\n old userTO = " + userDto1);
 
-		Authority authority = (Authority) getSession().load(Authority.class,
-				adminAuthotityId);
-		AuthorityDto authorityDto = mapperFacade.map(authority,
-				AuthorityDto.class);
-		assertTrue(userDto1.getAuthorities().contains(authorityDto));
+    Authority authority = (Authority) getSession().load(Authority.class, adminAuthotityId);
+    AuthorityDto authorityDto = mapperFacade.map(authority, AuthorityDto.class);
+    assertTrue(userDto1.getAuthorities().contains(authorityDto));
 
-		userDto1.getAuthorities().remove(authorityDto);
-		Assert.assertNotNull(user1);
-		mapperFacade.map(userDto1, user1, TypeFactory.valueOf(UserDto.class),
-				TypeFactory.valueOf(User.class));
+    userDto1.getAuthorities().remove(authorityDto);
+    Assert.assertNotNull(user1);
+    mapperFacade.map(
+        userDto1, user1, TypeFactory.valueOf(UserDto.class), TypeFactory.valueOf(User.class));
 
-		assertFalse(user1.getAuthorities().contains(authority));
-	}
+    assertFalse(user1.getAuthorities().contains(authority));
+  }
 
-	@Test
-	public void testChangeGroup() {
-		removeGroup();
+  @Test
+  public void testChangeGroup() {
+    removeGroup();
 
-		getSession().flush();
-		getSession().clear();
+    getSession().flush();
+    getSession().clear();
 
-		revertGroup();
+    revertGroup();
 
-		getSession().flush();
-		getSession().clear();
+    getSession().flush();
+    getSession().clear();
+  }
 
-	}
+  private void removeGroup() {
+    UserGroup group = (UserGroup) getSession().load(UserGroup.class, groupId);
 
-	private void removeGroup() {
-		UserGroup group = (UserGroup) getSession().load(UserGroup.class,
-				groupId);
+    User user1 = (User) getSession().load(User.class, user1Id);
 
-		User user1 = (User) getSession().load(User.class, user1Id);
+    assertTrue(group.getUsers().contains(user1));
 
-		assertTrue(group.getUsers().contains(user1));
+    UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
 
-		UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
+    UserGroupDto groupDto = mapperFacade.map(group, UserGroupDto.class);
+    groupDto.removeUser(userDto1);
 
-		UserGroupDto groupDto = mapperFacade.map(group, UserGroupDto.class);
-		groupDto.removeUser(userDto1);
+    mapperFacade.map(
+        groupDto,
+        group,
+        TypeFactory.valueOf(UserGroupDto.class),
+        TypeFactory.valueOf(UserGroup.class));
 
-		mapperFacade.map(groupDto, group,
-				TypeFactory.valueOf(UserGroupDto.class),
-				TypeFactory.valueOf(UserGroup.class));
+    assertFalse(group.getUsers().contains(user1));
+  }
 
-		assertFalse(group.getUsers().contains(user1));
-	}
+  private void revertGroup() {
+    UserGroup group = (UserGroup) getSession().load(UserGroup.class, groupId);
 
-	private void revertGroup() {
-		UserGroup group = (UserGroup) getSession().load(UserGroup.class,
-				groupId);
+    User user1 = (User) getSession().load(User.class, user1Id);
 
-		User user1 = (User) getSession().load(User.class, user1Id);
+    assertFalse(group.getUsers().contains(user1));
 
-		assertFalse(group.getUsers().contains(user1));
+    UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
 
-		UserDto userDto1 = mapperFacade.map(user1, UserDto.class);
+    UserGroupDto groupDto = mapperFacade.map(group, UserGroupDto.class);
+    groupDto.addUser(userDto1);
 
-		UserGroupDto groupDto = mapperFacade.map(group, UserGroupDto.class);
-		groupDto.addUser(userDto1);
+    mapperFacade.map(
+        groupDto,
+        group,
+        TypeFactory.valueOf(UserGroupDto.class),
+        TypeFactory.valueOf(UserGroup.class));
 
-		mapperFacade.map(groupDto, group,
-				TypeFactory.valueOf(UserGroupDto.class),
-				TypeFactory.valueOf(UserGroup.class));
-
-		assertTrue(group.getUsers().contains(user1));
-	}
-
+    assertTrue(group.getUsers().contains(user1));
+  }
 }

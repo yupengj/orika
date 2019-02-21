@@ -17,18 +17,9 @@
  */
 package ma.glasnost.orika.test.community.issue20;
 
+import javax.persistence.*;
 
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @Entity
 public class User extends BaseEntity {
   private UsrGroup group;
@@ -44,13 +35,7 @@ public class User extends BaseEntity {
     this.password = password;
   }
 
-  public User() {
-  }
-
-
-  public void setName(String name) {
-    this.name = name;
-  }
+  public User() {}
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn
@@ -67,7 +52,9 @@ public class User extends BaseEntity {
     return name;
   }
 
-
+  public void setName(String name) {
+    this.name = name;
+  }
 
   public String getPassword() {
     return password;
@@ -79,8 +66,6 @@ public class User extends BaseEntity {
 
   @Override
   public String toString() {
-    return "User{" +
-      "name='" + name + '\'' +
-      "} " + super.toString();
+    return "User{" + "name='" + name + '\'' + "} " + super.toString();
   }
 }

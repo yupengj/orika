@@ -18,45 +18,43 @@
 
 package ma.glasnost.orika.test.community;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.test.MappingUtil;
-
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * NullPointerException in MultiOccurrenceToMultiOccurrence.mapFields.
+ *
  * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/85">https://code.google.com/archive/p/orika/</a>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/85">https://code.google.com/archive/p/orika/</a>
  * @author conleym
- * 
  */
 public final class Issue85TestCase {
-    
-    @Test
-    public void test() {
-        MapperFactory f = MappingUtil.getMapperFactory();
-        f.classMap(MapContainer.class, Map.class).field("map{value}", "{key}").register();
-        
-        final MapperFacade facade = f.getMapperFacade();
-        final Map<Object, Object> dest = new HashMap<Object, Object>();
-        final Map<Object, Object> src = new HashMap<Object, Object>();
-        src.put("xyz", "123456");
-        facade.map(new MapContainer<Object, Object>(src), dest);
-        System.out.println(dest);
+
+  @Test
+  public void test() {
+    MapperFactory f = MappingUtil.getMapperFactory();
+    f.classMap(MapContainer.class, Map.class).field("map{value}", "{key}").register();
+
+    final MapperFacade facade = f.getMapperFacade();
+    final Map<Object, Object> dest = new HashMap<Object, Object>();
+    final Map<Object, Object> src = new HashMap<Object, Object>();
+    src.put("xyz", "123456");
+    facade.map(new MapContainer<Object, Object>(src), dest);
+    System.out.println(dest);
+  }
+
+  public static final class MapContainer<X, Y> {
+    public final Map<X, Y> map;
+
+    public MapContainer(final Map<X, Y> map) {
+      this.map = map;
     }
-    
-    
-    public final static class MapContainer<X, Y> {
-        public final Map<X, Y> map;
-        
-        public MapContainer(final Map<X, Y> map) {
-            this.map = map;
-        }
-    }
-    
+  }
 }

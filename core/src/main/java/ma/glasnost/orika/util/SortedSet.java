@@ -21,41 +21,35 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * A sorted set implementation based on a Comparator (or type's natural
- * ordering) where the comparison function is allowed to return ordering
- * equivalence (0) which doesn't necessarily imply logical equivalence.
- * <p>
- * This allows for the ordering of a set of items where some are less or greater
- * than others, while others are simply not comparable in an ordering sense (in
- * which case, 0 is returned from their comparison).
- * <p>
- * This class is thread-safe, with the same caveats for ConcurrentSkipListMap.
- * 
- * @author matt.deboer@gmail.com
- * @param <V>
- *            the element type
+ * A sorted set implementation based on a Comparator (or type's natural ordering) where the
+ * comparison function is allowed to return ordering equivalence (0) which doesn't necessarily imply
+ * logical equivalence.
+ *
+ * <p>This allows for the ordering of a set of items where some are less or greater than others,
+ * while others are simply not comparable in an ordering sense (in which case, 0 is returned from
+ * their comparison).
+ *
+ * <p>This class is thread-safe, with the same caveats for ConcurrentSkipListMap.
+ *
+ * @param <V> the element type
  */
 public class SortedSet<V> extends SortedCollection<V> implements Set<V> {
 
-	/**
-	 * @param ordering
-	 */
-	public SortedSet(Ordering<V> ordering) {
-		super(ordering);
-	}
+  /** @param ordering */
+  public SortedSet(Ordering<V> ordering) {
+    super(ordering);
+  }
 
-	/**
-	 * @param c
-	 *            the collection to initialize this sorted set
-	 * @param ordering
-	 *            the ordering used to sort this set
-	 */
-	public SortedSet(Collection<? extends V> c, Ordering<V> ordering) {
-		super(c, ordering);
-	}
+  /**
+   * @param c the collection to initialize this sorted set
+   * @param ordering the ordering used to sort this set
+   */
+  public SortedSet(Collection<? extends V> c, Ordering<V> ordering) {
+    super(c, ordering);
+  }
 
-	@Override
-	protected boolean mustAdd(V item) {
-		return !super.contains(item);
-	}
+  @Override
+  protected boolean mustAdd(V item) {
+    return !super.contains(item);
+  }
 }

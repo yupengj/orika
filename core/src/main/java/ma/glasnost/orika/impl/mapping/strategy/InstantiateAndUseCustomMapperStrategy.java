@@ -18,46 +18,50 @@
 
 package ma.glasnost.orika.impl.mapping.strategy;
 
-import java.util.Map;
-
 import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.ObjectFactory;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.unenhance.UnenhanceStrategy;
 
+import java.util.Map;
+
 /**
- * InstantiateAndUseCustomMapperStrategy uses a custom ObjectFactory and
- * a custom Mapper to map from source to destination type.
+ * InstantiateAndUseCustomMapperStrategy uses a custom ObjectFactory and a custom Mapper to map from
+ * source to destination type.
  */
 public class InstantiateAndUseCustomMapperStrategy extends UseCustomMapperStrategy {
-    
-	/**
-	 * The custom ObjectFactory used by this strategy
-	 */
-	protected final ObjectFactory<Object> objectFactory;
-    
-    /**
-     * Creates a new instance of InstantiateAndUseCustomMapperStrategy
-     * 
-     * @param sourceType
-     * @param destinationType
-     * @param customMapper
-     * @param objectFactory
-     * @param unenhancer
-     */
-    public InstantiateAndUseCustomMapperStrategy(Type<Object> sourceType, Type<Object> destinationType, Mapper<Object, Object> customMapper, ObjectFactory<Object> objectFactory, UnenhanceStrategy unenhancer) {
-    	super(sourceType, destinationType, customMapper, unenhancer);
-        this.objectFactory = objectFactory;
-    }
 
-    protected Object getInstance(Object sourceObject, Object destinationObject, MappingContext context) {
-    	return objectFactory.create(sourceObject, context);
-    }
+  /** The custom ObjectFactory used by this strategy */
+  protected final ObjectFactory<Object> objectFactory;
 
-	@Override
-	protected void describeMembers(Map<String, Object> members) {
-		super.describeMembers(members);
-		members.put("objectFactory", objectFactory);
-	}
+  /**
+   * Creates a new instance of InstantiateAndUseCustomMapperStrategy
+   *
+   * @param sourceType
+   * @param destinationType
+   * @param customMapper
+   * @param objectFactory
+   * @param unenhancer
+   */
+  public InstantiateAndUseCustomMapperStrategy(
+      Type<Object> sourceType,
+      Type<Object> destinationType,
+      Mapper<Object, Object> customMapper,
+      ObjectFactory<Object> objectFactory,
+      UnenhanceStrategy unenhancer) {
+    super(sourceType, destinationType, customMapper, unenhancer);
+    this.objectFactory = objectFactory;
+  }
+
+  protected Object getInstance(
+      Object sourceObject, Object destinationObject, MappingContext context) {
+    return objectFactory.create(sourceObject, context);
+  }
+
+  @Override
+  protected void describeMembers(Map<String, Object> members) {
+    super.describeMembers(members);
+    members.put("objectFactory", objectFactory);
+  }
 }

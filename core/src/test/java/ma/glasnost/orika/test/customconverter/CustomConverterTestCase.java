@@ -23,96 +23,93 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.test.MappingUtil;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class CustomConverterTestCase {
-    
-    public static class MyCustomConverter extends CustomConverter<Long, String> {
-        
-        /*
-         * (non-Javadoc)
-         * 
-         * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
-         * ma.glasnost.orika.metadata.Type)
-         */
-        public String convert(Long source, Type<? extends String> destinationType, MappingContext context) {
-            return "long{" + source + "}";
-        }
+
+  @Test
+  public void testConvertLongString() {
+
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.getConverterFactory().registerConverter(new MyCustomConverter());
+    factory.classMap(A.class, B.class).field("id", "string").register();
+
+    A source = new A();
+    source.setId(42L);
+
+    B destination = factory.getMapperFacade().map(source, B.class);
+
+    Assert.assertEquals("long{42}", destination.getString());
+  }
+
+  @Test
+  public void testConvertStringToString() {
+
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.getConverterFactory().registerConverter(new MyCustomConverter2());
+    factory.classMap(A.class, B.class).field("id", "string").register();
+
+    B source = new B();
+    source.setString("hello");
+
+    C destination = factory.getMapperFacade().map(source, C.class);
+
+    Assert.assertEquals("string: hello", destination.string);
+  }
+
+  public static class MyCustomConverter extends CustomConverter<Long, String> {
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
+     * ma.glasnost.orika.metadata.Type)
+     */
+    public String convert(
+        Long source, Type<? extends String> destinationType, MappingContext context) {
+      return "long{" + source + "}";
     }
-    
-    public static class MyCustomConverter2 extends CustomConverter<String, String> {
-        /*
-         * (non-Javadoc)
-         * 
-         * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
-         * ma.glasnost.orika.metadata.Type)
-         */
-        public String convert(String source, Type<? extends String> destinationType, MappingContext context) {
-            return "string: " + source;
-        }
+  }
+
+  public static class MyCustomConverter2 extends CustomConverter<String, String> {
+    /*
+     * (non-Javadoc)
+     *
+     * @see ma.glasnost.orika.Converter#convert(java.lang.Object,
+     * ma.glasnost.orika.metadata.Type)
+     */
+    public String convert(
+        String source, Type<? extends String> destinationType, MappingContext context) {
+      return "string: " + source;
     }
-    
-    @Test
-    public void testConvertLongString() {
-        
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        factory.getConverterFactory().registerConverter(new MyCustomConverter());
-        factory.classMap(A.class, B.class).field("id", "string").register();
-        
-        A source = new A();
-        source.setId(42L);
-        
-        B destination = factory.getMapperFacade().map(source, B.class);
-        
-        Assert.assertEquals("long{42}", destination.getString());
-        
+  }
+
+  public static class A {
+    private Long id;
+
+    public Long getId() {
+      return id;
     }
-    
-    @Test
-    public void testConvertStringToString() {
-        
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        factory.getConverterFactory().registerConverter(new MyCustomConverter2());
-        factory.classMap(A.class, B.class).field("id", "string").register();
-        
-        B source = new B();
-        source.setString("hello");
-        
-        C destination = factory.getMapperFacade().map(source, C.class);
-        
-        Assert.assertEquals("string: hello", destination.string);
-        
+
+    public void setId(Long id) {
+      this.id = id;
     }
-    
-    public static class A {
-        private Long id;
-        
-        public Long getId() {
-            return id;
-        }
-        
-        public void setId(Long id) {
-            this.id = id;
-        }
-        
+  }
+
+  public static class B {
+    private String string;
+
+    public String getString() {
+      return string;
     }
-    
-    public static class B {
-        private String string;
-        
-        public String getString() {
-            return string;
-        }
-        
-        public void setString(String string) {
-            this.string = string;
-        }
-        
+
+    public void setString(String string) {
+      this.string = string;
     }
-    
-    public static class C {
-        public String string;
-    }
+  }
+
+  public static class C {
+    public String string;
+  }
 }

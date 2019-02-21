@@ -18,41 +18,38 @@
 
 package ma.glasnost.orika.test.perf;
 
+import ma.glasnost.orika.test.DynamicSuite;
+import org.junit.runner.JUnitCore;
+
 import java.io.File;
 import java.io.IOException;
 
-import ma.glasnost.orika.test.DynamicSuite;
-
-import org.junit.runner.JUnitCore;
-
 /**
- * LaunchTestsForProfiler provides a launcher for using the VisualVm (or another)
- * profiler over all of the unit tests.<br>
- * It provides a break at the beginning pausing for input which allows
- * attaching/configuring the profiler, as well as a similar pause at the
- * end to allow for capturing/saving results.<br><br>
- * 
+ * LaunchTestsForProfiler provides a launcher for using the VisualVm (or another) profiler over all
+ * of the unit tests.<br>
+ * It provides a break at the beginning pausing for input which allows attaching/configuring the
+ * profiler, as well as a similar pause at the end to allow for capturing/saving results.<br>
+ * <br>
  */
 public class LaunchTestsForProfiler {
-    
-    public static void main(String[] args) throws IOException {
-        
-        File classFolder = new File(LaunchTestsForProfiler.class.getResource("/").getFile());
-        Class<?>[] testClasses = DynamicSuite.findTestCases(classFolder, ".*TestCase").toArray(new Class<?>[0]);
-        
-        
-        System.out.println("Press enter when ready to start...");
-        System.in.read();
-        
-        /*
-         * Manually fire the set of test classes; this avoids having this test included when all
-         * test cases are run within an IDE, since this is a special case used only for profiling
-         */
-        JUnitCore.runClasses(testClasses);
-        
-        System.out.println("Press enter when ready to quit...");
-        System.in.read();
-        System.in.read();
-        
-    }
+
+  public static void main(String[] args) throws IOException {
+
+    File classFolder = new File(LaunchTestsForProfiler.class.getResource("/").getFile());
+    Class<?>[] testClasses =
+        DynamicSuite.findTestCases(classFolder, ".*TestCase").toArray(new Class<?>[0]);
+
+    System.out.println("Press enter when ready to start...");
+    System.in.read();
+
+    /*
+     * Manually fire the set of test classes; this avoids having this test included when all
+     * test cases are run within an IDE, since this is a special case used only for profiling
+     */
+    JUnitCore.runClasses(testClasses);
+
+    System.out.println("Press enter when ready to quit...");
+    System.in.read();
+    System.in.read();
+  }
 }

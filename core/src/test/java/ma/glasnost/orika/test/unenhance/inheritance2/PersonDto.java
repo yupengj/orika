@@ -18,19 +18,15 @@
 
 package ma.glasnost.orika.test.unenhance.inheritance2;
 
-/**
- * @author Sergey Vasilyev
- */
+/** @author Sergey Vasilyev */
 public class PersonDto extends AbstractDto {
-	private String name;
+  private String name;
 
+  public String getName() {
+    return name;
+  }
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+  public void setName(String name) {
+    this.name = name;
+  }
 }

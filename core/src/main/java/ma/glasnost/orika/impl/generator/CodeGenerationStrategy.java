@@ -17,66 +17,63 @@
  */
 package ma.glasnost.orika.impl.generator;
 
-import java.util.List;
-
 import ma.glasnost.orika.MapperFactory;
 
+import java.util.List;
+
 /**
- * CodeGenerationStrategy is an encapsulation of the collection of individual 
- * field mapping scenarios for which code is generated. It allows reordering,
- * overriding, adding and removing the scenarios individually as desired. 
- * 
- * @author matt.deboer@gmail.com
- *
+ * CodeGenerationStrategy is an encapsulation of the collection of individual field mapping
+ * scenarios for which code is generated. It allows reordering, overriding, adding and removing the
+ * scenarios individually as desired.
  */
 public interface CodeGenerationStrategy {
-    
-    /**
-     * Position represents the relative position of a specification
-     * in the chain of mapping specifications
-     */
-    enum Position {
-        BEFORE,
-        AFTER,
-        IN_PLACE_OF,
-        FIRST,
-        LAST
-    }
-    
-    /**
-     * Set the MapperFactory on this CodeGenerationStrategy
-     * 
-     * @param mapperFactory the MapperFactory to apply
-     */
-    void setMapperFactory(MapperFactory mapperFactory);
-    
-    /**
-     * Convenience method to add a specification at a relative position with respect to
-     * another Specification, or the list in general
-     * 
-     * @param spec the specification to add
-     * @param relativePosition the relative position
-     * @param relativeSpec the other relative spec (for Positions BEFORE, AFTER, or IN_PLACE_OF)
-     */
-    void addSpecification(Specification spec, Position relativePosition, Class<? extends Specification> relativeSpec);
-    
-    /**
-     * @return the defined specifications 
-     */
-    List<Specification> getSpecifications();
-    
-    /**
-     * Convenience method to add an AggregateSpecification at a relative position with respect to
-     * another AggregateSpecification, or the list in general
-     * 
-     * @param spec the specification to add
-     * @param relativePosition the relative position
-     * @param relativeSpec the other relative spec (for Positions BEFORE, AFTER, or IN_PLACE_OF)
-     */
-    void addAggregateSpecification(AggregateSpecification spec, Position relativePosition, Class<AggregateSpecification> relativeSpec);
-    
-    /**
-     * @return the defined aggregate specifications
-     */
-    List<AggregateSpecification> getAggregateSpecifications();
+
+  /**
+   * Set the MapperFactory on this CodeGenerationStrategy
+   *
+   * @param mapperFactory the MapperFactory to apply
+   */
+  void setMapperFactory(MapperFactory mapperFactory);
+
+  /**
+   * Convenience method to add a specification at a relative position with respect to another
+   * Specification, or the list in general
+   *
+   * @param spec the specification to add
+   * @param relativePosition the relative position
+   * @param relativeSpec the other relative spec (for Positions BEFORE, AFTER, or IN_PLACE_OF)
+   */
+  void addSpecification(
+      Specification spec, Position relativePosition, Class<? extends Specification> relativeSpec);
+
+  /** @return the defined specifications */
+  List<Specification> getSpecifications();
+
+  /**
+   * Convenience method to add an AggregateSpecification at a relative position with respect to
+   * another AggregateSpecification, or the list in general
+   *
+   * @param spec the specification to add
+   * @param relativePosition the relative position
+   * @param relativeSpec the other relative spec (for Positions BEFORE, AFTER, or IN_PLACE_OF)
+   */
+  void addAggregateSpecification(
+      AggregateSpecification spec,
+      Position relativePosition,
+      Class<AggregateSpecification> relativeSpec);
+
+  /** @return the defined aggregate specifications */
+  List<AggregateSpecification> getAggregateSpecifications();
+
+  /**
+   * Position represents the relative position of a specification in the chain of mapping
+   * specifications
+   */
+  enum Position {
+    BEFORE,
+    AFTER,
+    IN_PLACE_OF,
+    FIRST,
+    LAST
+  }
 }

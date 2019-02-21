@@ -17,76 +17,66 @@
  */
 package ma.glasnost.orika.test.community.issue21;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Set;
 
-/**
- * 
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @Entity
 public class User extends BaseEntity {
-	private UserGroup group;
-	private String name;
-	private String password;
-	private Set<Authority> authorities;
+  private UserGroup group;
+  private String name;
+  private String password;
+  private Set<Authority> authorities;
 
-	public User(String name) {
-		this(name, name);
-	}
+  public User(String name) {
+    this(name, name);
+  }
 
-	public User(String name, String password) {
-		this.name = name;
-		this.password = password;
-	}
+  public User(String name, String password) {
+    this.name = name;
+    this.password = password;
+  }
 
-	public User() {
-	}
+  public User() {}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn
+  public UserGroup getGroup() {
+    return group;
+  }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn
-	public UserGroup getGroup() {
-		return group;
-	}
+  public void setGroup(UserGroup group) {
+    this.group = group;
+  }
 
-	public void setGroup(UserGroup group) {
-		this.group = group;
-	}
+  @Column(unique = true)
+  public String getName() {
+    return name;
+  }
 
-	@Column(unique = true)
-	public String getName() {
-		return name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setAuthorities(Set<Authority> authorities) {
-		this.authorities = authorities;
-	}
+  @ManyToMany
+  public Set<Authority> getAuthorities() {
+    return authorities;
+  }
 
-	@ManyToMany
-	public Set<Authority> getAuthorities() {
-		return authorities;
-	}
+  public void setAuthorities(Set<Authority> authorities) {
+    this.authorities = authorities;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	@Override
-	public String toString() {
-		return "User{" + "name='" + name + '\'' + "} " + super.toString();
-	}
+  @Override
+  public String toString() {
+    return "User{" + "name='" + name + '\'' + "} " + super.toString();
+  }
 }

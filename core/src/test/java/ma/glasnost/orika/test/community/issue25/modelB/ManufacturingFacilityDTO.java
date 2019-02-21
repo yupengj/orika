@@ -19,35 +19,29 @@ package ma.glasnost.orika.test.community.issue25.modelB;
 
 import java.io.Serializable;
 
+public class ManufacturingFacilityDTO implements Serializable {
 
-public class  ManufacturingFacilityDTO implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4949602104392727453L;
-	
-	private String description;
-	private Long idNumber;
-	
-	public ManufacturingFacilityDTO(){
-		
-	}
-	
-	public String getDescription() {
-		return description;
-	}
+  /** */
+  private static final long serialVersionUID = 4949602104392727453L;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  private String description;
+  private Long idNumber;
 
-	public Long getIdNumber() {
-		return idNumber;
-	}
+  public ManufacturingFacilityDTO() {}
 
-	public void setIdNumber(Long idNumber) {
-		this.idNumber = idNumber;
-	}
-	
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Long getIdNumber() {
+    return idNumber;
+  }
+
+  public void setIdNumber(Long idNumber) {
+    this.idNumber = idNumber;
+  }
 }

@@ -20,20 +20,13 @@ package ma.glasnost.orika;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * MappedTypePair represents any pair of mapped types, which are distinguished
- * from each other as 'A type' and 'B type'
- * 
- * @author matt.deboer@gmail.com
- *
+ * MappedTypePair represents any pair of mapped types, which are distinguished from each other as 'A
+ * type' and 'B type'
  */
 public interface MappedTypePair<A, B> {
-    /**
-     * @return the 'A' type for this mapped pair
-     */
-    Type<A> getAType();
-    
-    /**
-     * @return the 'B' type for this mapped pair
-     */
-    Type<B> getBType();
+  /** @return the 'A' type for this mapped pair */
+  Type<A> getAType();
+
+  /** @return the 'B' type for this mapped pair */
+  Type<B> getBType();
 }

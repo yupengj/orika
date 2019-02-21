@@ -17,14 +17,6 @@
  */
 package ma.glasnost.orika.test.map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-
 import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
@@ -35,35 +27,40 @@ import ma.glasnost.orika.metadata.TypeFactory;
 import ma.glasnost.orika.test.DynamicSuite;
 import ma.glasnost.orika.test.DynamicSuite.Scenario;
 import ma.glasnost.orika.test.DynamicSuite.TestCasePattern;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
 /**
- * Run All *TestCase.java Unit-Tests, but use always the {@link MultipleMapperWrapper} even if no ObjectFactory is used or only one Mapper
- * where found.
- * <p>
- * This should covering all special cases.
+ * Run All *TestCase.java Unit-Tests, but use always the {@link MultipleMapperWrapper} even if no
+ * ObjectFactory is used or only one Mapper where found.
  *
+ * <p>This should covering all special cases.
  */
 @RunWith(DynamicSuite.class)
 @TestCasePattern(".*TestCase")
 @Scenario(name = "alwaysCreateMultipleMapperWrapper")
 public class MultipleMapperWrapperTestSuite {
-    
-    @BeforeClass
-    public static void alwaysCreateMultipleMapperWrapper() {
-        System.setProperty("ma.glasnost.orika.alwaysCreateMultipleMapperWrapper", "true");
-        // validate basic pre-requirements for this TestSuite (be sure that the property is set and evaluated right):
-        final MapperFactory factory = new DefaultMapperFactory.Builder().build();
-        Type<A> aType = TypeFactory.valueOf(A.class);
-        Mapper<Object, Object> mapper = factory.lookupMapper(new MapperKey(aType, aType));
-        assertThat(mapper, is(instanceOf(MultipleMapperWrapper.class)));
-        
-    }
-    
-    @AfterClass
-    public static void tearDown() {
-        System.clearProperty("ma.glasnost.orika.alwaysCreateMultipleMapperWrapper");
-    }
-    
-    public static class A {
-    }
+
+  @BeforeClass
+  public static void alwaysCreateMultipleMapperWrapper() {
+    System.setProperty("ma.glasnost.orika.alwaysCreateMultipleMapperWrapper", "true");
+    // validate basic pre-requirements for this TestSuite (be sure that the property is set and
+    // evaluated right):
+    final MapperFactory factory = new DefaultMapperFactory.Builder().build();
+    Type<A> aType = TypeFactory.valueOf(A.class);
+    Mapper<Object, Object> mapper = factory.lookupMapper(new MapperKey(aType, aType));
+    assertThat(mapper, is(instanceOf(MultipleMapperWrapper.class)));
+  }
+
+  @AfterClass
+  public static void tearDown() {
+    System.clearProperty("ma.glasnost.orika.alwaysCreateMultipleMapperWrapper");
+  }
+
+  public static class A {}
 }

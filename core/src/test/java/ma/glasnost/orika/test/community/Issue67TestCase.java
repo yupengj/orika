@@ -18,54 +18,52 @@
 
 package ma.glasnost.orika.test.community;
 
-import org.junit.Test;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import org.junit.Test;
 
 /**
  * Property with no getter (null readMethod) is not being excluded/ignored
- * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/67">https://code.google.com/archive/p/orika/</a>
- * @author matt.deboer@gmail.com
  *
+ * <p>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/67">https://code.google.com/archive/p/orika/</a>
  */
 public class Issue67TestCase {
 
-	@Test
-	public void simpleCase() {
-		MapperFactory factory = new DefaultMapperFactory.Builder().build();
-		factory.registerClassMap(factory.classMap(Bean.class, Bean.class)
-				.byDefault().toClassMap());
-		MapperFacade mapper = factory.getMapperFacade();
-		Bean bean = new Bean();
-		bean.setSize(20);
-		bean.setName("Kidney");
-		mapper.map(bean, Bean.class);
+  @Test
+  public void simpleCase() {
+    MapperFactory factory = new DefaultMapperFactory.Builder().build();
+    factory.registerClassMap(factory.classMap(Bean.class, Bean.class).byDefault().toClassMap());
+    MapperFacade mapper = factory.getMapperFacade();
+    Bean bean = new Bean();
+    bean.setSize(20);
+    bean.setName("Kidney");
+    mapper.map(bean, Bean.class);
 
-		/* If map pass no need to check */
-	}
+    /* If map pass no need to check */
+  }
 
-	public static class Bean {
+  public static class Bean {
 
-		private String name;
-		private int size;
+    private String name;
+    private int size;
 
-		/*
-		 * public int getSize() { return size; }
-		 */
-		public void setSize(int size) {
-			this.size = size;
-		}
+    /*
+     * public int getSize() { return size; }
+     */
+    public void setSize(int size) {
+      this.size = size;
+    }
 
-		public String getName() {
-			return name;
-		}
+    public String getName() {
+      return name;
+    }
 
-		public void setName(String value) {
-			this.name = value;
-		}
-	}
+    public void setName(String value) {
+      this.name = value;
+    }
+  }
 }

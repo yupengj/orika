@@ -17,58 +17,54 @@
  */
 package ma.glasnost.orika.impl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.ObjectFactory;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
- * DefaultConstructorObjectFactory is used for types which should be instantiated
- * using their default constructor.
- * 
- * @author matt.deboer@gmail.com
- *
+ * DefaultConstructorObjectFactory is used for types which should be instantiated using their
+ * default constructor.
  */
 public class DefaultConstructorObjectFactory<T> implements ObjectFactory<T> {
 
-    private final String description;
-    private Constructor<T> constructor;
-    
-    public DefaultConstructorObjectFactory(Class<T> type) {
-        this.constructor = getDefaultConstructor(type);
-        constructor.setAccessible(true);
-        this.description = getClass().getSimpleName() + "<" + type.getSimpleName() + ">";
+  private final String description;
+  private Constructor<T> constructor;
+
+  public DefaultConstructorObjectFactory(Class<T> type) {
+    this.constructor = getDefaultConstructor(type);
+    constructor.setAccessible(true);
+    this.description = getClass().getSimpleName() + "<" + type.getSimpleName() + ">";
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> Constructor<T> getDefaultConstructor(Class<T> type) {
+    for (Constructor<?> c : type.getDeclaredConstructors()) {
+      if (c.getParameterTypes().length == 0) {
+        return (Constructor<T>) c;
+      }
     }
-    
-    @SuppressWarnings("unchecked")
-    private static <T> Constructor<T> getDefaultConstructor(Class<T> type) {
-        for (Constructor<?> c : type.getDeclaredConstructors()) {
-            if (c.getParameterTypes().length ==  0) {
-                return (Constructor<T>) c;
-            }
-        }
-        return null;
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see ma.glasnost.orika.ObjectFactory#create(java.lang.Object, ma.glasnost.orika.MappingContext)
+   */
+  @Override
+  public T create(Object source, MappingContext mappingContext) {
+    try {
+      return constructor.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    } catch (InvocationTargetException e) {
+      throw new IllegalStateException(e);
     }
-    
-    /* (non-Javadoc)
-     * @see ma.glasnost.orika.ObjectFactory#create(java.lang.Object, ma.glasnost.orika.MappingContext)
-     */
-    @Override
-    public T create(Object source, MappingContext mappingContext) {
-        try {
-            return constructor.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalStateException(e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-    
-    public String toString() {
-    	return description;
-    }
-    
+  }
+
+  public String toString() {
+    return description;
+  }
 }

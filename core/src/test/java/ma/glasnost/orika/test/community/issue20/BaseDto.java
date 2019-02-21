@@ -19,65 +19,57 @@ package ma.glasnost.orika.test.community.issue20;
 
 import java.io.Serializable;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 public abstract class BaseDto implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-	private Long id;
+  private Long id;
 
-	private Long version;
+  private Long version;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public Long getVersion() {
-		return version;
-	}
+  public Long getVersion() {
+    return version;
+  }
 
-	public void setVersion(Long version) {
-		this.version = version;
-	}
+  public void setVersion(Long version) {
+    this.version = version;
+  }
 
-	public boolean isNew() {
-		return id == null;
-	}
+  public boolean isNew() {
+    return id == null;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
 
-		if (o == null || (getClass() != o.getClass()))
-			return false;
+    if (o == null || (getClass() != o.getClass())) return false;
 
-		BaseDto that = (BaseDto) o;
+    BaseDto that = (BaseDto) o;
 
-		if (isNew()) {
-			return this == that;
-		} else {
-			return id.equals(that.id);
-		}
+    if (isNew()) {
+      return this == that;
+    } else {
+      return id.equals(that.id);
+    }
+  }
 
-	}
+  @Override
+  public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+  }
 
-	@Override
-	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
-	}
-
-	@Override
-	public String toString() {
-		return "BaseDto{" + "id=" + id + ", version=" + version + '}';
-	}
+  @Override
+  public String toString() {
+    return "BaseDto{" + "id=" + id + ", version=" + version + '}';
+  }
 }

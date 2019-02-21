@@ -18,61 +18,54 @@
 
 package ma.glasnost.orika.impl.mapping.strategy;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import ma.glasnost.orika.MappingStrategy;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
 
-/**
- * AbstractMappingStrategy provides base MappingStrategy functionality
- */
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/** AbstractMappingStrategy provides base MappingStrategy functionality */
 public abstract class AbstractMappingStrategy implements MappingStrategy {
 
-    /**
-     * The source type mapped by this strategy
-     */
-    protected final Type<Object> sourceType;
-    /**
-     * The destination type mapped by this strategy
-     */
-    protected final Type<Object> destinationType;
-    
-    /**
-     * @param sourceType
-     * @param destinationType
-     */
-    public AbstractMappingStrategy(Type<Object> sourceType, Type<Object> destinationType) {
-        this.sourceType = sourceType;
-        this.destinationType = destinationType;
-    }
-    
-    public Type<Object> getAType() {
-        return sourceType;
-    }
+  /** The source type mapped by this strategy */
+  protected final Type<Object> sourceType;
+  /** The destination type mapped by this strategy */
+  protected final Type<Object> destinationType;
 
-    public Type<Object> getBType() {
-        return destinationType;
+  /**
+   * @param sourceType
+   * @param destinationType
+   */
+  public AbstractMappingStrategy(Type<Object> sourceType, Type<Object> destinationType) {
+    this.sourceType = sourceType;
+    this.destinationType = destinationType;
+  }
+
+  public Type<Object> getAType() {
+    return sourceType;
+  }
+
+  public Type<Object> getBType() {
+    return destinationType;
+  }
+
+  public String toString() {
+    StringBuilder out = new StringBuilder(getClass().getSimpleName());
+    String srcName = TypeFactory.nameOf(sourceType, destinationType);
+    String dstName = TypeFactory.nameOf(destinationType, sourceType);
+    out.append("<").append(srcName).append(", ").append(dstName).append(">").append(" {");
+    LinkedHashMap<String, Object> members = new LinkedHashMap<String, Object>();
+    describeMembers(members);
+    String separator = "";
+    for (Entry<String, Object> member : members.entrySet()) {
+      out.append(separator).append(member.getKey()).append(": ").append(member.getValue());
+      separator = ", ";
     }
-    
-    public String toString() {
-    	StringBuilder out = new StringBuilder(getClass().getSimpleName());
-    	String srcName = TypeFactory.nameOf(sourceType, destinationType);
-    	String dstName = TypeFactory.nameOf(destinationType, sourceType);
-    	out.append("<").append(srcName).append(", ")
-    		.append(dstName).append(">").append(" {");
-    	LinkedHashMap<String, Object> members = new LinkedHashMap<String, Object>();
-    	describeMembers(members);
-    	String separator = "";
-    	for (Entry<String, Object> member: members.entrySet()) {
-    		out.append(separator).append(member.getKey()).append(": ").append(member.getValue());
-    		separator = ", ";
-    	}
-    	out.append("}");
-    	return out.toString();
-    }
-    
-    protected abstract void describeMembers(Map<String, Object> members);
+    out.append("}");
+    return out.toString();
+  }
+
+  protected abstract void describeMembers(Map<String, Object> members);
 }

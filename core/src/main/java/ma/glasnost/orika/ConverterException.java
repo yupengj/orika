@@ -20,10 +20,10 @@ package ma.glasnost.orika;
 
 /**
  * An exception that usually occurs during a conversion (run time).
- * 
+ *
  * @author S.M. El Aatifi
  */
 public class ConverterException extends RuntimeException {
 
-	private static final long serialVersionUID = 8568713038592686945L;
+  private static final long serialVersionUID = 8568713038592686945L;
 }

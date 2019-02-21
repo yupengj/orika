@@ -23,74 +23,60 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.test.MappingUtil;
-import ma.glasnost.orika.test.property.TestCaseClasses.Author;
-import ma.glasnost.orika.test.property.TestCaseClasses.AuthorChild;
-import ma.glasnost.orika.test.property.TestCaseClasses.Book;
-import ma.glasnost.orika.test.property.TestCaseClasses.BookChild;
-import ma.glasnost.orika.test.property.TestCaseClasses.BookMyDTO;
-
+import ma.glasnost.orika.test.property.TestCaseClasses.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Verifies that objects that include public fields can also be properly mapped
- * 
- * @author matt.deboer@gmail.com
- *
- */
+/** Verifies that objects that include public fields can also be properly mapped */
 public class PublicFieldMappingTestCase {
-    
-    private Author createAuthor(Class<? extends Author> type) throws InstantiationException, IllegalAccessException {
-        Author author = type.newInstance();
-        author.setName("Khalil Gebran");
-        
-        return author;
-    }
-    
-    private Book createBook(Class<? extends Book> type) throws InstantiationException, IllegalAccessException {
-        Book book = type.newInstance();
-        book.title = "The Prophet";
-        
-        return book;
-    }
-    
-    @Test
-    public void testMappingInterfaceImplementationNoExistingMapping() throws Exception {
-        
-      
-        DefaultFieldMapper myHint =
-                /**
-                 * This sample hint converts "myProperty" to "property", and vis-versa.
-                 */
-                new DefaultFieldMapper() {
-                    
-                    public String suggestMappedField(String fromProperty, Type<?> fromPropertyType) {
-                        if (fromProperty.startsWith("my")) {
-                            return fromProperty.substring(2, 3).toLowerCase() + fromProperty.substring(3);
-                        } else {
-                            return "my" + fromProperty.substring(0, 1).toUpperCase() + fromProperty.substring(1);
-                        }
-                    }
-                    
-                };
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        factory.registerDefaultFieldMapper(myHint);
-        MapperFacade mapper = factory.getMapperFacade();
-        
-        Book book = createBook(BookChild.class);
-        book.setAuthor(createAuthor(AuthorChild.class));
-        
-        BookMyDTO mappedBook = mapper.map(book, BookMyDTO.class);
-        Book mapBack = mapper.map(mappedBook, Book.class);
-        
-        Assert.assertNotNull(mappedBook);
-        Assert.assertNotNull(mapBack);
-        
-        Assert.assertEquals(book.getAuthor().getName(), mappedBook.getMyAuthor().getMyName());
-        Assert.assertEquals(book.title, mappedBook.getMyTitle());
-        Assert.assertEquals(book.getAuthor().getName(), mapBack.getAuthor().getName());
-        Assert.assertEquals(book.title, mapBack.title);
-    }
- 
-    
+
+  private Author createAuthor(Class<? extends Author> type)
+      throws InstantiationException, IllegalAccessException {
+    Author author = type.newInstance();
+    author.setName("Khalil Gebran");
+
+    return author;
+  }
+
+  private Book createBook(Class<? extends Book> type)
+      throws InstantiationException, IllegalAccessException {
+    Book book = type.newInstance();
+    book.title = "The Prophet";
+
+    return book;
+  }
+
+  @Test
+  public void testMappingInterfaceImplementationNoExistingMapping() throws Exception {
+
+    DefaultFieldMapper myHint =
+        /** This sample hint converts "myProperty" to "property", and vis-versa. */
+        new DefaultFieldMapper() {
+
+          public String suggestMappedField(String fromProperty, Type<?> fromPropertyType) {
+            if (fromProperty.startsWith("my")) {
+              return fromProperty.substring(2, 3).toLowerCase() + fromProperty.substring(3);
+            } else {
+              return "my" + fromProperty.substring(0, 1).toUpperCase() + fromProperty.substring(1);
+            }
+          }
+        };
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.registerDefaultFieldMapper(myHint);
+    MapperFacade mapper = factory.getMapperFacade();
+
+    Book book = createBook(BookChild.class);
+    book.setAuthor(createAuthor(AuthorChild.class));
+
+    BookMyDTO mappedBook = mapper.map(book, BookMyDTO.class);
+    Book mapBack = mapper.map(mappedBook, Book.class);
+
+    Assert.assertNotNull(mappedBook);
+    Assert.assertNotNull(mapBack);
+
+    Assert.assertEquals(book.getAuthor().getName(), mappedBook.getMyAuthor().getMyName());
+    Assert.assertEquals(book.title, mappedBook.getMyTitle());
+    Assert.assertEquals(book.getAuthor().getName(), mapBack.getAuthor().getName());
+    Assert.assertEquals(book.title, mapBack.title);
+  }
 }

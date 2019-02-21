@@ -17,27 +17,23 @@
  */
 package ma.glasnost.orika.test.community.issue20;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 public class UserInfo extends BaseDto {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  private String name;
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public String toString() {
-		return "UserInfo{" + "name='" + name + '\'' + "} " + super.toString();
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    return "UserInfo{" + "name='" + name + '\'' + "} " + super.toString();
+  }
 }

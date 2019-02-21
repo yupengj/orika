@@ -22,51 +22,43 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.MappingStrategy;
 import ma.glasnost.orika.metadata.Type;
 
-/**
- * CopyByReferenceStrategy copies the source reference directly to the
- * destination
- */
+/** CopyByReferenceStrategy copies the source reference directly to the destination */
 public class CopyByReferenceStrategy implements MappingStrategy {
-    
-    private static class Singleton {
-        private static CopyByReferenceStrategy INSTANCE = new CopyByReferenceStrategy();
-    }
-    
-    /**
-     * @return the singleton instance of this strategy
-     */
-    public static CopyByReferenceStrategy getInstance() {
-        return Singleton.INSTANCE;
-    }
-    
-    /**
-     * Prevent instantiation
-     */
-    private CopyByReferenceStrategy() {
-    }
-    
-    public Object map(Object sourceObject, Object destinationObject, MappingContext context) {
-        return sourceObject;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ma.glasnost.orika.impl.mapping.strategy.MappingStrategy#getSoureType()
-     */
-    public Type<Object> getAType() {
-        return null;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ma.glasnost.orika.impl.mapping.strategy.MappingStrategy#getDestinationType
-     * ()
-     */
-    public Type<Object> getBType() {
-        return null;
-    }
+
+  /** Prevent instantiation */
+  private CopyByReferenceStrategy() {}
+
+  /** @return the singleton instance of this strategy */
+  public static CopyByReferenceStrategy getInstance() {
+    return Singleton.INSTANCE;
+  }
+
+  public Object map(Object sourceObject, Object destinationObject, MappingContext context) {
+    return sourceObject;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * ma.glasnost.orika.impl.mapping.strategy.MappingStrategy#getSoureType()
+   */
+  public Type<Object> getAType() {
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * ma.glasnost.orika.impl.mapping.strategy.MappingStrategy#getDestinationType
+   * ()
+   */
+  public Type<Object> getBType() {
+    return null;
+  }
+
+  private static class Singleton {
+    private static CopyByReferenceStrategy INSTANCE = new CopyByReferenceStrategy();
+  }
 }

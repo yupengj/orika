@@ -21,9 +21,6 @@ package ma.glasnost.orika.test.unenhance;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.test.MappingUtil;
 import ma.glasnost.orika.test.unenhance.SuperTypeTestCaseClasses.BookDTO;
-
-import java.io.Serializable;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -36,64 +33,61 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:HibernateProxyTestCase-context.xml")
+@ContextConfiguration(locations = "classpath:HibernateProxyTestCase-context.xml")
 @Transactional
 @DirtiesContext
 public class HibernateProxyTestCase {
 
-	private MapperFacade mapper = MappingUtil.getMapperFactory().getMapperFacade();
-	
-	@Autowired
-	private SessionFactory sessionFactory;
-	
-	private Serializable bookId;
+  private MapperFacade mapper = MappingUtil.getMapperFactory().getMapperFacade();
 
+  @Autowired private SessionFactory sessionFactory;
 
-	
-	protected Session getSession() {
-	    return sessionFactory.getCurrentSession();
-	}
-	
-	@Before
-	public void setup() {
-		
-		Author author = new Author();
-		author.setName("Khalil Gebran");
-		getSession().save(author);
+  private Serializable bookId;
 
-		Book book = new Book();
-		book.setTitle("The Prophet");
-		book.setAuthor(author);
-		
-		
-		Book book2 = new Book();
-		book2.setTitle("The Prophet 2");
-		book.setAuthor(author);
-		
-		bookId = getSession().save(book);
-		getSession().save(book2);
-		
-		/*
-		 * Set books also to complete cyclic relationship
-		 */
-		author.getBooks().add(book);
-		author.getBooks().add(book2);
-		
-		
-		getSession().flush();
-		getSession().clear();
-	}
-	
-	@Test
-	public void testMappingProxyObject() {
-		
-		Book book = (Book) getSession().load(Book.class, bookId);
-		for (int i=0; i < 100; ++i) {
-			BookDTO bookDto = mapper.map(book, BookDTO.class);
-	
-			Assert.assertEquals("The Prophet", bookDto.getTitle());
-			Assert.assertEquals("Khalil Gebran", bookDto.getAuthor().getName());
-		}
-	}
+  protected Session getSession() {
+    return sessionFactory.getCurrentSession();
+  }
+
+  @Before
+  public void setup() {
+
+    Author author = new Author();
+    author.setName("Khalil Gebran");
+    getSession().save(author);
+
+    Book book = new Book();
+    book.setTitle("The Prophet");
+    book.setAuthor(author);
+
+    Book book2 = new Book();
+    book2.setTitle("The Prophet 2");
+    book.setAuthor(author);
+
+    bookId = getSession().save(book);
+    getSession().save(book2);
+
+    /*
+     * Set books also to complete cyclic relationship
+     */
+    author.getBooks().add(book);
+    author.getBooks().add(book2);
+
+    getSession().flush();
+    getSession().clear();
+  }
+
+  @Test
+  public void testMappingProxyObject() {
+
+    Book book = (Book) getSession().load(Book.class, bookId);
+    for (int i = 0; i < 100; ++i) {
+      BookDTO bookDto = mapper.map(book, BookDTO.class);
+
+      Assert.assertEquals("The Prophet", bookDto.getTitle());
+      Assert.assertEquals("Khalil Gebran", bookDto.getAuthor().getName());
+    }
+  }
 }

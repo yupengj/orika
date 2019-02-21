@@ -21,43 +21,45 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class ManufacturingFacilityDTS implements Serializable {
+public class ManufacturingFacilityDTS implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1917745131193055771L;
-	
-	private ManufacturingFacilityDTO manufacturingfacility;
-	private List<AddressDTO>	addressL;
-	
-	public ManufacturingFacilityDTO getManufacturingfacility() {
-		return (manufacturingfacility==null)? manufacturingfacility = new ManufacturingFacilityDTO():this.manufacturingfacility;
-	}
-	public void setManufacturingfacility(ManufacturingFacilityDTO manufacturingfacility) {
-		this.manufacturingfacility = manufacturingfacility;
-	}
-	public List<AddressDTO> getAddressL() {
-		return (addressL == null ? addressL = new ArrayList<AddressDTO>() : addressL);
-	}
-	public void setAddressL(List<AddressDTO> addressL) {
-		this.addressL = addressL;
-	}
-	
-	public String getDescription() {
-		return getManufacturingfacility().getDescription();
-	}
+  /** */
+  private static final long serialVersionUID = -1917745131193055771L;
 
-	public void setDescription(String description) {
-		getManufacturingfacility().setDescription(description);
-	}
+  private ManufacturingFacilityDTO manufacturingfacility;
+  private List<AddressDTO> addressL;
 
-	public Long getIdNumber() {
-		return getManufacturingfacility().getIdNumber();
-	}
+  public ManufacturingFacilityDTO getManufacturingfacility() {
+    return (manufacturingfacility == null)
+        ? manufacturingfacility = new ManufacturingFacilityDTO()
+        : this.manufacturingfacility;
+  }
 
-	public void setIdNumber(Long idNumber) {
-		getManufacturingfacility().setIdNumber(idNumber);
-	}
+  public void setManufacturingfacility(ManufacturingFacilityDTO manufacturingfacility) {
+    this.manufacturingfacility = manufacturingfacility;
+  }
+
+  public List<AddressDTO> getAddressL() {
+    return (addressL == null ? addressL = new ArrayList<AddressDTO>() : addressL);
+  }
+
+  public void setAddressL(List<AddressDTO> addressL) {
+    this.addressL = addressL;
+  }
+
+  public String getDescription() {
+    return getManufacturingfacility().getDescription();
+  }
+
+  public void setDescription(String description) {
+    getManufacturingfacility().setDescription(description);
+  }
+
+  public Long getIdNumber() {
+    return getManufacturingfacility().getIdNumber();
+  }
+
+  public void setIdNumber(Long idNumber) {
+    getManufacturingfacility().setIdNumber(idNumber);
+  }
 }
-

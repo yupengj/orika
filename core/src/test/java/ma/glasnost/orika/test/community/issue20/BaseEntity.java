@@ -19,17 +19,9 @@ package ma.glasnost.orika.test.community.issue20;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import javax.persistence.*;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @MappedSuperclass
 public abstract class BaseEntity {
   private Long id;
@@ -74,7 +66,6 @@ public abstract class BaseEntity {
       return false;
     }
 
-
     BaseEntity that = (BaseEntity) o;
 
     if (isNew()) {
@@ -82,7 +73,6 @@ public abstract class BaseEntity {
     } else {
       return id.equals(that.id);
     }
-
   }
 
   @Override
@@ -92,9 +82,6 @@ public abstract class BaseEntity {
 
   @Override
   public String toString() {
-    return "BaseEntity{" +
-      "id=" + id +
-      ", version=" + version +
-      '}';
+    return "BaseEntity{" + "id=" + id + ", version=" + version + '}';
   }
 }

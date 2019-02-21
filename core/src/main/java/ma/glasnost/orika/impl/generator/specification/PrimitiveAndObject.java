@@ -23,41 +23,49 @@ import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.TypeFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author mattdeboer
- *
- */
+/** @author mattdeboer */
 public class PrimitiveAndObject extends AbstractSpecification {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrimitiveAndObject.class);
-    
-    public boolean appliesTo(FieldMap fieldMap) {
-        return (fieldMap.getSource().getType().isPrimitive() 
-                && !TypeFactory.TYPE_OF_OBJECT.equals(fieldMap.getDestination().getType()))
-                    || fieldMap.getDestination().getType().isPrimitive();
-    }
+  private static final Logger LOGGER = LoggerFactory.getLogger(PrimitiveAndObject.class);
 
-    public String generateEqualityTestCode(FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
-        return source + " == " + destination;
-    }
+  public boolean appliesTo(FieldMap fieldMap) {
+    return (fieldMap.getSource().getType().isPrimitive()
+            && !TypeFactory.TYPE_OF_OBJECT.equals(fieldMap.getDestination().getType()))
+        || fieldMap.getDestination().getType().isPrimitive();
+  }
 
-    public String generateMappingCode(FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
-        LOGGER.debug("PrimitiveAndObject condition occurred; context: " +
-                "\nsrc: " + source.property() + 
-                "\nsrc.isArrayElement: " + source.property().isArrayElement() + 
-                "\nsrc.isListElement: " + source.property().isListElement() + 
-                "\nsrc.isMapKey: " + source.property().isMapKey() + 
-                "\ndest: " + destination.property() + 
-                "\ndest.isArrayElement: " + destination.property().isArrayElement() + 
-                "\ndest.isListElement: " + destination.property().isListElement() + 
-                "\ndest.isMapKey: " + destination.property().isMapKey()
-                );
-        throw new MappingException("Encountered mapping of primitive to object (or vise-versa); sourceType="+
-                source.type() + ", destinationType=" + destination.type());
-    }
-    
+  public String generateEqualityTestCode(
+      FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
+    return source + " == " + destination;
+  }
+
+  public String generateMappingCode(
+      FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
+    LOGGER.debug(
+        "PrimitiveAndObject condition occurred; context: "
+            + "\nsrc: "
+            + source.property()
+            + "\nsrc.isArrayElement: "
+            + source.property().isArrayElement()
+            + "\nsrc.isListElement: "
+            + source.property().isListElement()
+            + "\nsrc.isMapKey: "
+            + source.property().isMapKey()
+            + "\ndest: "
+            + destination.property()
+            + "\ndest.isArrayElement: "
+            + destination.property().isArrayElement()
+            + "\ndest.isListElement: "
+            + destination.property().isListElement()
+            + "\ndest.isMapKey: "
+            + destination.property().isMapKey());
+    throw new MappingException(
+        "Encountered mapping of primitive to object (or vise-versa); sourceType="
+            + source.type()
+            + ", destinationType="
+            + destination.type());
+  }
 }

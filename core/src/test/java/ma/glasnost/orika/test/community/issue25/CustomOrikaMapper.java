@@ -17,9 +17,6 @@
  */
 package ma.glasnost.orika.test.community.issue25;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
@@ -29,31 +26,43 @@ import ma.glasnost.orika.test.community.issue25.modelA.ManufacturingFacility;
 import ma.glasnost.orika.test.community.issue25.modelB.AddressDTO;
 import ma.glasnost.orika.test.community.issue25.modelB.ManufacturingFacilityDTS;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CustomOrikaMapper extends ConfigurableMapper {
-    
-    @Override
-    public void configure(MapperFactory mapperFactory) {
 
-        mapperFactory.registerMapper(new AddressMergingMapper());
-        mapperFactory.registerConcreteType(new TypeBuilder<List<Address>>(){}.build(), 
-                                           new TypeBuilder<ArrayList<Address>>(){}.build()); 
-        mapperFactory.registerConcreteType(new TypeBuilder<List<AddressDTO>>(){}.build(), 
-                                           new TypeBuilder<ArrayList<AddressDTO>>(){}.build()); 
+  @Override
+  public void configure(MapperFactory mapperFactory) {
 
-        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        //Add converters...
-        
-        mapperFactory.registerClassMap(mapperFactory.classMap(ManufacturingFacility.class, ManufacturingFacilityDTS.class )
-                                .fieldMap("description" , "manufacturingfacility.description").add()
-                                .fieldMap("addresses","addressL").add()
-                                .toClassMap()
-                                );
-        
-        mapperFactory.registerClassMap(mapperFactory.classMap(Address.class, AddressDTO.class )
-                                .fieldMap("idNumber",   "idNumber").add()
-                                .fieldMap("street",     "street").add()
-                                .fieldMap("postalcode", "postalcode").add()
-                                .toClassMap()
-                                );
-    }
+    mapperFactory.registerMapper(new AddressMergingMapper());
+    mapperFactory.registerConcreteType(
+        new TypeBuilder<List<Address>>() {}.build(),
+        new TypeBuilder<ArrayList<Address>>() {}.build());
+    mapperFactory.registerConcreteType(
+        new TypeBuilder<List<AddressDTO>>() {}.build(),
+        new TypeBuilder<ArrayList<AddressDTO>>() {}.build());
+
+    ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+    // Add converters...
+
+    mapperFactory.registerClassMap(
+        mapperFactory
+            .classMap(ManufacturingFacility.class, ManufacturingFacilityDTS.class)
+            .fieldMap("description", "manufacturingfacility.description")
+            .add()
+            .fieldMap("addresses", "addressL")
+            .add()
+            .toClassMap());
+
+    mapperFactory.registerClassMap(
+        mapperFactory
+            .classMap(Address.class, AddressDTO.class)
+            .fieldMap("idNumber", "idNumber")
+            .add()
+            .fieldMap("street", "street")
+            .add()
+            .fieldMap("postalcode", "postalcode")
+            .add()
+            .toClassMap());
+  }
 }

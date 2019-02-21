@@ -18,54 +18,62 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
 import ma.glasnost.orika.impl.generator.MultiOccurrenceVariableRef;
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-/**
- * ObjectToObject
- *
- */
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
+/** ObjectToObject */
 public class ObjectToObject extends AbstractSpecification {
 
-    public boolean appliesTo(FieldMap fieldMap) {
-        return true;
+  public boolean appliesTo(FieldMap fieldMap) {
+    return true;
+  }
+
+  public String generateMappingCode(
+      FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
+
+    if (code.isDebugEnabled()) {
+      code.debugField(fieldMap, "mapping object to object");
     }
 
-    public String generateMappingCode(FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code) {
-        
-        if (code.isDebugEnabled()) {
-            code.debugField(fieldMap, "mapping object to object");
-        }
-        
-        String mapNewObject = destination.assignIfPossible(format("(%s)%s", destination.typeName(), code.callMapper(source, destination.type()), source));
-        String mapExistingObject = code.callMapper(source, destination);
-        if (destination.isAssignable()) {
-        	mapExistingObject = destination.assignIfPossible(format("(%s)%s", destination.typeName(), mapExistingObject));
-        }
-        String mapStmt = format(" %s { %s; } else { %s; }", destination.ifNull(), mapNewObject, mapExistingObject);
-        
-        String ipStmt = "";
-        if (fieldMap.getInverse() != null) {
-            VariableRef inverse = new VariableRef(fieldMap.getInverse(), destination);
-            
-            if (inverse.isCollection()) {
-                MultiOccurrenceVariableRef inverseCollection = MultiOccurrenceVariableRef.from(inverse);
-                ipStmt += inverse.ifNull() + inverse.assign(inverseCollection.newCollection()) + ";";
-                ipStmt += format("%s.add(%s);", inverse, destination.owner());
-            } else if (inverse.isArray()) {
-                ipStmt += "/* TODO Orika source code does not support Arrays */";
-            } else {
-                ipStmt += statement(inverse.assign(destination.owner()));
-            }
-        }
-        
-        String mapNull = destination.isAssignable() && shouldMapNulls(fieldMap, code) ? format(" else {\n %s { %s; }\n}\n", destination.ifPathNotNull(), destination.assign("null")): "";
-        return statement("%s { %s  %s } %s", source.ifNotNull(), mapStmt, ipStmt, mapNull);
-        
+    String mapNewObject =
+        destination.assignIfPossible(
+            format(
+                "(%s)%s",
+                destination.typeName(), code.callMapper(source, destination.type()), source));
+    String mapExistingObject = code.callMapper(source, destination);
+    if (destination.isAssignable()) {
+      mapExistingObject =
+          destination.assignIfPossible(format("(%s)%s", destination.typeName(), mapExistingObject));
     }
-    
+    String mapStmt =
+        format(" %s { %s; } else { %s; }", destination.ifNull(), mapNewObject, mapExistingObject);
+
+    String ipStmt = "";
+    if (fieldMap.getInverse() != null) {
+      VariableRef inverse = new VariableRef(fieldMap.getInverse(), destination);
+
+      if (inverse.isCollection()) {
+        MultiOccurrenceVariableRef inverseCollection = MultiOccurrenceVariableRef.from(inverse);
+        ipStmt += inverse.ifNull() + inverse.assign(inverseCollection.newCollection()) + ";";
+        ipStmt += format("%s.add(%s);", inverse, destination.owner());
+      } else if (inverse.isArray()) {
+        ipStmt += "/* TODO Orika source code does not support Arrays */";
+      } else {
+        ipStmt += statement(inverse.assign(destination.owner()));
+      }
+    }
+
+    String mapNull =
+        destination.isAssignable() && shouldMapNulls(fieldMap, code)
+            ? format(
+                " else {\n %s { %s; }\n}\n",
+                destination.ifPathNotNull(), destination.assign("null"))
+            : "";
+    return statement("%s { %s  %s } %s", source.ifNotNull(), mapStmt, ipStmt, mapNull);
+  }
 }

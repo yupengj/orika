@@ -23,54 +23,63 @@ import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
- * ConstructorConverter will converter from one type to another if there exists
- * a constructor for the destinationType with a single argument matching the
- * type of the source.
- * 
- * @author matt.deboer@gmail.com
+ * ConstructorConverter will converter from one type to another if there exists a constructor for
+ * the destinationType with a single argument matching the type of the source.
+ *
  * @author elaatifi@gmail.com
  */
 public class ConstructorConverter extends BuiltinCustomConverter<Object, Object> {
-    
-    public boolean canConvert(Type<?> sourceType, Type<?> destinationType) {
-        try {
-            return destinationType.getRawType().getConstructor(sourceType.getRawType()) != null;
-        } catch (NoSuchMethodException e) {
-            try {
-                if (sourceType.isPrimitive()) {
-                    return destinationType.getRawType().getConstructor(ClassUtil.getWrapperType(sourceType.getRawType())) != null;
-                } else if (sourceType.isPrimitiveWrapper()) {
-                    return destinationType.getRawType().getConstructor(ClassUtil.getPrimitiveType(sourceType.getRawType())) != null;
-                } else {
-                    return false;
-                }
-            } catch (NoSuchMethodException e1) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
+
+  public boolean canConvert(Type<?> sourceType, Type<?> destinationType) {
+    try {
+      return destinationType.getRawType().getConstructor(sourceType.getRawType()) != null;
+    } catch (NoSuchMethodException e) {
+      try {
+        if (sourceType.isPrimitive()) {
+          return destinationType
+                  .getRawType()
+                  .getConstructor(ClassUtil.getWrapperType(sourceType.getRawType()))
+              != null;
+        } else if (sourceType.isPrimitiveWrapper()) {
+          return destinationType
+                  .getRawType()
+                  .getConstructor(ClassUtil.getPrimitiveType(sourceType.getRawType()))
+              != null;
+        } else {
+          return false;
         }
+      } catch (NoSuchMethodException e1) {
+        return false;
+      }
+    } catch (Exception e) {
+      return false;
     }
-    
-    public Object convert(Object source, Type<?> destinationType, MappingContext context) {
-        try {
-            return destinationType.getRawType().getConstructor(source.getClass()).newInstance(source);
-        } catch (NoSuchMethodException e) {
-            Type<?> sourceType = TypeFactory.valueOf(source.getClass());
-            try {
-                if (sourceType.isPrimitive()) {
-                    return destinationType.getRawType().getConstructor(ClassUtil.getWrapperType(sourceType.getRawType())).newInstance(source);
-                } else if (sourceType.isPrimitiveWrapper()) {
-                    return destinationType.getRawType().getConstructor(ClassUtil.getPrimitiveType(sourceType.getRawType())).newInstance(source);
-                } else {
-                    return false;
-                }
-            } catch (Exception e1) {
-                return false;
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+  }
+
+  public Object convert(Object source, Type<?> destinationType, MappingContext context) {
+    try {
+      return destinationType.getRawType().getConstructor(source.getClass()).newInstance(source);
+    } catch (NoSuchMethodException e) {
+      Type<?> sourceType = TypeFactory.valueOf(source.getClass());
+      try {
+        if (sourceType.isPrimitive()) {
+          return destinationType
+              .getRawType()
+              .getConstructor(ClassUtil.getWrapperType(sourceType.getRawType()))
+              .newInstance(source);
+        } else if (sourceType.isPrimitiveWrapper()) {
+          return destinationType
+              .getRawType()
+              .getConstructor(ClassUtil.getPrimitiveType(sourceType.getRawType()))
+              .newInstance(source);
+        } else {
+          return false;
         }
+      } catch (Exception e1) {
+        return false;
+      }
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e);
     }
-    
+  }
 }

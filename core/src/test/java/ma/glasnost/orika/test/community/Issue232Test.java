@@ -32,51 +32,55 @@ import static org.junit.Assert.assertNotNull;
 
 public class Issue232Test {
 
-    private MapperFactory mapperFactory;
+  private MapperFactory mapperFactory;
 
-    @Before
-    public void setUp() throws Exception {
-        mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.registerFilter(new NullFilter<Map, Map>());
-        mapperFactory.classMap(FirstClassWithMap.class, SecondClassWithMap.class).byDefault().register();
+  @Before
+  public void setUp() throws Exception {
+    mapperFactory = new DefaultMapperFactory.Builder().build();
+    mapperFactory.registerFilter(new NullFilter<Map, Map>());
+    mapperFactory
+        .classMap(FirstClassWithMap.class, SecondClassWithMap.class)
+        .byDefault()
+        .register();
+  }
+
+  @Test
+  public void test_map_to_map_with_filter() {
+    FirstClassWithMap firstMap = new FirstClassWithMap();
+    firstMap.setMap(new HashMap<String, String>());
+    firstMap.getMap().put("A", "1");
+
+    SecondClassWithMap transformed =
+        mapperFactory.getMapperFacade().map(firstMap, SecondClassWithMap.class);
+
+    assertNotNull(transformed);
+    assertNotNull(transformed.getMap());
+    assertEquals("1", transformed.getMap().get("A"));
+  }
+
+  public static class FirstClassWithMap {
+
+    private Map<String, String> map;
+
+    public Map<String, String> getMap() {
+      return map;
     }
 
-    @Test
-    public void test_map_to_map_with_filter() {
-        FirstClassWithMap firstMap = new FirstClassWithMap();
-        firstMap.setMap(new HashMap<String, String>());
-        firstMap.getMap().put("A", "1");
+    public void setMap(Map<String, String> map) {
+      this.map = map;
+    }
+  }
 
-        SecondClassWithMap transformed = mapperFactory.getMapperFacade().map(firstMap, SecondClassWithMap.class);
+  public static class SecondClassWithMap {
 
-        assertNotNull(transformed);
-        assertNotNull(transformed.getMap());
-        assertEquals("1", transformed.getMap().get("A"));
+    private Map<String, String> map;
+
+    public Map<String, String> getMap() {
+      return map;
     }
 
-    public static class FirstClassWithMap {
-
-        private Map<String, String> map;
-
-        public Map<String, String> getMap() {
-            return map;
-        }
-
-        public void setMap(Map<String, String> map) {
-            this.map = map;
-        }
+    public void setMap(Map<String, String> map) {
+      this.map = map;
     }
-
-    public static class SecondClassWithMap {
-
-        private Map<String, String> map;
-
-        public Map<String, String> getMap() {
-            return map;
-        }
-
-        public void setMap(Map<String, String> map) {
-            this.map = map;
-        }
-    }
+  }
 }

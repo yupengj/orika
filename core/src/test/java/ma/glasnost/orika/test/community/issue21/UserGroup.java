@@ -17,72 +17,72 @@
  */
 package ma.glasnost.orika.test.community.issue21;
 
-import ma.glasnost.orika.test.community.issue21.BaseEntity;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * 
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @Entity
 public class UserGroup extends BaseEntity {
-	private String name;
-	private String caption;
-	private Set<User> users;
+  private String name;
+  private String caption;
+  private Set<User> users;
 
-	public UserGroup() {
-	}
+  public UserGroup() {}
 
-	public UserGroup(String name) {
-		this.name = name;
-		users = new HashSet<User>();
-	}
+  public UserGroup(String name) {
+    this.name = name;
+    users = new HashSet<User>();
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getCaption() {
-		return caption;
-	}
+  public String getCaption() {
+    return caption;
+  }
 
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
+  public void setCaption(String caption) {
+    this.caption = caption;
+  }
 
-	@OneToMany
-	@JoinColumn
-	public Set<User> getUsers() {
-		return users;
-	}
+  @OneToMany
+  @JoinColumn
+  public Set<User> getUsers() {
+    return users;
+  }
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
+  public void setUsers(Set<User> users) {
+    this.users = users;
+  }
 
-	public void removeUser(User user) {
-		getUsers().remove(user);
-		user.setGroup(null);
-	}
+  public void removeUser(User user) {
+    getUsers().remove(user);
+    user.setGroup(null);
+  }
 
-	public void addUser(User user) {
-		getUsers().add(user);
-		user.setGroup(this);
-	}
+  public void addUser(User user) {
+    getUsers().add(user);
+    user.setGroup(this);
+  }
 
-	@Override
-	public String toString() {
-		return "UserGroup{" + "name='" + name + '\'' + ", caption='" + caption
-				+ '\'' + "} " + super.toString();
-	}
+  @Override
+  public String toString() {
+    return "UserGroup{"
+        + "name='"
+        + name
+        + '\''
+        + ", caption='"
+        + caption
+        + '\''
+        + "} "
+        + super.toString();
+  }
 }

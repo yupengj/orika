@@ -23,67 +23,68 @@ import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
  * Abstract super-class for all generated mappers and user custom mappers.
- * 
+ *
  * @see ma.glasnost.orika.metadata.ClassMapBuilder
  * @author S.M. El Aatifi
- * 
  */
 public abstract class CustomMapper<A, B> implements Mapper<A, B> {
-    
-    private static final Type<Mapper> MAPPER_INTERFACE = TypeFactory.valueOf(Mapper.class);
-    protected Type<A> aType;
-    protected Type<B> bType;
-    protected MapperFacade mapperFacade;
-    
-    public CustomMapper() {
-        try {
-            Type<?> mapperInterface = TypeFactory.valueOf(getClass()).findInterface(MAPPER_INTERFACE);
-            java.lang.reflect.Type[] actualTypeArguments = mapperInterface.getActualTypeArguments();
-            aType = TypeFactory.valueOf(actualTypeArguments[0]);
-            bType = TypeFactory.valueOf(actualTypeArguments[1]);
-        } catch (IllegalArgumentException e) {
-            /*
-             * do nothing; this was not extended by a user getXXType methods
-             * must be manually overridden
-             */
-        }
+
+  private static final Type<Mapper> MAPPER_INTERFACE = TypeFactory.valueOf(Mapper.class);
+  protected Type<A> aType;
+  protected Type<B> bType;
+  protected MapperFacade mapperFacade;
+
+  public CustomMapper() {
+    try {
+      Type<?> mapperInterface = TypeFactory.valueOf(getClass()).findInterface(MAPPER_INTERFACE);
+      java.lang.reflect.Type[] actualTypeArguments = mapperInterface.getActualTypeArguments();
+      aType = TypeFactory.valueOf(actualTypeArguments[0]);
+      bType = TypeFactory.valueOf(actualTypeArguments[1]);
+    } catch (IllegalArgumentException e) {
+      /*
+       * do nothing; this was not extended by a user getXXType methods
+       * must be manually overridden
+       */
     }
-    
-    public void mapAtoB(A a, B b, MappingContext context) {
-        /* */
+  }
+
+  public void mapAtoB(A a, B b, MappingContext context) {
+    /* */
+  }
+
+  public void mapBtoA(B b, A a, MappingContext context) {
+    /* */
+  }
+
+  public Type<A> getAType() {
+    if (aType == null) {
+      throw new IllegalStateException(
+          "getAType() must be overridden when Type parameters are not supplied");
     }
-    
-    public void mapBtoA(B b, A a, MappingContext context) {
-        /* */
+    return aType;
+  }
+
+  public Type<B> getBType() {
+    if (bType == null) {
+      throw new IllegalStateException(
+          "getBType() must be overridden when Type parameters are not supplied");
     }
-    
-    public Type<A> getAType() {
-        if (aType == null) {
-            throw new IllegalStateException("getAType() must be overridden when Type parameters are not supplied");
-        }
-        return aType;
-    }
-    
-    public Type<B> getBType() {
-        if (bType == null) {
-            throw new IllegalStateException("getBType() must be overridden when Type parameters are not supplied");
-        }
-        return bType;
-    }
-    
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
-    }
-    
-    public void setUsedMappers(Mapper<Object, Object>[] mapper) {
-        throw throwShouldNotCalledCustomMapper();
-    }
-    
-    public Boolean favorsExtension() {
-        return false;
-    }
-    
-    private IllegalStateException throwShouldNotCalledCustomMapper() {
-        return new IllegalStateException("Should not be called for a user custom mapper.");
-    }
+    return bType;
+  }
+
+  public void setMapperFacade(MapperFacade mapperFacade) {
+    this.mapperFacade = mapperFacade;
+  }
+
+  public void setUsedMappers(Mapper<Object, Object>[] mapper) {
+    throw throwShouldNotCalledCustomMapper();
+  }
+
+  public Boolean favorsExtension() {
+    return false;
+  }
+
+  private IllegalStateException throwShouldNotCalledCustomMapper() {
+    return new IllegalStateException("Should not be called for a user custom mapper.");
+  }
 }

@@ -17,103 +17,84 @@
  */
 package ma.glasnost.orika.test.community;
 
-import java.util.Date;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.test.MappingUtil;
-
 import org.junit.Test;
+
+import java.util.Date;
 
 /**
  * Orika wraps user exceptions in MapperException
- * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/65">https://code.google.com/archive/p/orika/</a>
- * @author matt.deboer@gmail.com
  *
+ * <p>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/65">https://code.google.com/archive/p/orika/</a>
  */
 public class Issue65TestCase {
-    
-    public static class CustomException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
+
+  @Test(expected = CustomException.class)
+  public void throwExceptions() {
+
+    MapperFactory mapperFactory = MappingUtil.getMapperFactory();
+    MapperFacade mapper = mapperFactory.getMapperFacade();
+
+    DomainObjectDto dto = new DomainObjectDto();
+    dto.setDate(new Date());
+    dto.setValue(-2L);
+
+    mapper.map(dto, DomainObject.class);
+  }
+
+  public static class CustomException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+  }
+
+  public static class DomainObject {
+
+    private Long value;
+    private Date date;
+    /** @return the value */
+    public Long getValue() {
+      return value;
     }
-    
-    public static class DomainObject {
-        
-        private Long value;
-        private Date date;
-        /**
-         * @return the value
-         */
-        public Long getValue() {
-            return value;
-        }
-        /**
-         * @param value the value to set
-         */
-        public void setValue(Long value) {
-            if (value == null || value <= 0) {
-                throw new CustomException();
-            }
-            this.value = value;
-        }
-        /**
-         * @return the date
-         */
-        public Date getDate() {
-            return date;
-        }
-        /**
-         * @param date the date to set
-         */
-        public void setDate(Date date) {
-            this.date = date;
-        }
-        
+    /** @param value the value to set */
+    public void setValue(Long value) {
+      if (value == null || value <= 0) {
+        throw new CustomException();
+      }
+      this.value = value;
     }
-    
-    public static class DomainObjectDto {
-        
-        private Long value;
-        private Date date;
-        /**
-         * @return the value
-         */
-        public Long getValue() {
-            return value;
-        }
-        /**
-         * @param value the value to set
-         */
-        public void setValue(Long value) {
-            this.value = value;
-        }
-        /**
-         * @return the date
-         */
-        public Date getDate() {
-            return date;
-        }
-        /**
-         * @param date the date to set
-         */
-        public void setDate(Date date) {
-            this.date = date;
-        }
+    /** @return the date */
+    public Date getDate() {
+      return date;
     }
-    
-    
-    @Test(expected=CustomException.class)
-    public void throwExceptions() {
-        
-        MapperFactory mapperFactory = MappingUtil.getMapperFactory();
-        MapperFacade mapper = mapperFactory.getMapperFacade();
-        
-        DomainObjectDto dto = new DomainObjectDto();
-        dto.setDate(new Date());
-        dto.setValue(-2L);
-        
-        mapper.map(dto, DomainObject.class); 
+    /** @param date the date to set */
+    public void setDate(Date date) {
+      this.date = date;
     }
+  }
+
+  public static class DomainObjectDto {
+
+    private Long value;
+    private Date date;
+    /** @return the value */
+    public Long getValue() {
+      return value;
+    }
+    /** @param value the value to set */
+    public void setValue(Long value) {
+      this.value = value;
+    }
+    /** @return the date */
+    public Date getDate() {
+      return date;
+    }
+    /** @param date the date to set */
+    public void setDate(Date date) {
+      this.date = date;
+    }
+  }
 }

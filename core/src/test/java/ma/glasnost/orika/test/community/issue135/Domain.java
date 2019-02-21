@@ -20,44 +20,42 @@ package ma.glasnost.orika.test.community.issue135;
 
 public class Domain {
 
-	private SubA subA;
+  private SubA subA;
 
-	private SubB subB;
-	
-	private int primitive;
-	private boolean active; 
+  private SubB subB;
 
-	public SubA getSubA() {
-		return subA;
-	}
+  private int primitive;
+  private boolean active;
 
-	public void setSubA(SubA subA) {
-		this.subA = subA;
-	}
+  public SubA getSubA() {
+    return subA;
+  }
 
-	public SubB getSubB() {
-		return subB;
-	}
+  public void setSubA(SubA subA) {
+    this.subA = subA;
+  }
 
-	public void setSubB(SubB subB) {
-		this.subB = subB;
-	}
+  public SubB getSubB() {
+    return subB;
+  }
 
-	public int getPrimitive() {
-		return primitive;
-	}
+  public void setSubB(SubB subB) {
+    this.subB = subB;
+  }
 
-	public void setPrimitive(int primtive) {
-		this.primitive = primtive;
-	}
+  public int getPrimitive() {
+    return primitive;
+  }
 
-	public boolean isActive() {
-		return active;
-	}
+  public void setPrimitive(int primtive) {
+    this.primitive = primtive;
+  }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 }

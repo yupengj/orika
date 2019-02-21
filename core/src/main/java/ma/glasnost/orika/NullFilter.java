@@ -21,48 +21,54 @@ package ma.glasnost.orika;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * A filter that does no filtering. This provides a useful base class for simple filters
- * that just want to implement one facet.
- * 
+ * A filter that does no filtering. This provides a useful base class for simple filters that just
+ * want to implement one facet.
+ *
  * @param <A>
  * @param <B>
  */
 public class NullFilter<A, B> extends CustomFilter<A, B> {
-    /**
-     * @return false
-     */
-    public boolean filtersSource() {
-        return false;
-    }
+  /** @return false */
+  public boolean filtersSource() {
+    return false;
+  }
 
-    /**
-     * @return false
-     */
-    public boolean filtersDestination() {
-        return false;
-    }
+  /** @return false */
+  public boolean filtersDestination() {
+    return false;
+  }
 
-    /**
-     * @return true
-     */
-    public <S extends A, D extends B> boolean shouldMap(final Type<S> sourceType, final String sourceName, final S source, final Type<D> destType, final String destName,
-            D dest, final MappingContext mappingContext) {
-        return true;
-    }
+  /** @return true */
+  public <S extends A, D extends B> boolean shouldMap(
+      final Type<S> sourceType,
+      final String sourceName,
+      final S source,
+      final Type<D> destType,
+      final String destName,
+      D dest,
+      final MappingContext mappingContext) {
+    return true;
+  }
 
-    /**
-     * @return destinationValue
-     */
-    public <D extends B> D filterDestination(D destinationValue, final Type<?> sourceType, final String sourceName, final Type<D> destType,
-            final String destName, final MappingContext mappingContext) {
-        return destinationValue;
-    }
+  /** @return destinationValue */
+  public <D extends B> D filterDestination(
+      D destinationValue,
+      final Type<?> sourceType,
+      final String sourceName,
+      final Type<D> destType,
+      final String destName,
+      final MappingContext mappingContext) {
+    return destinationValue;
+  }
 
-    /**
-     * @return sourceValue
-     */
-    public <S extends A> S filterSource(final S sourceValue, final Type<S> sourceType, final String sourceName, final Type<?> destType,
-            final String destName, final MappingContext mappingContext) {
-        return sourceValue;
-    }
+  /** @return sourceValue */
+  public <S extends A> S filterSource(
+      final S sourceValue,
+      final Type<S> sourceType,
+      final String sourceName,
+      final Type<?> destType,
+      final String destName,
+      final MappingContext mappingContext) {
+    return sourceValue;
+  }
 }

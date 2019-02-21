@@ -28,59 +28,50 @@ import java.net.URLClassLoader;
 import static ma.glasnost.orika.test.TestUtil.getJavaSourceClassLoader;
 
 /**
- *
- * Note: this test is named '_IDEOnly' to allow it to be skipped 
- * during maven tests, as it has achieved inconsistent results
- * using that method.
- * Until a better solution can be found, we relegate it to running only
- * within the IDE.
+ * Note: this test is named '_IDEOnly' to allow it to be skipped during maven tests, as it has
+ * achieved inconsistent results using that method. Until a better solution can be found, we
+ * relegate it to running only within the IDE.
  */
 public class MultiLayeredClassloader_IDEOnly {
-    
-	/**
-	 * @return a copy of the current thread context class-loader
-	 */
-	public static ClassLoader copyThreadContextClassLoader() {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		if (cl instanceof URLClassLoader) {
-			@SuppressWarnings("resource")
-			URLClassLoader ucl = (URLClassLoader)cl;
-			return new URLClassLoader(ucl.getURLs());
-		} else {
-			throw new IllegalStateException("ThreadContextClassLoader is not a URLClassLoader");
-		}
-	}
 
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    /**
-     * Test that Orika can be run from a nested class-loader
-     */
-    @Test
-    public void nestedClassLoader() throws Exception {
-
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        File tempClasses = temporaryFolder.getRoot();
-
-        ClassLoader threadContextLoader = Thread.currentThread().getContextClassLoader();
-        getJavaSourceClassLoader(threadContextLoader);
-        ClassLoader childLoader = new URLClassLoader(new URL[]{tempClasses.toURI().toURL()},
-        		copyThreadContextClassLoader());
-        
-        Class<?> runnerClass = childLoader.loadClass("dtotypes.Runner");
-        Object runner = runnerClass.newInstance();
-        try {
-            Thread.currentThread().setContextClassLoader(childLoader);
-        
-            childLoader.loadClass("dtotypes.BookHiddenDto");
-            childLoader.loadClass("types.BookHidden");
-            
-            runnerClass.getMethod("test").invoke(runner);
-            
-        } finally {
-            Thread.currentThread().setContextClassLoader(tccl);
-        }
-        
+  /** @return a copy of the current thread context class-loader */
+  public static ClassLoader copyThreadContextClassLoader() {
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    if (cl instanceof URLClassLoader) {
+      @SuppressWarnings("resource")
+      URLClassLoader ucl = (URLClassLoader) cl;
+      return new URLClassLoader(ucl.getURLs());
+    } else {
+      throw new IllegalStateException("ThreadContextClassLoader is not a URLClassLoader");
     }
+  }
+
+  /** Test that Orika can be run from a nested class-loader */
+  @Test
+  public void nestedClassLoader() throws Exception {
+
+    final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+    File tempClasses = temporaryFolder.getRoot();
+
+    ClassLoader threadContextLoader = Thread.currentThread().getContextClassLoader();
+    getJavaSourceClassLoader(threadContextLoader);
+    ClassLoader childLoader =
+        new URLClassLoader(new URL[] {tempClasses.toURI().toURL()}, copyThreadContextClassLoader());
+
+    Class<?> runnerClass = childLoader.loadClass("dtotypes.Runner");
+    Object runner = runnerClass.newInstance();
+    try {
+      Thread.currentThread().setContextClassLoader(childLoader);
+
+      childLoader.loadClass("dtotypes.BookHiddenDto");
+      childLoader.loadClass("types.BookHidden");
+
+      runnerClass.getMethod("test").invoke(runner);
+
+    } finally {
+      Thread.currentThread().setContextClassLoader(tccl);
+    }
+  }
 }

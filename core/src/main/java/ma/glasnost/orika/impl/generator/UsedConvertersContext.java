@@ -23,33 +23,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * 
- * @author matt.deboer@gmail.com
- *
- */
+/** */
 public class UsedConvertersContext {
-    
-    private Map<Converter,Integer> usedConverters = new HashMap<Converter,Integer>();
-    private int usedTypeIndex = 0;
 
-    public int getIndex(Converter converter) {
-        if (converter == null) {
-            throw new NullPointerException("type must not be null");
-        }
-        Integer index = usedConverters.get(converter);
-        if (index == null) {
-            index = usedTypeIndex++;
-            usedConverters.put(converter, index);
-        }
-        return index;
+  private Map<Converter, Integer> usedConverters = new HashMap<Converter, Integer>();
+  private int usedTypeIndex = 0;
+
+  public int getIndex(Converter converter) {
+    if (converter == null) {
+      throw new NullPointerException("type must not be null");
     }
-    
-    public Converter<?, ?>[] toArray() {
-        Converter[] converters = new Converter[usedConverters.size()];
-        for (Entry<Converter, Integer> entry : usedConverters.entrySet()) {
-            converters[entry.getValue()] = entry.getKey();
-        }
-        return converters;
+    Integer index = usedConverters.get(converter);
+    if (index == null) {
+      index = usedTypeIndex++;
+      usedConverters.put(converter, index);
     }
+    return index;
+  }
+
+  public Converter<?, ?>[] toArray() {
+    Converter[] converters = new Converter[usedConverters.size()];
+    for (Entry<Converter, Integer> entry : usedConverters.entrySet()) {
+      converters[entry.getValue()] = entry.getKey();
+    }
+    return converters;
+  }
 }

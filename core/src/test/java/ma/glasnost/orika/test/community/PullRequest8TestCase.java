@@ -23,44 +23,40 @@ import ma.glasnost.orika.ObjectFactory;
 import ma.glasnost.orika.impl.DefaultConstructorObjectFactory;
 import ma.glasnost.orika.metadata.TypeFactory;
 import ma.glasnost.orika.test.MappingUtil;
+import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Test;
-
 /**
  * lookupObjectFactory should consider superclasses for source type.
+ *
  * <p>
- * 
- * @see <a href="https://github.com/orika-mapper/orika/pull/8">https://github.com/orika-mapper/orika</a>
+ *
+ * @see <a
+ *     href="https://github.com/orika-mapper/orika/pull/8">https://github.com/orika-mapper/orika</a>
  */
 public class PullRequest8TestCase {
-	public static class MySourceType {
-	}
+  @Test
+  public void test() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+    factory.registerObjectFactory(
+        new MyObjectFactory<MyType>(MyType.class), TypeFactory.valueOf(MyType.class));
+    factory.registerClassMap(factory.classMap(MySourceType.class, MyType.class).toClassMap());
+    ObjectFactory<MyType> myFactory =
+        factory.lookupObjectFactory(
+            TypeFactory.valueOf(MyType.class), TypeFactory.valueOf(MySourceType.class));
+    assertThat(myFactory, is(instanceOf(MyObjectFactory.class)));
+  }
 
-	public static class MyType {
-	}
+  public static class MySourceType {}
 
-	public static class MyObjectFactory<T> extends
-			DefaultConstructorObjectFactory<T> {
-		public MyObjectFactory(Class<T> type) {
-			super(type);
-		}
-	}
+  public static class MyType {}
 
-	@Test
-	public void test() {
-		MapperFactory factory = MappingUtil.getMapperFactory();
-		factory.registerObjectFactory(
-				new MyObjectFactory<MyType>(MyType.class),
-				TypeFactory.valueOf(MyType.class));
-		factory.registerClassMap(factory.classMap(MySourceType.class,
-				MyType.class).toClassMap());
-		ObjectFactory<MyType> myFactory = factory.lookupObjectFactory(
-				TypeFactory.valueOf(MyType.class),
-				TypeFactory.valueOf(MySourceType.class));
-        assertThat(myFactory, is(instanceOf(MyObjectFactory.class)));
-	}
+  public static class MyObjectFactory<T> extends DefaultConstructorObjectFactory<T> {
+    public MyObjectFactory(Class<T> type) {
+      super(type);
+    }
+  }
 }

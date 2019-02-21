@@ -19,79 +19,69 @@ package ma.glasnost.orika.test.community.issue21;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import javax.persistence.*;
 
-/**
- * 
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 @MappedSuperclass
 public abstract class BaseEntity {
-	private Long id;
+  private Long id;
 
-	private Long version;
+  private Long version;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long getId() {
-		return id;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	@Version
-	public Long getVersion() {
-		return version;
-	}
+  @Version
+  public Long getVersion() {
+    return version;
+  }
 
-	public void setVersion(Long version) {
-		this.version = version;
-	}
+  public void setVersion(Long version) {
+    this.version = version;
+  }
 
-	@Transient
-	public boolean isNew() {
-		return id == null;
-	}
+  @Transient
+  public boolean isNew() {
+    return id == null;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
 
-		if (o instanceof HibernateProxy) {
-			return o.equals(this);
-		}
+    if (o instanceof HibernateProxy) {
+      return o.equals(this);
+    }
 
-		if (o == null || (getClass() != o.getClass())) {
-			return false;
-		}
+    if (o == null || (getClass() != o.getClass())) {
+      return false;
+    }
 
-		BaseEntity that = (BaseEntity) o;
+    BaseEntity that = (BaseEntity) o;
 
-		if (isNew()) {
-			return this == that;
-		} else {
-			return id.equals(that.id);
-		}
+    if (isNew()) {
+      return this == that;
+    } else {
+      return id.equals(that.id);
+    }
+  }
 
-	}
+  @Override
+  public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+  }
 
-	@Override
-	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
-	}
-
-	@Override
-	public String toString() {
-		return "BaseEntity{" + "id=" + id + ", version=" + version + '}';
-	}
+  @Override
+  public String toString() {
+    return "BaseEntity{" + "id=" + id + ", version=" + version + '}';
+  }
 }

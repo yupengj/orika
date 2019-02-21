@@ -33,107 +33,111 @@ import ma.glasnost.orika.property.IntrospectorPropertyResolver;
 import ma.glasnost.orika.property.PropertyResolverStrategy;
 
 /**
- * UtilityResolver is used to resolve implementations for the various
- * customizable utility types used in Orika.
- * 
- * @author matt.deboer@gmail.com
- * 
+ * UtilityResolver is used to resolve implementations for the various customizable utility types
+ * used in Orika.
  */
 public abstract class UtilityResolver {
-    
-    /**
-     * Provides a default compiler strategy, favoring a type specified in the
-     * appropriate system property if found.
-     * 
-     * @return the default instance of CompilerStrategy
-     */
-    public static CompilerStrategy getDefaultCompilerStrategy() {
-        return resolveUtility(OrikaSystemProperties.COMPILER_STRATEGY, JaninoCompilerStrategy.class);
+
+  /**
+   * Provides a default compiler strategy, favoring a type specified in the appropriate system
+   * property if found.
+   *
+   * @return the default instance of CompilerStrategy
+   */
+  public static CompilerStrategy getDefaultCompilerStrategy() {
+    return resolveUtility(OrikaSystemProperties.COMPILER_STRATEGY, JaninoCompilerStrategy.class);
+  }
+
+  /**
+   * Provides a default constructor resolver strategy, favoring a type specified in the appropriate
+   * system property if found.
+   *
+   * @return the default instance of ConverterFactory
+   */
+  public static ConverterFactory getDefaultConverterFactory() {
+    return resolveUtility(OrikaSystemProperties.CONVERTER_FACTORY, DefaultConverterFactory.class);
+  }
+
+  /**
+   * Provides a default constructor resolver strategy, favoring a type specified in the appropriate
+   * system property if found.
+   *
+   * @return the default instance of ConstructorResolverStrategy
+   */
+  public static ConstructorResolverStrategy getDefaultConstructorResolverStrategy() {
+    return resolveUtility(
+        OrikaSystemProperties.CONSTRUCTOR_RESOLVER_STRATEGY,
+        SimpleConstructorResolverStrategy.class);
+  }
+
+  /**
+   * Provides a default constructor resolver strategy, favoring a type specified in the appropriate
+   * system property if found.
+   *
+   * @return the default instance of PropertyResolverStrategy
+   */
+  public static PropertyResolverStrategy getDefaultPropertyResolverStrategy() {
+    return resolveUtility(
+        OrikaSystemProperties.PROPERTY_RESOLVER_STRATEGY, IntrospectorPropertyResolver.class);
+  }
+
+  /**
+   * Provides a default ClassMapBuilderFactory instance, favoring a type specified in the
+   * appropriate system property if found.
+   *
+   * @return the default instance of ClassMapBuilderFactory
+   */
+  public static ClassMapBuilderFactory getDefaultClassMapBuilderFactory() {
+    return resolveUtility(
+        OrikaSystemProperties.CLASSMAP_BUILDER_FACTORY, ClassMapBuilder.Factory.class);
+  }
+
+  /**
+   * Provides a default ClassMapBuilderFactory instance, favoring a type specified in the
+   * appropriate system property if found.
+   *
+   * @return the default instance of MappingContextFactory
+   */
+  public static MappingContextFactory getDefaultMappingContextFactory() {
+    return resolveUtility(
+        OrikaSystemProperties.MAPPING_CONTEXT_FACTORY, MappingContext.Factory.class);
+  }
+
+  /**
+   * Resolves a utility implementation, given a system property for customized instance, and a
+   * default implementation class.
+   *
+   * @param systemProperty
+   * @param defaultImplementation
+   * @return
+   */
+  private static <U> U resolveUtility(
+      String systemProperty, Class<? extends U> defaultImplementation) {
+
+    U utility = null;
+    String utilityClassName = System.getProperty(systemProperty);
+    if (utilityClassName != null) {
+
+      try {
+        @SuppressWarnings("unchecked")
+        Class<? extends U> utilityClass =
+            (Class<? extends U>)
+                Class.forName(
+                    utilityClassName, true, Thread.currentThread().getContextClassLoader());
+        utility = utilityClass.newInstance();
+
+      } catch (Exception e) {
+        throw new IllegalArgumentException(
+            "utility implementation specified for " + systemProperty + " was invalid", e);
+      }
+
+    } else {
+      try {
+        utility = defaultImplementation.newInstance();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
-    
-    /**
-     * Provides a default constructor resolver strategy, favoring a type
-     * specified in the appropriate system property if found.
-     * 
-     * @return the default instance of ConverterFactory
-     */
-    public static ConverterFactory getDefaultConverterFactory() {
-        return resolveUtility(OrikaSystemProperties.CONVERTER_FACTORY, DefaultConverterFactory.class);
-    }
-    
-    /**
-     * Provides a default constructor resolver strategy, favoring a type
-     * specified in the appropriate system property if found.
-     * 
-     * @return the default instance of ConstructorResolverStrategy
-     */
-    public static ConstructorResolverStrategy getDefaultConstructorResolverStrategy() {
-        return resolveUtility(OrikaSystemProperties.CONSTRUCTOR_RESOLVER_STRATEGY, SimpleConstructorResolverStrategy.class);
-    }
-    
-    /**
-     * Provides a default constructor resolver strategy, favoring a type
-     * specified in the appropriate system property if found.
-     * 
-     * @return the default instance of PropertyResolverStrategy
-     */
-    public static PropertyResolverStrategy getDefaultPropertyResolverStrategy() {
-        return resolveUtility(OrikaSystemProperties.PROPERTY_RESOLVER_STRATEGY, IntrospectorPropertyResolver.class);
-        
-    }
-    
-    /**
-     * Provides a default ClassMapBuilderFactory instance, favoring a type
-     * specified in the appropriate system property if found.
-     * 
-     * @return the default instance of ClassMapBuilderFactory
-     */
-    public static ClassMapBuilderFactory getDefaultClassMapBuilderFactory() {
-        return resolveUtility(OrikaSystemProperties.CLASSMAP_BUILDER_FACTORY, ClassMapBuilder.Factory.class);
-    }
-    
-    /**
-     * Provides a default ClassMapBuilderFactory instance, favoring a type
-     * specified in the appropriate system property if found.
-     * 
-     * @return the default instance of MappingContextFactory
-     */
-    public static MappingContextFactory getDefaultMappingContextFactory() {
-        return resolveUtility(OrikaSystemProperties.MAPPING_CONTEXT_FACTORY, MappingContext.Factory.class);
-    }
-    
-    /**
-     * Resolves a utility implementation, given a system property for customized
-     * instance, and a default implementation class.
-     * 
-     * @param systemProperty
-     * @param defaultImplementation
-     * @return
-     */
-    private static <U> U resolveUtility(String systemProperty, Class<? extends U> defaultImplementation) {
-        
-        U utility = null;
-        String utilityClassName = System.getProperty(systemProperty);
-        if (utilityClassName != null) {
-            
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends U> utilityClass = (Class<? extends U>) Class.forName(utilityClassName, true, Thread.currentThread()
-                        .getContextClassLoader());
-                utility = utilityClass.newInstance();
-                
-            } catch (Exception e) {
-                throw new IllegalArgumentException("utility implementation specified for " + systemProperty + " was invalid", e);
-            }
-            
-        } else {
-            try {
-                utility = defaultImplementation.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return utility;
-    }
-    
+    return utility;
+  }
 }

@@ -18,71 +18,66 @@
 
 package ma.glasnost.orika.test.primitives;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.test.MappingUtil;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BooleanTestCase {
-    
-    @Test
-    public void testPrimtiveToWrapper() {
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        
-        factory.classMap(Primitive.class, Wrapper.class).field("primitive", "wrapper").register();
-        
-        MapperFacade mapper = factory.getMapperFacade();
-        
-        Wrapper source = new Wrapper();
-        source.setWrapper(true);
-        
-        Primitive destination = mapper.map(source, Primitive.class);
-        Assert.assertEquals(Boolean.TRUE, destination.isPrimitive());
-        
+
+  @Test
+  public void testPrimtiveToWrapper() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+
+    factory.classMap(Primitive.class, Wrapper.class).field("primitive", "wrapper").register();
+
+    MapperFacade mapper = factory.getMapperFacade();
+
+    Wrapper source = new Wrapper();
+    source.setWrapper(true);
+
+    Primitive destination = mapper.map(source, Primitive.class);
+    Assert.assertEquals(Boolean.TRUE, destination.isPrimitive());
+  }
+
+  @Test
+  public void testWrapperToPrimtive() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+
+    factory.classMap(Wrapper.class, Primitive.class).field("wrapper", "primitive").register();
+
+    MapperFacade mapper = factory.getMapperFacade();
+
+    Primitive source = new Primitive();
+    source.setPrimitive(true);
+
+    Wrapper destination = mapper.map(source, Wrapper.class);
+    Assert.assertEquals(true, destination.getWrapper());
+  }
+
+  public static class Primitive {
+    private boolean primitive;
+
+    public boolean isPrimitive() {
+      return primitive;
     }
-    
-    @Test
-    public void testWrapperToPrimtive() {
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        
-        factory.classMap(Wrapper.class, Primitive.class).field("wrapper", "primitive").register();
-        
-        MapperFacade mapper = factory.getMapperFacade();
-        
-        Primitive source = new Primitive();
-        source.setPrimitive(true);
-        
-        Wrapper destination = mapper.map(source, Wrapper.class);
-        Assert.assertEquals(true, destination.getWrapper());
-        
+
+    public void setPrimitive(boolean primitive) {
+      this.primitive = primitive;
     }
-    
-    public static class Primitive {
-        private boolean primitive;
-        
-        public boolean isPrimitive() {
-            return primitive;
-        }
-        
-        public void setPrimitive(boolean primitive) {
-            this.primitive = primitive;
-        }
+  }
+
+  public static class Wrapper {
+
+    private Boolean wrapper;
+
+    public Boolean getWrapper() {
+      return wrapper;
     }
-    
-    public static class Wrapper {
-        
-        private Boolean wrapper;
-        
-        public Boolean getWrapper() {
-            return wrapper;
-        }
-        
-        public void setWrapper(Boolean wrapper) {
-            this.wrapper = wrapper;
-        }
-        
+
+    public void setWrapper(Boolean wrapper) {
+      this.wrapper = wrapper;
     }
-    
+  }
 }

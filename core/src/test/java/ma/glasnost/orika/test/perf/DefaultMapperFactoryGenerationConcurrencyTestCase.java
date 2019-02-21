@@ -17,91 +17,87 @@
  */
 package ma.glasnost.orika.test.perf;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMap;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultMapperFactoryGenerationConcurrencyTestCase {
-    
-    static public class A {
 
-        private String property;
-                
-        public String getProperty() {
-            return property;
-        }
+  private static Throwable throwable = null;
 
-        public void setProperty(String property) {
-            this.property = property;
-        }
+  @Test
+  public void concurrencyTest() throws Exception {
+
+    List<Thread> threads = new ArrayList<Thread>();
+
+    for (int i = 0; i < 50; ++i) {
+      threads.add(
+          new Thread(
+              new DefaultMapperFactoryGenerationConcurrencyTestCase.ConcurrencyTestRunnable()));
     }
 
-    static public class B {
-
-        private String property;       
-
-        public String getProperty() {
-            return property;
-        }
-
-        public void setProperty(String property) {
-            this.property = property;
-        }
+    for (Thread t : threads) {
+      t.start();
     }
-        
-    private static Throwable throwable = null;
- 
-    private class ConcurrencyTestRunnable implements Runnable {
-  
-        public void run() {
-            try {
 
-                
-                MapperFactory factory = new DefaultMapperFactory.Builder().build();
-                
-                ClassMap<A, B> classMap = factory.classMap(A.class, B.class).byDefault().toClassMap();
-                
-                factory.registerClassMap(classMap);
-                
-                MapperFacade mapper = factory.getMapperFacade();
-                
-                A from = new A();
-                from.setProperty("test");
-                mapper.map(from, B.class);
-            }
-            
-            catch(Exception e) {
-                throwable = e;
-            }
-        }        
+    for (Thread t : threads) {
+      t.join();
     }
-    
 
-    @Test 
-    public void concurrencyTest() throws Exception {
+    Assert.assertNull("caught unexpected exception: " + throwable, throwable);
+  }
 
-        List<Thread> threads = new ArrayList<Thread>();
-        
-        for(int i=0; i<50; ++i) {
-            threads.add(new Thread(new DefaultMapperFactoryGenerationConcurrencyTestCase.ConcurrencyTestRunnable()));
-        }
-        
-        for(Thread t : threads) {
-            t.start();
-        }
-        
-        for(Thread t : threads) {
-            t.join();
-        }
-        
-        Assert.assertNull("caught unexpected exception: " + throwable, throwable);
-        
+  public static class A {
+
+    private String property;
+
+    public String getProperty() {
+      return property;
     }
+
+    public void setProperty(String property) {
+      this.property = property;
+    }
+  }
+
+  public static class B {
+
+    private String property;
+
+    public String getProperty() {
+      return property;
+    }
+
+    public void setProperty(String property) {
+      this.property = property;
+    }
+  }
+
+  private class ConcurrencyTestRunnable implements Runnable {
+
+    public void run() {
+      try {
+
+        MapperFactory factory = new DefaultMapperFactory.Builder().build();
+
+        ClassMap<A, B> classMap = factory.classMap(A.class, B.class).byDefault().toClassMap();
+
+        factory.registerClassMap(classMap);
+
+        MapperFacade mapper = factory.getMapperFacade();
+
+        A from = new A();
+        from.setProperty("test");
+        mapper.map(from, B.class);
+      } catch (Exception e) {
+        throwable = e;
+      }
+    }
+  }
 }

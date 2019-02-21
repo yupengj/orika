@@ -25,30 +25,23 @@ import java.util.List;
  * @since: 8/23/13
  */
 
-/**
- *
- * This need, for example, for REST
- */
-
+/** This need, for example, for REST */
 public class BContainerListBObject1 {
 
-    private List<BObject1> list;
+  private List<BObject1> list;
 
-    public BContainerListBObject1() {
-    }
+  public BContainerListBObject1() {}
 
-    public List<BObject1> getList() {
-        return list;
-    }
+  public List<BObject1> getList() {
+    return list;
+  }
 
-    public void setList(List<BObject1> list) {
-        this.list = list;
-    }
+  public void setList(List<BObject1> list) {
+    this.list = list;
+  }
 
-    @Override
-    public String toString() {
-        return "BContainerListBObject1{" +
-                "list=" + list +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "BContainerListBObject1{" + "list=" + list + '}';
+  }
 }

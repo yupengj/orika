@@ -25,12 +25,12 @@ import ma.glasnost.orika.CustomConverter;
  * @param <C>
  * @param <D>
  */
-abstract class BuiltinCustomConverter<C, D> extends CustomConverter<C, D>{
+abstract class BuiltinCustomConverter<C, D> extends CustomConverter<C, D> {
 
-	private String description = "builtin:" + getClass().getSimpleName() +
-			"<"+sourceType + ", " + destinationType+">";
-	
-	public String toString() {
-		return description;
-	}
+  private String description =
+      "builtin:" + getClass().getSimpleName() + "<" + sourceType + ", " + destinationType + ">";
+
+  public String toString() {
+    return description;
+  }
 }

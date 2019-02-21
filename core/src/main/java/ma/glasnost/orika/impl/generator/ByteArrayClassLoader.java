@@ -21,45 +21,40 @@ package ma.glasnost.orika.impl.generator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 
- * @author elaatifi@gmail.com
- * 
- */
+/** @author elaatifi@gmail.com */
 public class ByteArrayClassLoader extends ClassLoader {
-    
-    private Map<String, byte[]> classData;
-    
-    public ByteArrayClassLoader(ClassLoader parent) {
-        super(parent);
-        classData = new ConcurrentHashMap<String, byte[]>();
+
+  private Map<String, byte[]> classData;
+
+  public ByteArrayClassLoader(ClassLoader parent) {
+    super(parent);
+    classData = new ConcurrentHashMap<String, byte[]>();
+  }
+
+  /**
+   * Cache the bytes for a given class by name; will be used upon a subsequent load request.
+   *
+   * @param name
+   * @param data
+   */
+  void putClassData(String name, byte[] data) {
+    classData.put(name, data);
+  }
+
+  byte[] getBytes(String name) {
+    byte[] data = classData.get(name);
+    return data != null ? data.clone() : null;
+  }
+
+  protected Class<?> findClass(String name) throws ClassNotFoundException {
+    byte[] b = classData.get(name);
+    if (b == null) {
+      throw new ClassNotFoundException(name);
     }
-    
-    /**
-     * Cache the bytes for a given class by name; will be used upon a subsequent
-     * load request.
-     * 
-     * @param name
-     * @param data
-     */
-    void putClassData(String name, byte[] data) {
-        classData.put(name, data);
-    }
-    
-    byte[] getBytes(String name) {
-        byte[] data = classData.get(name);
-        return data != null ? data.clone() : null;
-    }
-    
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        byte[] b = classData.get(name);
-        if (b == null) {
-            throw new ClassNotFoundException(name);
-        }
-        return defineClass(name, b, 0, b.length);
-    }
-    
-    public Class<?> defineClass(String name, byte[] b) {
-        return defineClass(name, b, 0, b.length);
-    }
+    return defineClass(name, b, 0, b.length);
+  }
+
+  public Class<?> defineClass(String name, byte[] b) {
+    return defineClass(name, b, 0, b.length);
+  }
 }

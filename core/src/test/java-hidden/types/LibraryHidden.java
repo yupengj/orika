@@ -18,31 +18,30 @@
 
 package types;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ma.glasnost.orika.test.unenhance.SuperTypeTestCaseClasses.Book;
 import ma.glasnost.orika.test.unenhance.SuperTypeTestCaseClasses.Library;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LibraryHidden implements Library {
-		
-	private String title;
 
-	private List<Book> books;
+  private String title;
 
-	public String getTitle() {
-		return title;
-	}
+  private List<Book> books;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public List<Book> getBooks() {
-		if (books==null) {
-			books = new ArrayList<Book>();
-		}
-		return books;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
+  public List<Book> getBooks() {
+    if (books == null) {
+      books = new ArrayList<Book>();
+    }
+    return books;
+  }
 }

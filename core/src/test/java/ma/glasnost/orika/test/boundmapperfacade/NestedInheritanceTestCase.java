@@ -18,94 +18,87 @@
 
 package ma.glasnost.orika.test.boundmapperfacade;
 
-import org.junit.Assert;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.test.MappingUtil;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 public class NestedInheritanceTestCase {
-    
-    @Test
-    public void testNestedInheritance() {
-        MapperFactory factory = MappingUtil.getMapperFactory();
-        
-        factory.registerClassMap(factory.classMap(Person.class, PersonDTO.class).byDefault());
-        factory.registerClassMap(factory.classMap(Client.class, ClientDTO.class).byDefault());
-        factory.registerClassMap(factory.classMap(Subscription.class, SubscriptionDTO.class).field("client", "person"));
-        
-        Client client = new Client();
-        client.setName("Khalil Gebran");
-        
-        Subscription subscription = new Subscription();
-        subscription.setClient(client);
-        
-        SubscriptionDTO dto = factory.getMapperFacade(Subscription.class, SubscriptionDTO.class).map(subscription);
-        
-        Assert.assertNotNull(dto);
-        Assert.assertNotNull(dto.getPerson());
-        Assert.assertEquals(client.getName(), dto.getPerson().getName());
+
+  @Test
+  public void testNestedInheritance() {
+    MapperFactory factory = MappingUtil.getMapperFactory();
+
+    factory.registerClassMap(factory.classMap(Person.class, PersonDTO.class).byDefault());
+    factory.registerClassMap(factory.classMap(Client.class, ClientDTO.class).byDefault());
+    factory.registerClassMap(
+        factory.classMap(Subscription.class, SubscriptionDTO.class).field("client", "person"));
+
+    Client client = new Client();
+    client.setName("Khalil Gebran");
+
+    Subscription subscription = new Subscription();
+    subscription.setClient(client);
+
+    SubscriptionDTO dto =
+        factory.getMapperFacade(Subscription.class, SubscriptionDTO.class).map(subscription);
+
+    Assert.assertNotNull(dto);
+    Assert.assertNotNull(dto.getPerson());
+    Assert.assertEquals(client.getName(), dto.getPerson().getName());
+  }
+
+  public abstract static class Person {
+    private String name;
+
+    public String getName() {
+      return name;
     }
-    
-    public abstract static class Person {
-        private String name;
-        
-        public String getName() {
-            return name;
-        }
-        
-        public void setName(String name) {
-            this.name = name;
-        }
-        
+
+    public void setName(String name) {
+      this.name = name;
     }
-    
-    public static class Client extends Person {
-        
+  }
+
+  public static class Client extends Person {}
+
+  public static class Subscription {
+
+    private Person client;
+
+    public Person getClient() {
+      return client;
     }
-    
-    public static class Subscription {
-        
-        private Person client;
-        
-        public Person getClient() {
-            return client;
-        }
-        
-        public void setClient(Person client) {
-            this.client = client;
-        }
-        
+
+    public void setClient(Person client) {
+      this.client = client;
     }
-    
-    public static abstract class PersonDTO {
-        
-        private String name;
-        
-        public String getName() {
-            return name;
-        }
-        
-        public void setName(String name) {
-            this.name = name;
-        }
-        
+  }
+
+  public abstract static class PersonDTO {
+
+    private String name;
+
+    public String getName() {
+      return name;
     }
-    
-    public static class ClientDTO extends PersonDTO {
-        
+
+    public void setName(String name) {
+      this.name = name;
     }
-    
-    public static class SubscriptionDTO {
-        private PersonDTO person;
-        
-        public PersonDTO getPerson() {
-            return person;
-        }
-        
-        public void setPerson(PersonDTO person) {
-            this.person = person;
-        }
-        
+  }
+
+  public static class ClientDTO extends PersonDTO {}
+
+  public static class SubscriptionDTO {
+    private PersonDTO person;
+
+    public PersonDTO getPerson() {
+      return person;
     }
+
+    public void setPerson(PersonDTO person) {
+      this.person = person;
+    }
+  }
 }

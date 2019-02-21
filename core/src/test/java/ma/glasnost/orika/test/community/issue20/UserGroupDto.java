@@ -19,42 +19,37 @@ package ma.glasnost.orika.test.community.issue20;
 
 import java.util.Set;
 
-/**
- * @author Dmitriy Khomyakov
- * @author matt.deboer@gmail.com
- */
+/** @author Dmitriy Khomyakov */
 public class UserGroupDto extends BaseDto {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
-	private Set<UserDto> users;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-	public String getName() {
-		return name;
-	}
+  private String name;
+  private Set<UserDto> users;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public Set<UserDto> getUsers() {
-		return users;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setUsers(Set<UserDto> users) {
-		this.users = users;
-	}
+  public Set<UserDto> getUsers() {
+    return users;
+  }
 
-	public void addUser(UserDto user) {
-		getUsers().add(user);
-		user.setGroup(this);
-	}
+  public void setUsers(Set<UserDto> users) {
+    this.users = users;
+  }
 
-	@Override
-	public String toString() {
-		return "UserGroupDto{" + "name='" + name + '\'' + ", users=" + users
-				+ "} " + super.toString();
-	}
+  public void addUser(UserDto user) {
+    getUsers().add(user);
+    user.setGroup(this);
+  }
+
+  @Override
+  public String toString() {
+    return "UserGroupDto{" + "name='" + name + '\'' + ", users=" + users + "} " + super.toString();
+  }
 }

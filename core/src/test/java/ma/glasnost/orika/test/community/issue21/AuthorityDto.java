@@ -20,14 +20,14 @@ package ma.glasnost.orika.test.community.issue21;
 import java.util.Set;
 
 /**
-*
-* @author Dmitriy Khomyakov
-* @author matt.deboer@gmail.com
-*/
+ * @author Dmitriy Khomyakov
+ * @author matt.deboer@gmail.com
+ */
 public class AuthorityDto extends BaseDto {
   private String caption;
 
   private String name;
+  private Set<AuthorityDto> children;
 
   public String getName() {
     return name;
@@ -36,9 +36,6 @@ public class AuthorityDto extends BaseDto {
   public void setName(String name) {
     this.name = name;
   }
-
-  private Set<AuthorityDto> children;
-
 
   public String getCaption() {
     return caption;
@@ -56,12 +53,8 @@ public class AuthorityDto extends BaseDto {
     this.children = children;
   }
 
-
-
   @Override
   public String toString() {
-    return "AuthorityDto{" +
-      "caption='" + caption + '\'' +
-      "} " + super.toString();
+    return "AuthorityDto{" + "caption='" + caption + '\'' + "} " + super.toString();
   }
 }

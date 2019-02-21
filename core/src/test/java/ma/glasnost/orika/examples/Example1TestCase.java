@@ -17,12 +17,6 @@
  */
 package ma.glasnost.orika.examples;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import org.junit.Assert;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.metadata.Property;
@@ -30,144 +24,151 @@ import ma.glasnost.orika.metadata.TypeFactory;
 import ma.glasnost.orika.property.IntrospectorPropertyResolver;
 import ma.glasnost.orika.property.PropertyResolver;
 import ma.glasnost.orika.test.MappingUtil;
-
+import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @author matt.deboer@gmail.com
- * 
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+/** */
 public class Example1TestCase {
-    
-    private static final String NESTED_OPEN = PropertyResolver.ELEMENT_PROPERT_PREFIX;
-    private static final String NESTED_CLOSE = PropertyResolver.ELEMENT_PROPERT_SUFFIX;
-    
-    @Test
-    public void resolveProperties() {
-        
-        PropertyResolver propertyResolver = new IntrospectorPropertyResolver();
-        
-        Property aliasesFirst = propertyResolver.getProperty(TypeFactory.valueOf(PersonDto.class), "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE);
-        
-        Assert.assertNotNull(aliasesFirst);
-        Assert.assertEquals(TypeFactory.valueOf(String.class), aliasesFirst.getType());
-        Assert.assertNotNull(aliasesFirst.getContainer());
-        Assert.assertEquals(TypeFactory.valueOf(String[][].class), aliasesFirst.getContainer().getType());
+
+  private static final String NESTED_OPEN = PropertyResolver.ELEMENT_PROPERT_PREFIX;
+  private static final String NESTED_CLOSE = PropertyResolver.ELEMENT_PROPERT_SUFFIX;
+
+  @Test
+  public void resolveProperties() {
+
+    PropertyResolver propertyResolver = new IntrospectorPropertyResolver();
+
+    Property aliasesFirst =
+        propertyResolver.getProperty(
+            TypeFactory.valueOf(PersonDto.class), "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE);
+
+    Assert.assertNotNull(aliasesFirst);
+    Assert.assertEquals(TypeFactory.valueOf(String.class), aliasesFirst.getType());
+    Assert.assertNotNull(aliasesFirst.getContainer());
+    Assert.assertEquals(
+        TypeFactory.valueOf(String[][].class), aliasesFirst.getContainer().getType());
+  }
+
+  /** ! */
+  @Test
+  public void nestedElements() {
+
+    MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
+
+    mapperFactory
+        .classMap(Person.class, PersonDto.class)
+        .field("name.first", "firstName")
+        .field("name.last", "lastName")
+        .field(
+            "knownAliases" + NESTED_OPEN + "first" + NESTED_CLOSE,
+            "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE)
+        .field(
+            "knownAliases" + NESTED_OPEN + "last" + NESTED_CLOSE,
+            "aliases" + NESTED_OPEN + "[1]" + NESTED_CLOSE)
+        .byDefault()
+        .register();
+
+    MapperFacade mapper = mapperFactory.getMapperFacade();
+
+    List<Name> aliases = new ArrayList<Name>();
+    aliases.add(new Name("Joe", "Williams"));
+    aliases.add(new Name("Terry", "Connor"));
+    Person source = new Person(new Name("John", "Doe"), new Date(), aliases);
+
+    PersonDto dest = mapper.map(source, PersonDto.class);
+
+    Assert.assertNotNull(dest);
+    Assert.assertEquals(source.getName().getFirst(), dest.getFirstName());
+    Assert.assertEquals(source.getName().getLast(), dest.getLastName());
+    Assert.assertEquals(source.getKnownAliases().get(0).getFirst(), dest.getAliases()[0][0]);
+    Assert.assertEquals(source.getKnownAliases().get(0).getLast(), dest.getAliases()[0][1]);
+    Assert.assertEquals(source.getKnownAliases().get(1).getFirst(), dest.getAliases()[1][0]);
+    Assert.assertEquals(source.getKnownAliases().get(1).getLast(), dest.getAliases()[1][1]);
+  }
+
+  public static class Person {
+    private Name name;
+    private List<Name> knownAliases;
+    private Date birthDate;
+
+    public Person(Name name, Date birthDate, List<Name> knownAliases) {
+      this.name = name;
+      this.birthDate = (Date) birthDate.clone();
+      this.knownAliases = new ArrayList<Name>(knownAliases);
     }
-    
-    /**
-     * !
-     */
-    @Test
-    public void nestedElements() {
-        
-        MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
-        
-        mapperFactory.classMap(Person.class, PersonDto.class)
-                .field("name.first", "firstName")
-                .field("name.last", "lastName")
-                .field("knownAliases" + NESTED_OPEN + "first" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[0]" + NESTED_CLOSE)
-                .field("knownAliases" + NESTED_OPEN + "last" + NESTED_CLOSE, "aliases" + NESTED_OPEN + "[1]" + NESTED_CLOSE)
-                .byDefault()
-                .register();
-        
-        MapperFacade mapper = mapperFactory.getMapperFacade();
-        
-        List<Name> aliases = new ArrayList<Name>();
-        aliases.add(new Name("Joe", "Williams"));
-        aliases.add(new Name("Terry", "Connor"));
-        Person source = new Person(new Name("John","Doe"), new Date(), aliases);
-        
-        PersonDto dest = mapper.map(source, PersonDto.class);
-        
-        Assert.assertNotNull(dest);
-        Assert.assertEquals(source.getName().getFirst(), dest.getFirstName());
-        Assert.assertEquals(source.getName().getLast(), dest.getLastName());
-        Assert.assertEquals(source.getKnownAliases().get(0).getFirst(), dest.getAliases()[0][0]);
-        Assert.assertEquals(source.getKnownAliases().get(0).getLast(), dest.getAliases()[0][1]);
-        Assert.assertEquals(source.getKnownAliases().get(1).getFirst(), dest.getAliases()[1][0]);
-        Assert.assertEquals(source.getKnownAliases().get(1).getLast(), dest.getAliases()[1][1]);
-        
+
+    public List<Name> getKnownAliases() {
+      return Collections.unmodifiableList(knownAliases);
     }
-    
-    public static class Person {
-        private Name name;
-        private List<Name> knownAliases;
-        private Date birthDate;
-        
-        public Person(Name name, Date birthDate, List<Name> knownAliases) {
-            this.name = name;
-            this.birthDate = (Date) birthDate.clone();
-            this.knownAliases = new ArrayList<Name>(knownAliases);
-        }
-        
-        public List<Name> getKnownAliases() {
-            return Collections.unmodifiableList(knownAliases);
-        }
-        
-        public Name getName() {
-            return name;
-        }
-        
-        public Date getBirthDate() {
-            return (Date) birthDate.clone();
-        }
+
+    public Name getName() {
+      return name;
     }
-    
-    public static class Name {
-        private String first;
-        private String last;
-        
-        public Name(String first, String last) {
-            this.first = first;
-            this.last = last;
-        }
-        
-        public String getFirst() {
-            return first;
-        }
-        
-        public String getLast() {
-            return last;
-        }
+
+    public Date getBirthDate() {
+      return (Date) birthDate.clone();
     }
-    
-    public static class PersonDto {
-        private String firstName;
-        private String lastName;
-        private Date birthDate;
-        private String[][] aliases;
-        
-        public String getFirstName() {
-            return firstName;
-        }
-        
-        public String getLastName() {
-            return lastName;
-        }
-        
-        public Date getBirthDate() {
-            return birthDate;
-        }
-        
-        public String[][] getAliases() {
-            return aliases;
-        }
-        
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-        
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-        
-        public void setBirthDate(Date birthDate) {
-            this.birthDate = birthDate;
-        }
-        
-        public void setAliases(String[][] aliases) {
-            this.aliases = aliases;
-        }
+  }
+
+  public static class Name {
+    private String first;
+    private String last;
+
+    public Name(String first, String last) {
+      this.first = first;
+      this.last = last;
     }
+
+    public String getFirst() {
+      return first;
+    }
+
+    public String getLast() {
+      return last;
+    }
+  }
+
+  public static class PersonDto {
+    private String firstName;
+    private String lastName;
+    private Date birthDate;
+    private String[][] aliases;
+
+    public String getFirstName() {
+      return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+      this.firstName = firstName;
+    }
+
+    public String getLastName() {
+      return lastName;
+    }
+
+    public void setLastName(String lastName) {
+      this.lastName = lastName;
+    }
+
+    public Date getBirthDate() {
+      return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+      this.birthDate = birthDate;
+    }
+
+    public String[][] getAliases() {
+      return aliases;
+    }
+
+    public void setAliases(String[][] aliases) {
+      this.aliases = aliases;
+    }
+  }
 }

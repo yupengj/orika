@@ -18,103 +18,106 @@
 
 package ma.glasnost.orika.metadata;
 
-import java.util.List;
-
 import ma.glasnost.orika.DefaultFieldMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.property.PropertyResolverStrategy;
 
+import java.util.List;
+
 /**
- * ClassMapBuilderForMaps is a custom ClassMapBuilder instance which is
- * used for mapping standard JavaBeans to Map instances.
+ * ClassMapBuilderForMaps is a custom ClassMapBuilder instance which is used for mapping standard
+ * JavaBeans to Map instances.
  *
  * @param <A>
  * @param <B>
  */
-public class ClassMapBuilderForLists<A, B> extends ClassMapBuilderForMaps<A,B> {
-    
-	
-	/**
-	 * Factory creates instances of ClassMapBuilderForLists
-	 */
-	public static class Factory extends ClassMapBuilderFactory {
-        @Override
-        protected <A, B> boolean appliesTo(Type<A> aType, Type<B> bType) {
-            return (aType.isList() && !bType.isList()) || (bType.isList() && !aType.isList());
-        }
+public class ClassMapBuilderForLists<A, B> extends ClassMapBuilderForMaps<A, B> {
 
-		/* (non-Javadoc)
-		 * @see ma.glasnost.orika.metadata.ClassMapBuilderFactory#newClassMapBuilder(ma.glasnost.orika.metadata.Type, ma.glasnost.orika.metadata.Type, ma.glasnost.orika.property.PropertyResolverStrategy, ma.glasnost.orika.DefaultFieldMapper[])
-		 */
-        @Override
-		protected <A, B> ClassMapBuilder<A,B> newClassMapBuilder(
-				Type<A> aType, Type<B> bType,
-				MapperFactory mapperFactory,
-				PropertyResolverStrategy propertyResolver,
-				DefaultFieldMapper[] defaults) {
-			
-			return new ClassMapBuilderForLists<A,B>(aType, bType, mapperFactory, propertyResolver, defaults);
-		}
-	}
-	
-	private int currentIndex = 0;
-	
-    /**
-     * @param aType
-     * @param bType
-     * @param propertyResolver
-     * @param defaults
+  private int currentIndex = 0;
+
+  /**
+   * @param aType
+   * @param bType
+   * @param propertyResolver
+   * @param defaults
+   */
+  protected ClassMapBuilderForLists(
+      Type<A> aType,
+      Type<B> bType,
+      MapperFactory mapperFactory,
+      PropertyResolverStrategy propertyResolver,
+      DefaultFieldMapper... defaults) {
+    super(aType, bType, mapperFactory, propertyResolver, defaults);
+  }
+
+  protected ClassMapBuilderForLists<A, B> self() {
+    return this;
+  }
+
+  protected boolean isATypeBean() {
+    return !getAType().isList();
+  }
+
+  protected boolean isSpecialCaseType(Type<?> type) {
+    return type.isList();
+  }
+
+  /**
+   * @param expr
+   * @return the index of the next element in the list
+   */
+  protected int resolveAndIncrementIndex(String expr) {
+    int nextIndex;
+    try {
+      nextIndex = Integer.valueOf(expr.replaceAll("[\\[\\]]", ""));
+    } catch (NumberFormatException e) {
+      nextIndex = currentIndex + 1;
+    }
+    currentIndex = nextIndex;
+    return nextIndex;
+  }
+
+  public FieldMapBuilder<A, B> fieldMap(String fieldNameA, String fieldNameB, boolean byDefault) {
+
+    if (isATypeBean()) {
+      fieldNameB = "" + resolveAndIncrementIndex(fieldNameB);
+    } else {
+      fieldNameA = "" + resolveAndIncrementIndex(fieldNameA);
+    }
+
+    return super.fieldMap(fieldNameA, fieldNameB, byDefault);
+  }
+
+  protected Property resolveCustomProperty(String expr, Type<?> propertyType) {
+    Type<?> listAncestor = propertyType;
+    if (!listAncestor.isParameterized()) {
+      listAncestor = listAncestor.findAncestor(List.class);
+    }
+
+    int index = Integer.valueOf(expr.replaceAll("[\\[\\]]", ""));
+    return new ListElementProperty(index, listAncestor.getNestedType(0), null);
+  }
+
+  /** Factory creates instances of ClassMapBuilderForLists */
+  public static class Factory extends ClassMapBuilderFactory {
+    @Override
+    protected <A, B> boolean appliesTo(Type<A> aType, Type<B> bType) {
+      return (aType.isList() && !bType.isList()) || (bType.isList() && !aType.isList());
+    }
+
+    /* (non-Javadoc)
+     * @see ma.glasnost.orika.metadata.ClassMapBuilderFactory#newClassMapBuilder(ma.glasnost.orika.metadata.Type, ma.glasnost.orika.metadata.Type, ma.glasnost.orika.property.PropertyResolverStrategy, ma.glasnost.orika.DefaultFieldMapper[])
      */
-    protected ClassMapBuilderForLists(Type<A> aType, Type<B> bType, MapperFactory mapperFactory, PropertyResolverStrategy propertyResolver, DefaultFieldMapper... defaults) {
-	    super(aType, bType, mapperFactory, propertyResolver, defaults);
-	}
-       
-    protected ClassMapBuilderForLists<A, B> self() {
-        return this;
-    }           
-    
-    protected boolean isATypeBean() {
-        return !getAType().isList();
+    @Override
+    protected <A, B> ClassMapBuilder<A, B> newClassMapBuilder(
+        Type<A> aType,
+        Type<B> bType,
+        MapperFactory mapperFactory,
+        PropertyResolverStrategy propertyResolver,
+        DefaultFieldMapper[] defaults) {
+
+      return new ClassMapBuilderForLists<A, B>(
+          aType, bType, mapperFactory, propertyResolver, defaults);
     }
-    
-    protected boolean isSpecialCaseType(Type<?> type) {
-        return type.isList();
-    }
-    
-    /**
-     * @param expr
-     * @return the index of the next element in the list
-     */
-    protected int resolveAndIncrementIndex(String expr) {
-        int nextIndex;
-        try {
-            nextIndex = Integer.valueOf(expr.replaceAll("[\\[\\]]", ""));
-        } catch (NumberFormatException e) {
-            nextIndex =  currentIndex + 1;
-        }
-        currentIndex = nextIndex;
-        return nextIndex;
-    }
-    
-    public FieldMapBuilder<A, B> fieldMap(String fieldNameA, String fieldNameB, boolean byDefault) {
-        
-        if (isATypeBean()) {
-            fieldNameB = "" + resolveAndIncrementIndex(fieldNameB);
-        } else {
-            fieldNameA = "" + resolveAndIncrementIndex(fieldNameA);
-        }
-         
-        return super.fieldMap(fieldNameA, fieldNameB, byDefault);
-    }
-     
-    protected Property resolveCustomProperty(String expr, Type<?> propertyType) {
-        Type<?> listAncestor = propertyType;
-        if (!listAncestor.isParameterized()) {
-            listAncestor = listAncestor.findAncestor(List.class);
-        }
-        
-        int index = Integer.valueOf(expr.replaceAll("[\\[\\]]", ""));
-        return new ListElementProperty(index, listAncestor.getNestedType(0), null);
-    }
-    
+  }
 }

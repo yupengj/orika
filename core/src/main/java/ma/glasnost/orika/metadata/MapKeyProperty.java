@@ -18,25 +18,29 @@
 package ma.glasnost.orika.metadata;
 
 /**
- * MapKeyProperty is a special Property instance used to represent a value
- * which associated with a key within a Map.
- * 
- * @author matt.deboer@gmail.com
- *
+ * MapKeyProperty is a special Property instance used to represent a value which associated with a
+ * key within a Map.
  */
 public class MapKeyProperty extends Property {
-    
-    public MapKeyProperty(String key, Type<?> keyType, Type<?> valueType, Property owner) {
-        super(key,key,"get(" + chooseKey(key, keyType) + ")","put(" + chooseKey(key, keyType) + ",%s)",valueType,null, owner);
-    }
 
-    static private String chooseKey(String key, Type<?> keyType) {
-        return (String.class != keyType.getRawType() && keyType.isConvertibleFromString())
-            ?   keyType.getCanonicalName() + ".valueOf(\"" + key + "\")"
-            :   "\"" + key + "\"";
-    }
-    
-    public boolean isMapKey() {
-        return true;
-    }
+  public MapKeyProperty(String key, Type<?> keyType, Type<?> valueType, Property owner) {
+    super(
+        key,
+        key,
+        "get(" + chooseKey(key, keyType) + ")",
+        "put(" + chooseKey(key, keyType) + ",%s)",
+        valueType,
+        null,
+        owner);
+  }
+
+  private static String chooseKey(String key, Type<?> keyType) {
+    return (String.class != keyType.getRawType() && keyType.isConvertibleFromString())
+        ? keyType.getCanonicalName() + ".valueOf(\"" + key + "\")"
+        : "\"" + key + "\"";
+  }
+
+  public boolean isMapKey() {
+    return true;
+  }
 }

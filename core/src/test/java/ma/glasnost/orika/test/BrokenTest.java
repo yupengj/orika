@@ -27,13 +27,12 @@ import java.util.GregorianCalendar;
 
 public class BrokenTest {
 
-    @Test
-    public void testConvertingGregorianCalendar() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder()
-                .build();
+  @Test
+  public void testConvertingGregorianCalendar() {
+    MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        MapperFacade mapperFacade = mapperFactory.getMapperFacade();
-        GregorianCalendar gc = new GregorianCalendar();
-        Object dest = mapperFacade.map(gc, Object.class);
-    }
+    MapperFacade mapperFacade = mapperFactory.getMapperFacade();
+    GregorianCalendar gc = new GregorianCalendar();
+    Object dest = mapperFacade.map(gc, Object.class);
+  }
 }

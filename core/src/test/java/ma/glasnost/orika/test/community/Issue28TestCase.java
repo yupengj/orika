@@ -26,34 +26,38 @@ import ma.glasnost.orika.test.MappingUtil;
 import ma.glasnost.orika.test.community.issue26.OrderID;
 import ma.glasnost.orika.test.community.issue28.Order;
 import ma.glasnost.orika.test.community.issue28.OrderData;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * StackoverflowException on recursively-defined generic type.
- * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/28">https://code.google.com/archive/p/orika/</a>
  *
+ * <p>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/28">https://code.google.com/archive/p/orika/</a>
  */
 public class Issue28TestCase {
-    @Test
-    public void testMapping() {
-        MapperFactory mapperFactory = MappingUtil.getMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter(new OrderIdConverter());
-        mapperFactory.classMap(Order.class, OrderData.class).field("id", "number").byDefault().register();
-        MapperFacade facade = mapperFactory.getMapperFacade();
-        OrderData data = new OrderData(1234l);
-        Order order = facade.map(data, Order.class);
-        Assert.assertEquals(Long.valueOf(1234l), order.getId());
+  @Test
+  public void testMapping() {
+    MapperFactory mapperFactory = MappingUtil.getMapperFactory();
+    mapperFactory.getConverterFactory().registerConverter(new OrderIdConverter());
+    mapperFactory
+        .classMap(Order.class, OrderData.class)
+        .field("id", "number")
+        .byDefault()
+        .register();
+    MapperFacade facade = mapperFactory.getMapperFacade();
+    OrderData data = new OrderData(1234l);
+    Order order = facade.map(data, Order.class);
+    Assert.assertEquals(Long.valueOf(1234l), order.getId());
+  }
+
+  public static class OrderIdConverter extends CustomConverter<Long, OrderID> {
+
+    public OrderID convert(
+        Long source, Type<? extends OrderID> destinationType, MappingContext context) {
+      return new OrderID(source);
     }
-    
-    public static class OrderIdConverter extends CustomConverter<Long, OrderID> {
-        
-        public OrderID convert(Long source, Type<? extends OrderID> destinationType, MappingContext context) {
-            return new OrderID(source);
-        }
-    }
-    
+  }
 }

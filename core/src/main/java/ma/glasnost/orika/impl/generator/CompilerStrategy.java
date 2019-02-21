@@ -18,114 +18,114 @@
 
 package ma.glasnost.orika.impl.generator;
 
+import ma.glasnost.orika.OrikaSystemProperties;
+
 import java.io.File;
 import java.io.IOException;
 
-import ma.glasnost.orika.OrikaSystemProperties;
-
-/**
- * Defines a standard compiler profile for use in generating mapping objects.
- * 
- * @author matt.deboer@gmail.com
- *
- */
+/** Defines a standard compiler profile for use in generating mapping objects. */
 public abstract class CompilerStrategy {
 
-    /**
-     * Compile and return the (generated) class; this will also cause the
-     * generated class to be detached from the class-pool, and any (optional)
-     * source and/or class files to be written.
-     * 
-     * @return the (generated) compiled class
-     * @throws SourceCodeGenerationException
-     */
-    public abstract Class<?> compileClass(SourceCodeContext sourceCode) throws SourceCodeGenerationException;
+  protected static final String WRITE_RELATIVE_TO_CLASSPATH = "classpath:";
+  protected final boolean writeSourceFiles;
+  protected final boolean writeClassFiles;
+  protected final String pathToWriteSourceFiles;
+  protected final String pathToWriteClassFiles;
+  protected CompilerStrategy(String writeSourceByDefault, String writeClassByDefault) {
 
-    /**
-     * Verify that the Class provided is accessible to the compiler/generator.
-     * 
-     * @param type
-     * @throws SourceCodeGenerationException
-     *             if the type is not accessible
-     */
-    public abstract void assureTypeIsAccessible(Class<?> type) throws SourceCodeGenerationException;
+    this.writeSourceFiles =
+        Boolean.valueOf(
+            System.getProperty(
+                OrikaSystemProperties.WRITE_SOURCE_FILES,
+                System.getProperty(
+                    "ma.glasnost.orika.GeneratedSourceCode.writeSourceFiles",
+                    writeSourceByDefault)));
 
-    protected final boolean writeSourceFiles;
-    protected final boolean writeClassFiles;
-    protected final String pathToWriteSourceFiles;
-    protected final String pathToWriteClassFiles;
-    
-    protected static final String WRITE_RELATIVE_TO_CLASSPATH = "classpath:";
-    
-    protected CompilerStrategy(String writeSourceByDefault, String writeClassByDefault) {
-	
-    	this.writeSourceFiles = Boolean.valueOf(System.getProperty(
-    		OrikaSystemProperties.WRITE_SOURCE_FILES,
-    		System.getProperty("ma.glasnost.orika.GeneratedSourceCode.writeSourceFiles", 
-    			writeSourceByDefault)));
-    	
-    	this.writeClassFiles = Boolean.valueOf(System.getProperty(
-    		OrikaSystemProperties.WRITE_CLASS_FILES,
-    		System.getProperty("ma.glasnost.orika.GeneratedSourceCode.writeClassFiles", 
-    			writeClassByDefault)));
-    	
-    	this.pathToWriteSourceFiles = 
-    			(String)System.getProperty(OrikaSystemProperties.WRITE_SOURCE_FILES_TO_PATH, 
-    					WRITE_RELATIVE_TO_CLASSPATH + "/");
-    	
-    	this.pathToWriteClassFiles = 
-    			(String)System.getProperty(OrikaSystemProperties.WRITE_CLASS_FILES_TO_PATH, 
-    					WRITE_RELATIVE_TO_CLASSPATH + "/");
+    this.writeClassFiles =
+        Boolean.valueOf(
+            System.getProperty(
+                OrikaSystemProperties.WRITE_CLASS_FILES,
+                System.getProperty(
+                    "ma.glasnost.orika.GeneratedSourceCode.writeClassFiles", writeClassByDefault)));
+
+    this.pathToWriteSourceFiles =
+        (String)
+            System.getProperty(
+                OrikaSystemProperties.WRITE_SOURCE_FILES_TO_PATH,
+                WRITE_RELATIVE_TO_CLASSPATH + "/");
+
+    this.pathToWriteClassFiles =
+        (String)
+            System.getProperty(
+                OrikaSystemProperties.WRITE_CLASS_FILES_TO_PATH, WRITE_RELATIVE_TO_CLASSPATH + "/");
+  }
+
+  /**
+   * Compile and return the (generated) class; this will also cause the generated class to be
+   * detached from the class-pool, and any (optional) source and/or class files to be written.
+   *
+   * @return the (generated) compiled class
+   * @throws SourceCodeGenerationException
+   */
+  public abstract Class<?> compileClass(SourceCodeContext sourceCode)
+      throws SourceCodeGenerationException;
+
+  /**
+   * Verify that the Class provided is accessible to the compiler/generator.
+   *
+   * @param type
+   * @throws SourceCodeGenerationException if the type is not accessible
+   */
+  public abstract void assureTypeIsAccessible(Class<?> type) throws SourceCodeGenerationException;
+
+  /**
+   * Prepares the output path for a given package based on the provided base path string. If the
+   * base path string begins with "classpath:", then the path is resolved relative to this class'
+   * classpath root; otherwise, it is treated as an absolute file name.
+   *
+   * @param basePath
+   * @param packageName
+   * @return
+   * @throws IOException
+   */
+  protected File preparePackageOutputPath(String basePath, String packageName) throws IOException {
+
+    var packagePath = packageName.replaceAll("\\.", "/");
+    String path;
+    if (basePath.startsWith(WRITE_RELATIVE_TO_CLASSPATH)) {
+      path =
+          getClass()
+              .getResource(basePath.substring(WRITE_RELATIVE_TO_CLASSPATH.length()))
+              .getFile();
+    } else {
+      path = basePath;
+      if (!path.endsWith("/")) {
+        path += "/";
+      }
     }
-    
-    /**
-     * Prepares the output path for a given package based on the provided base path string.
-     * If the base path string begins with "classpath:", then the path is resolved relative
-     * to this class' classpath root; otherwise, it is treated as an absolute file name.
-     * 
-     * @param basePath
-     * @param packageName
-     * @return
-     * @throws IOException
-     */
-    protected File preparePackageOutputPath(String basePath, String packageName) throws IOException {
-    	
-    	var packagePath = packageName.replaceAll("\\.", "/") ;
-    	String path;
-		if (basePath.startsWith(WRITE_RELATIVE_TO_CLASSPATH)) {
-			path = getClass().getResource(basePath.substring(WRITE_RELATIVE_TO_CLASSPATH.length()))
-					.getFile();
-		} else {
-			path = basePath;
-			if (!path.endsWith("/")) {
-				path+= "/";
-			} 
-		}
 
-		File parentDir = new File(path + packagePath);
-		if (!parentDir.exists() && !parentDir.mkdirs()) {
-			throw new IOException("Could not create package directory for " + packageName );
-		}
-		
-		return parentDir;
-    	
+    File parentDir = new File(path + packagePath);
+    if (!parentDir.exists() && !parentDir.mkdirs()) {
+      throw new IOException("Could not create package directory for " + packageName);
     }
-    
-	public static class SourceCodeGenerationException extends Exception {
 
-		private static final long serialVersionUID = 1L;
+    return parentDir;
+  }
 
-		public SourceCodeGenerationException(String message, Throwable cause) {
-			super(message, cause);
-		}
+  public static class SourceCodeGenerationException extends Exception {
 
-		public SourceCodeGenerationException(Throwable cause) {
-			super(cause);
-		}
+    private static final long serialVersionUID = 1L;
 
-		public SourceCodeGenerationException(String message) {
-			super(message);
-		}
+    public SourceCodeGenerationException(String message, Throwable cause) {
+      super(message, cause);
+    }
 
-	}
+    public SourceCodeGenerationException(Throwable cause) {
+      super(cause);
+    }
+
+    public SourceCodeGenerationException(String message) {
+      super(message);
+    }
+  }
 }

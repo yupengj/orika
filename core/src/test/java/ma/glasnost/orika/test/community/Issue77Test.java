@@ -33,53 +33,53 @@ import static java.util.Arrays.asList;
 
 /**
  * Invalid code generated when embedded field name not a valid java variable name.
+ *
  * <p>
- * 
- * @see <a href="https://github.com/orika-mapper/orika/issues/77">https://github.com/orika-mapper/orika/issues</a>
+ *
+ * @see <a
+ *     href="https://github.com/orika-mapper/orika/issues/77">https://github.com/orika-mapper/orika/issues</a>
  */
 public class Issue77Test {
 
-    @Test
-    public void map_with_keys_containing_invalid_characters_for_a_variable_instantiation() {
-        MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
+  @Test
+  public void map_with_keys_containing_invalid_characters_for_a_variable_instantiation() {
+    MapperFactory mapperFactory = MappingUtil.getMapperFactory(true);
 
-        mapperFactory.classMap(A.class, B.class)
-                .field("mapSource['foo//bar']", "targetSet")
-                .register();
+    mapperFactory.classMap(A.class, B.class).field("mapSource['foo//bar']", "targetSet").register();
 
-        MapperFacade mapperFacade = mapperFactory.getMapperFacade();
+    MapperFacade mapperFacade = mapperFactory.getMapperFacade();
 
-        Map<String, List<String>> mapSource = new HashMap<>();
-        mapSource.put("foo//bar", asList("one", "two"));
-        A source = new A();
-        source.setMapSource(mapSource);
+    Map<String, List<String>> mapSource = new HashMap<>();
+    mapSource.put("foo//bar", asList("one", "two"));
+    A source = new A();
+    source.setMapSource(mapSource);
 
-        B map1 = mapperFacade.map(source, B.class);
+    B map1 = mapperFacade.map(source, B.class);
 
-        Assert.assertEquals(Set.of("one", "two"), map1.getTargetSet());
+    Assert.assertEquals(Set.of("one", "two"), map1.getTargetSet());
+  }
+
+  public static class A {
+    private Map<String, List<String>> mapSource;
+
+    public Map<String, List<String>> getMapSource() {
+      return mapSource;
     }
 
-    public static class A {
-        private Map<String, List<String>> mapSource;
+    public void setMapSource(Map<String, List<String>> mapSource) {
+      this.mapSource = mapSource;
+    }
+  }
 
-        public Map<String, List<String>> getMapSource() {
-            return mapSource;
-        }
+  public static class B {
+    private Set<String> targetSet;
 
-        public void setMapSource(Map<String, List<String>> mapSource) {
-            this.mapSource = mapSource;
-        }
+    public Set<String> getTargetSet() {
+      return targetSet;
     }
 
-    public static class B {
-        private Set<String> targetSet;
-
-        public Set<String> getTargetSet() {
-            return targetSet;
-        }
-
-        public void setTargetSet(Set<String> targetSet) {
-            this.targetSet = targetSet;
-        }
+    public void setTargetSet(Set<String> targetSet) {
+      this.targetSet = targetSet;
     }
+  }
 }

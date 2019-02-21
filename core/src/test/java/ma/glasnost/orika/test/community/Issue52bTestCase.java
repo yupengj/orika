@@ -17,95 +17,88 @@
  */
 package ma.glasnost.orika.test.community;
 
-import org.junit.Assert;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * StackOverflowError when using inheritance mapping.
- * <p>
- * 
- * @see <a href="https://code.google.com/archive/p/orika/issues/52">https://code.google.com/archive/p/orika/</a>
- * @author matt.deboer@gmail.com
  *
+ * <p>
+ *
+ * @see <a
+ *     href="https://code.google.com/archive/p/orika/issues/52">https://code.google.com/archive/p/orika/</a>
  */
 public class Issue52bTestCase {
-    
-    @Test
-    public void parentBeforeChild() {
 
-        MapperFactory factory = new DefaultMapperFactory.Builder().build();
-        MapperFacade mapper = factory.getMapperFacade();
+  @Test
+  public void parentBeforeChild() {
 
-        A source = new A();
-        source.field1 = "one";
-        source.field2 = "two";
-        
-        B dest = mapper.map(source, B.class);
-        
-        Assert.assertEquals(source.field1, dest.field1);
-        Assert.assertEquals(source.field2, dest.field2);
+    MapperFactory factory = new DefaultMapperFactory.Builder().build();
+    MapperFacade mapper = factory.getMapperFacade();
 
-        A1 source2 = new A1();
-        source2.field1 = "one";
-        source2.field2 = "two";
-        source2.field3 = "three";
-        
-        dest = mapper.map(source2, B.class);
-        
-        Assert.assertEquals(source2.field1, dest.field1);
-        Assert.assertEquals(source2.field2, dest.field2);
-        Assert.assertEquals(source2.field3, dest.field3);
-        
-    }
-    
-    @Test
-    public void childBeforeParent() {
+    A source = new A();
+    source.field1 = "one";
+    source.field2 = "two";
 
-        MapperFactory factory = new DefaultMapperFactory.Builder().build();
-        MapperFacade mapper = factory.getMapperFacade();
+    B dest = mapper.map(source, B.class);
 
-        
-        A1 source2 = new A1();
-        source2.field1 = "one";
-        source2.field2 = "two";
-        source2.field3 = "three";
-        
-       
-        B dest = mapper.map(source2, B.class);
-        
-        Assert.assertEquals(source2.field1, dest.field1);
-        Assert.assertEquals(source2.field2, dest.field2);
-        Assert.assertEquals(source2.field3, dest.field3);
-        
-        A source = new A();
-        source.field1 = "one";
-        source.field2 = "two";
-        
-        dest = mapper.map(source, B.class);
-        
-        Assert.assertEquals(source.field1, dest.field1);
-        Assert.assertEquals(source.field2, dest.field2);
+    Assert.assertEquals(source.field1, dest.field1);
+    Assert.assertEquals(source.field2, dest.field2);
 
-    }
-    
-    public static class A {
-        public String field1;
-        public String field2;
-    }
-    
-    public static class A1 extends A {
-        public String field3;
-    }
-    
-    public static class B {
-        public String field1;
-        public String field2;
-        public String field3;
-    }
-    
+    A1 source2 = new A1();
+    source2.field1 = "one";
+    source2.field2 = "two";
+    source2.field3 = "three";
+
+    dest = mapper.map(source2, B.class);
+
+    Assert.assertEquals(source2.field1, dest.field1);
+    Assert.assertEquals(source2.field2, dest.field2);
+    Assert.assertEquals(source2.field3, dest.field3);
+  }
+
+  @Test
+  public void childBeforeParent() {
+
+    MapperFactory factory = new DefaultMapperFactory.Builder().build();
+    MapperFacade mapper = factory.getMapperFacade();
+
+    A1 source2 = new A1();
+    source2.field1 = "one";
+    source2.field2 = "two";
+    source2.field3 = "three";
+
+    B dest = mapper.map(source2, B.class);
+
+    Assert.assertEquals(source2.field1, dest.field1);
+    Assert.assertEquals(source2.field2, dest.field2);
+    Assert.assertEquals(source2.field3, dest.field3);
+
+    A source = new A();
+    source.field1 = "one";
+    source.field2 = "two";
+
+    dest = mapper.map(source, B.class);
+
+    Assert.assertEquals(source.field1, dest.field1);
+    Assert.assertEquals(source.field2, dest.field2);
+  }
+
+  public static class A {
+    public String field1;
+    public String field2;
+  }
+
+  public static class A1 extends A {
+    public String field3;
+  }
+
+  public static class B {
+    public String field1;
+    public String field2;
+    public String field3;
+  }
 }
-

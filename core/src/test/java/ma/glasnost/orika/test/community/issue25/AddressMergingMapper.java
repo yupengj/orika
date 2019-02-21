@@ -17,64 +17,53 @@
  */
 package ma.glasnost.orika.test.community.issue25;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.test.community.issue25.modelA.Address;
 import ma.glasnost.orika.test.community.issue25.modelB.AddressDTO;
 
-public class AddressMergingMapper extends
-		CustomMapper<List<Address>, List<AddressDTO>> {
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-	public void mapAtoB(List<Address> a, List<AddressDTO> b,
-			MappingContext context) {
-	    merge(a, b, context);
-	}
+public class AddressMergingMapper extends CustomMapper<List<Address>, List<AddressDTO>> {
 
-	public void mapBtoA(List<AddressDTO> b, List<Address> a,
-			MappingContext context) {
-	    mapperFacade.mapAsCollection(b, a, Address.class, context);
-	}
+  public void mapAtoB(List<Address> a, List<AddressDTO> b, MappingContext context) {
+    merge(a, b, context);
+  }
 
-	private List<AddressDTO> merge(
-			List<Address> srcAddress,
-			List<AddressDTO> dstAddressesDTO,
-			MappingContext context) {
-		Set<Long> savedIdNumbers = new HashSet<Long>(
-				srcAddress.size());
-		for (Address currentAddress : srcAddress) {
-			AddressDTO foundAddressDTO = findEntity(dstAddressesDTO,
-					currentAddress.getIdNumber());
-			if (foundAddressDTO == null) { 
-				dstAddressesDTO.add(mapperFacade.map(currentAddress,
-						AddressDTO.class, context));
-			} else {
-				mapperFacade.map(currentAddress, foundAddressDTO, context);
-			}
-			savedIdNumbers.add(currentAddress.getIdNumber());
-		}
-		for (Iterator<AddressDTO> iterator = dstAddressesDTO.iterator(); iterator
-				.hasNext();) {
-			AddressDTO vCurrentAnschriftDTO = iterator.next();
-			if (!savedIdNumbers.contains(vCurrentAnschriftDTO
-					.getIdNumber())) {
-				iterator.remove();
-			}
-		}
-		return dstAddressesDTO;
-	}
+  public void mapBtoA(List<AddressDTO> b, List<Address> a, MappingContext context) {
+    mapperFacade.mapAsCollection(b, a, Address.class, context);
+  }
 
-	private AddressDTO findEntity(List<AddressDTO> dstAddressDTO,
-			Long aIdnumber) {
-		for (AddressDTO vCurrentDTO : dstAddressDTO) {
-			if (aIdnumber.equals(vCurrentDTO.getIdNumber())) {
-				return vCurrentDTO;
-			}
-		}
-		return null;
-	}
+  private List<AddressDTO> merge(
+      List<Address> srcAddress, List<AddressDTO> dstAddressesDTO, MappingContext context) {
+    Set<Long> savedIdNumbers = new HashSet<Long>(srcAddress.size());
+    for (Address currentAddress : srcAddress) {
+      AddressDTO foundAddressDTO = findEntity(dstAddressesDTO, currentAddress.getIdNumber());
+      if (foundAddressDTO == null) {
+        dstAddressesDTO.add(mapperFacade.map(currentAddress, AddressDTO.class, context));
+      } else {
+        mapperFacade.map(currentAddress, foundAddressDTO, context);
+      }
+      savedIdNumbers.add(currentAddress.getIdNumber());
+    }
+    for (Iterator<AddressDTO> iterator = dstAddressesDTO.iterator(); iterator.hasNext(); ) {
+      AddressDTO vCurrentAnschriftDTO = iterator.next();
+      if (!savedIdNumbers.contains(vCurrentAnschriftDTO.getIdNumber())) {
+        iterator.remove();
+      }
+    }
+    return dstAddressesDTO;
+  }
+
+  private AddressDTO findEntity(List<AddressDTO> dstAddressDTO, Long aIdnumber) {
+    for (AddressDTO vCurrentDTO : dstAddressDTO) {
+      if (aIdnumber.equals(vCurrentDTO.getIdNumber())) {
+        return vCurrentDTO;
+      }
+    }
+    return null;
+  }
 }
