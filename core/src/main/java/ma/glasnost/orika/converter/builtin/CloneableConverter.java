@@ -48,7 +48,9 @@ public class CloneableConverter extends CustomConverter<Object, Object> {
     private final Map<Class<?>, Method> cachedMethods;
     private final Method cloneMethod;
     private final String description;
-    
+    static {
+        //Object.class.getModule().addOpens("java.base", CloneableConverter.class.getModule());
+    }
     /**
      * Constructs a new ClonableConverter configured to handle the provided list
      * of types by cloning.

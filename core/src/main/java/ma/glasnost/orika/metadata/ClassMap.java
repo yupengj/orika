@@ -191,6 +191,34 @@ public class ClassMap<A, B> implements MappedTypePair<A, B>{
         }
     }
 
+    public Class<?> getNeighborClass() {
+        boolean aIsPublic = Modifier.isPublic(getAType().getRawType().getModifiers());
+        boolean bIsPublic = Modifier.isPublic(getBType().getRawType().getModifiers());
+
+        if (aIsPublic) {
+            if (bIsPublic) {
+                // both public, no package needed
+                return null;
+            } else {
+                // A public, B not --> use package of B
+                return getBType().getRawType();
+            }
+        } else {
+            if (bIsPublic) {
+                // A not public, B is --> use package of A
+                return getAType().getRawType();
+            } else {
+                // both package private --> make sure they're in the same package
+                String aPackage = getPackageName(getAType());
+                if (aPackage.equals(getPackageName(getBType()))) {
+                    return getBType().getRawType();
+                } else {
+                    throw new RuntimeException(getAType() + " and " + getBType() + " are both package private but are in different packages");
+                }
+            }
+        }
+    }
+
     private static String prependPackageName(String packageName, String className) {
         return packageName.isEmpty() || packageName.startsWith("java.") ? className : packageName + "." + className;
     }

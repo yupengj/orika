@@ -26,14 +26,12 @@ import com.thoughtworks.paranamer.Paranamer;
  * ConstructorParameterResolver is a utility for resolving constructor
  * parameters as Property instances.
  * 
- * @author mattdeboer
- * 
  */
 public class ConstructorParameterResolver {
-    
+
     private final Paranamer paranamer = new CachingParanamer(new AdaptiveParanamer(new BytecodeReadingParanamer(),
             new AnnotationParanamer()));
-    
+
     private final Map<java.lang.reflect.Type, Map<String, Set<Property>>> constructorPropertiesByType = new ConcurrentHashMap<java.lang.reflect.Type, Map<String, Set<Property>>>();
     
     /**

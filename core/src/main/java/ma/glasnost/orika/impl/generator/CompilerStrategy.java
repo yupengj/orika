@@ -90,11 +90,11 @@ public abstract class CompilerStrategy {
      */
     protected File preparePackageOutputPath(String basePath, String packageName) throws IOException {
     	
-    	String packagePath = packageName.replaceAll("\\.", "/") ;
-    	String path = null;
+    	var packagePath = packageName.replaceAll("\\.", "/") ;
+    	String path;
 		if (basePath.startsWith(WRITE_RELATIVE_TO_CLASSPATH)) {
 			path = getClass().getResource(basePath.substring(WRITE_RELATIVE_TO_CLASSPATH.length()))
-					.getFile().toString();
+					.getFile();
 		} else {
 			path = basePath;
 			if (!path.endsWith("/")) {

@@ -63,7 +63,7 @@ public final class MapperGenerator {
                 logDetails.append("Generating new mapper for (" + srcName + ", " + dstName + ")");
             }
             
-            final SourceCodeContext mapperCode = new SourceCodeContext(classMap.getMapperClassName(), GeneratedMapperBase.class, context,
+            final SourceCodeContext mapperCode = new SourceCodeContext(classMap.getMapperClassName(), GeneratedMapperBase.class, classMap.getNeighborClass(), context,
                     logDetails);
             
             Set<FieldMap> mappedFields = new LinkedHashSet<FieldMap>();

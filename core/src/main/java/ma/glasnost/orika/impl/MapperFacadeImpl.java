@@ -20,10 +20,10 @@ package ma.glasnost.orika.impl;
 
 import ma.glasnost.orika.*;
 import ma.glasnost.orika.MappingStrategy.Key;
-import ma.glasnost.orika.StateReporter.Reportable;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.mapping.strategy.MappingStrategyRecorder;
 import ma.glasnost.orika.impl.util.ClassUtil;
+import ma.glasnost.orika.impl.util.ExceptionUtil;
 import ma.glasnost.orika.metadata.MapperKey;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
@@ -36,13 +36,11 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ma.glasnost.orika.StateReporter.DIVIDER;
-import static ma.glasnost.orika.StateReporter.humanReadableSizeInMemory;
 
 /**
  * MapperFacadeImpl is the base implementation of MapperFacade
  */
-public class MapperFacadeImpl implements MapperFacade, Reportable {
+public class MapperFacadeImpl implements MapperFacade {
     
     protected final MapperFactory mapperFactory;
     private final MappingContextFactory contextFactory;
@@ -50,8 +48,7 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
     private final UnenhanceStrategy userUnenhanceStrategy;
     private final ConcurrentHashMap<Key, MappingStrategy> strategyCache = new ConcurrentHashMap<>();
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final ExceptionUtility exceptionUtil;
-    
+
     /**
      * Constructs a new MapperFacadeImpl
      * 
@@ -60,9 +57,8 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
      * @param unenhanceStrategy
      */
     public MapperFacadeImpl(final MapperFactory mapperFactory, final MappingContextFactory contextFactory,
-            final UnenhanceStrategy unenhanceStrategy, final ExceptionUtility exceptionUtil) {
+            final UnenhanceStrategy unenhanceStrategy) {
         this.mapperFactory = mapperFactory;
-        this.exceptionUtil = exceptionUtil;
         this.unenhanceStrategy = unenhanceStrategy;
         this.userUnenhanceStrategy = mapperFactory.getUserUnenhanceStrategy();
         this.contextFactory = contextFactory;
@@ -212,7 +208,7 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
                     MappingException e = new MappingException("No concrete class mapping defined for source class " + resolvedSourceType.getName());
                     e.setDestinationType(destinationType);
                     e.setSourceType(resolvedSourceType);
-                    throw exceptionUtil.decorate(e);
+                    throw e;
                 } else {
                     resolvedDestinationType = destinationType;
                 }
@@ -256,12 +252,9 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
             return existingResult;
             
         } catch (MappingException e) {
-            throw exceptionUtil.decorate(e);
+            throw e;
         } catch (RuntimeException e) {
-            if (!ExceptionUtility.originatedByOrika(e)) {
-                throw e;
-            }
-            MappingException me = exceptionUtil.newMappingException(e);
+            MappingException me = new MappingException(e);
             me.setSourceClass(sourceObject.getClass());
             me.setSourceType(sourceType);
             me.setDestinationType(destinationType);
@@ -316,7 +309,7 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
                 strategy.map(sourceObject, destinationObject, context);
             }
         } catch (MappingException e) {
-            throw exceptionUtil.decorate(e);
+            throw e;
         } catch (RuntimeException e) {
             
             if (destinationObject == null) {
@@ -331,10 +324,7 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
                 throw new MappingException("[sourceObject] can not be null.");
             }
             
-            if (!ExceptionUtility.originatedByOrika(e)) {
-                throw e;
-            }
-            MappingException me = exceptionUtil.newMappingException(e);
+            MappingException me = new MappingException(e);
             me.setSourceClass(sourceObject.getClass());
             me.setSourceType(sourceType);
             me.setDestinationType(destinationType);
@@ -380,10 +370,8 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
                 throw new MappingException("[sourceObject] can not be null.");
             }
             
-            if (!ExceptionUtility.originatedByOrika(e)) {
-                throw e;
-            }
-            MappingException me = exceptionUtil.newMappingException(e);
+
+            MappingException me = new MappingException(e);
             me.setSourceClass(sourceObject.getClass());
             me.setDestinationType(TypeFactory.valueOf(destinationObject.getClass()));
             me.setMappingStrategy(strategy);
@@ -674,12 +662,11 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
             return result;
             
         } catch (MappingException e) {
-            throw exceptionUtil.decorate(e);
+            throw e;
         } catch (RuntimeException e) {
-            if (!ExceptionUtility.originatedByOrika(e)) {
-                throw e;
-            }
-            MappingException me = exceptionUtil.newMappingException(e);
+            if(!ExceptionUtil.originatedByOrika(e)) throw e;
+
+            var me = new MappingException(e);
             me.setSourceClass(sourceObject.getClass());
             me.setDestinationType(TypeFactory.valueOf(destinationClass));
             me.setMappingStrategy(strategy);
@@ -1011,26 +998,6 @@ public class MapperFacadeImpl implements MapperFacade, Reportable {
         strategyCache.clear();
     }
     
-    /**
-     * Prints the current state of this MapperFacade to the supplied
-     * StringBuilder instance.
-     * 
-     * @param out
-     */
-    public void reportCurrentState(StringBuilder out) {
-        out.append(DIVIDER);
-        out.append("\nResolved strategies: ")
-                .append(strategyCache.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(strategyCache))
-                .append(")");
-        for (Entry<Key, MappingStrategy> entry : strategyCache.entrySet()) {
-            out.append("\n").append(entry.getKey()).append(": ").append(entry.getValue());
-        }
-        out.append(DIVIDER);
-        out.append("\nUnenhance strategy: ").append(unenhanceStrategy);
-    }
-
     /**
      * Return the Type for the given object.
      *

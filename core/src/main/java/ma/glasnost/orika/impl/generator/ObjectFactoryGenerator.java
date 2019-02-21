@@ -70,7 +70,8 @@ public class ObjectFactoryGenerator {
     public GeneratedObjectFactory build(Type<?> type, Type<?> sourceType, MappingContext context) {
         
         String className = type.getSimpleName() + "_" + sourceType.getSimpleName() + "_ObjectFactory" + nameSuffix;
-        className = prependPackageName(getPackageName(type), className);
+        String packageName = getPackageName(type);
+        className = prependPackageName(packageName, className);
         try {
             StringBuilder logDetails;
             if (LOGGER.isDebugEnabled()) {
@@ -79,8 +80,10 @@ public class ObjectFactoryGenerator {
             } else {
                 logDetails = null;
             }
-            
-            final SourceCodeContext factoryCode = new SourceCodeContext(className, GeneratedObjectFactory.class, context, logDetails);
+
+            Class<?> neighbor = className.startsWith(packageName) || packageName.isBlank() ? null: type.getRawType();
+            final var factoryCode = new SourceCodeContext(className, GeneratedObjectFactory.class,
+                    neighbor, context, logDetails);
             
             UsedTypesContext usedTypes = new UsedTypesContext();
             UsedConvertersContext usedConverters = new UsedConvertersContext();
@@ -88,7 +91,7 @@ public class ObjectFactoryGenerator {
             
             addCreateMethod(factoryCode, usedTypes, usedConverters, usedMapperFacades, type, sourceType, context, logDetails);
             
-            GeneratedObjectFactory objectFactory = (GeneratedObjectFactory) factoryCode.getInstance();
+            GeneratedObjectFactory objectFactory = factoryCode.getInstance();
             objectFactory.setMapperFacade(mapperFactory.getMapperFacade());
             
             if (logDetails != null) {
@@ -158,7 +161,7 @@ public class ObjectFactoryGenerator {
                 out.append(format("%s source = (%s) s;", sourceType.getCanonicalName(), sourceType.getCanonicalName()));
                 out.append("\ntry {\n");
                 
-                ConstructorMapping<?> constructorMapping = (ConstructorMapping<?>) constructorResolverStrategy.resolve(classMap,
+                ConstructorMapping<?> constructorMapping = constructorResolverStrategy.resolve(classMap,
                         destinationType);
                 Constructor<?> constructor = constructorMapping.getConstructor();
                 
@@ -180,9 +183,7 @@ public class ObjectFactoryGenerator {
                 }
                 
                 int argIndex = 0;
-                
-                argIndex = 0;
-                
+
                 for (FieldMap fieldMap : properties) {
                     VariableRef v = new VariableRef(constructorArguments[argIndex], "arg" + argIndex++);
                     VariableRef s = new VariableRef(fieldMap.getSource(), "source");

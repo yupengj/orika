@@ -20,7 +20,6 @@ package ma.glasnost.orika.impl;
 
 import ma.glasnost.orika.*;
 import ma.glasnost.orika.Properties;
-import ma.glasnost.orika.StateReporter.Reportable;
 import ma.glasnost.orika.constructor.ConstructorResolverStrategy;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.converter.builtin.BuiltinConverters;
@@ -50,8 +49,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static java.lang.Boolean.valueOf;
 import static java.lang.System.getProperty;
 import static ma.glasnost.orika.OrikaSystemProperties.*;
-import static ma.glasnost.orika.StateReporter.DIVIDER;
-import static ma.glasnost.orika.StateReporter.humanReadableSizeInMemory;
 
 /**
  * The mapper factory is the heart of Orika, a small container where metadata
@@ -61,7 +58,7 @@ import static ma.glasnost.orika.StateReporter.humanReadableSizeInMemory;
  * @author S.M. El Aatifi
  * 
  */
-public class DefaultMapperFactory implements MapperFactory, Reportable {
+public class DefaultMapperFactory implements MapperFactory {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMapperFactory.class);
 
@@ -96,8 +93,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
     protected volatile boolean isBuilt = false;
     protected volatile boolean isBuilding = false;
 
-    protected final ExceptionUtility exceptionUtil;
-    
+
     /**
      * Constructs a new instance of DefaultMapperFactory
      * 
@@ -108,20 +104,19 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
         this.converterFactory = new ConverterFactoryFacade(builder.converterFactory);
         this.compilerStrategy = builder.compilerStrategy;
         this.classMapRegistry = new ConcurrentHashMap<>();
-        this.mappersRegistry = new SortedCollection<Mapper<Object, Object>>(Ordering.MAPPER);
-        this.filtersRegistry = new SortedCollection<Filter<Object, Object>>(Ordering.FILTER);
-        this.explicitAToBRegistry = new ConcurrentHashMap<Type<?>, Set<Type<?>>>();
-        this.dynamicAToBRegistry = new ConcurrentHashMap<Type<?>, Set<Type<?>>>();
-        this.usedMapperMetadataRegistry = new ConcurrentHashMap<MapperKey, Set<ClassMap<Object, Object>>>();
-        this.objectFactoryRegistry = new ConcurrentHashMap<Type<? extends Object>, ConcurrentHashMap<Type<? extends Object>, ObjectFactory<? extends Object>>>();
-        this.defaultFieldMappers = new CopyOnWriteArrayList<DefaultFieldMapper>();
+        this.mappersRegistry = new SortedCollection<>(Ordering.MAPPER);
+        this.filtersRegistry = new SortedCollection<>(Ordering.FILTER);
+        this.explicitAToBRegistry = new ConcurrentHashMap<>();
+        this.dynamicAToBRegistry = new ConcurrentHashMap<>();
+        this.usedMapperMetadataRegistry = new ConcurrentHashMap<>();
+        this.objectFactoryRegistry = new ConcurrentHashMap<>();
+        this.defaultFieldMappers = new CopyOnWriteArrayList<>();
         this.userUnenahanceStrategy = builder.unenhanceStrategy;
         this.unenhanceStrategy = buildUnenhanceStrategy(builder.unenhanceStrategy, builder.superTypeStrategy);
         this.contextFactory = builder.mappingContextFactory;
         this.nonCyclicContextFactory = new NonCyclicMappingContext.Factory(this.contextFactory.getGlobalProperties());
-        this.exceptionUtil = new ExceptionUtility(this, builder.dumpStateOnException);
         this.mapperFacade = buildMapperFacade(contextFactory, unenhanceStrategy);
-        this.concreteTypeRegistry = new ConcurrentHashMap<java.lang.reflect.Type, Type<?>>();
+        this.concreteTypeRegistry = new ConcurrentHashMap<>();
         this.alwaysCreateMultipleMapperWrapper = builder.alwaysCreateMultipleMapperWrapper;
         
         if (builder.classMaps != null) {
@@ -665,7 +660,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
      * @return the MapperFacade to use
      */
     protected MapperFacade buildMapperFacade(MappingContextFactory contextFactory, UnenhanceStrategy unenhanceStrategy) {
-        return new MapperFacadeImpl(this, contextFactory, unenhanceStrategy, exceptionUtil);
+        return new MapperFacadeImpl(this, contextFactory, unenhanceStrategy);
     }
     
     /*
@@ -744,7 +739,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
                     } catch (MappingException e) {
                         e.setSourceType(mapperKey.getAType());
                         e.setDestinationType(mapperKey.getBType());
-                        throw exceptionUtil.decorate(e);
+                        throw e;
                     }
                 }
             }
@@ -1059,36 +1054,36 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
                          * Use the default constructor in the case where it is
                          * the only option
                          */
-                        result = new DefaultConstructorObjectFactory<T>(targetType.getRawType());
+                        result = new DefaultConstructorObjectFactory<>(targetType.getRawType());
                     } else {
                         try {
                             result = (ObjectFactory<T>) objectFactoryGenerator.build(targetType, sourceType, context);
                         } catch (MappingException e) {
                             for (Constructor<?> c : constructors) {
                                 if (c.getParameterTypes().length == 0) {
-                                    result = new DefaultConstructorObjectFactory<T>(targetType.getRawType());
+                                    result = new DefaultConstructorObjectFactory<>(targetType.getRawType());
                                     break;
                                 }
                             }
                             if (result == null) {
-                                throw exceptionUtil.decorate(e);
+                                throw e;
                             }
                         }
                     }
                     
                     ConcurrentHashMap<Type<? extends Object>, ObjectFactory<? extends Object>> localCache = objectFactoryRegistry.get(targetType);
                     if (localCache == null) {
-                        localCache = new ConcurrentHashMap<Type<? extends Object>, ObjectFactory<? extends Object>>();
-                        ConcurrentHashMap<Type<? extends Object>, ObjectFactory<? extends Object>> existing = objectFactoryRegistry.putIfAbsent(
+                        localCache = new ConcurrentHashMap<>();
+                        var existing = objectFactoryRegistry.putIfAbsent(
                                 targetType, localCache);
                         if (existing != null) {
                             localCache = existing;
                         }
                     }
                     
-                    ObjectFactory<T> existing = (ObjectFactory<T>) localCache.putIfAbsent(sourceType, result);
+                    var existing = localCache.putIfAbsent(sourceType, result);
                     if (existing != null) {
-                        result = existing;
+                        result = (ObjectFactory<T>) existing;
                     }
                     
                 } else {
@@ -1111,7 +1106,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
         /*
          * Check for a pre-resolved type
          */
-        Type<? extends D> concreteType = context == null ? null : context.getConcreteClass(sourceType, destinationType);
+        var concreteType = context == null ? null : context.getConcreteClass(sourceType, destinationType);
         
         if (concreteType != null) {
             return concreteType;
@@ -1129,7 +1124,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
         /*
          * Look for a match in the explicitly registered types
          */
-        Set<Type<?>> destinationSet = explicitAToBRegistry.get(sourceType);
+        var destinationSet = explicitAToBRegistry.get(sourceType);
         if (destinationSet != null && !destinationSet.isEmpty()) {
             for (final Type<?> type : destinationSet) {
                 if (destinationType.isAssignableFrom(type) && type.isConcrete()) {
@@ -1187,11 +1182,11 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
     }
 
     private <S, D> boolean customObjectFactoryForDestinationExists(Type<S> sourceType, Type<D> destinationType) {
-        Set<Type<? extends Object>> objFactoryDestTypes = getKeys(objectFactoryRegistry);
-        for (Type<? extends Object> objFactoryDestType : objFactoryDestTypes) {
+        var objFactoryDestTypes = getKeys(objectFactoryRegistry);
+        for (var objFactoryDestType : objFactoryDestTypes) {
             if (destinationType.isAssignableFrom(objFactoryDestType)
                     && objectFactoryRegistry.get(objFactoryDestType).containsKey(sourceType)) {
-                ObjectFactory<? extends Object> objectFactory = objectFactoryRegistry.get(objFactoryDestType).get(sourceType);
+                var objectFactory = objectFactoryRegistry.get(objFactoryDestType).get(sourceType);
                 if (isCustomObjectFactory(objectFactory)) {
                     return true;
                 }
@@ -1309,7 +1304,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
     }
     
     public Set<ClassMap<Object, Object>> lookupUsedClassMap(MapperKey mapperKey) {
-        Set<ClassMap<Object, Object>> usedClassMapSet = usedMapperMetadataRegistry.get(mapperKey);
+        var usedClassMapSet = usedMapperMetadataRegistry.get(mapperKey);
         if (usedClassMapSet == null) {
             usedClassMapSet = Collections.emptySet();
         }
@@ -1322,7 +1317,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
     private void buildClassMapRegistry() {
         
         // prepare a map for classmap (stored as set)
-        Map<MapperKey, ClassMap<Object, Object>> classMapsDictionary = new HashMap<MapperKey, ClassMap<Object, Object>>();
+        var classMapsDictionary = new HashMap<MapperKey, ClassMap<Object, Object>>();
         
         for (final ClassMap<Object, Object> classMap : classMapRegistry.values()) {
             classMapsDictionary.put(new MapperKey(classMap.getAType(), classMap.getBType()), classMap);
@@ -1331,12 +1326,12 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
         for (final ClassMap<?, ?> classMap : classMapRegistry.values()) {
             MapperKey key = new MapperKey(classMap.getAType(), classMap.getBType());
             
-            Set<ClassMap<Object, Object>> usedClassMapSet = new LinkedHashSet<ClassMap<Object, Object>>();
+            Set<ClassMap<Object, Object>> usedClassMapSet = new LinkedHashSet<>();
             
             for (final MapperKey parentMapperKey : classMap.getUsedMappers()) {
                 ClassMap<Object, Object> usedClassMap = classMapsDictionary.get(parentMapperKey);
                 if (usedClassMap == null) {
-                    throw exceptionUtil.newMappingException("Cannot find class mapping using mapper : " + classMap.getMapperClassName());
+                    throw new MappingException("Cannot find class mapping using mapper : " + classMap.getMapperClassName());
                 }
                 usedClassMapSet.add(usedClassMap);
             }
@@ -1442,7 +1437,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
     private void collectUsedMappers(ClassMap<?, ?> classMap, Set<Mapper<Object, Object>> parentMappers, MapperKey parentMapperKey, MappingContext context) {
         Mapper<Object, Object> parentMapper = lookupMapper(parentMapperKey, context);
         if (parentMapper == null) {
-            throw exceptionUtil.newMappingException("Cannot find used mappers for : " + classMap.getMapperClassName());
+            throw new MappingException("Cannot find used mappers for : " + classMap.getMapperClassName());
         }
         if (parentMapper instanceof MultipleMapperWrapper) {
             MultipleMapperWrapper multiMapperWrapper = (MultipleMapperWrapper) parentMapper;
@@ -1498,11 +1493,11 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
      */
     protected <S, D> void register(Type<S> sourceType, Type<D> destinationType, boolean isAutoGenerated) {
         
-        ConcurrentHashMap<Type<?>, Set<Type<?>>> registry = isAutoGenerated ? dynamicAToBRegistry : explicitAToBRegistry;
+        var registry = isAutoGenerated ? dynamicAToBRegistry : explicitAToBRegistry;
         
-        Set<Type<?>> destinationSet = registry.get(sourceType);
+        var destinationSet = registry.get(sourceType);
         if (destinationSet == null) {
-            destinationSet = new TreeSet<Type<?>>();
+            destinationSet = new TreeSet<>();
             Set<Type<?>> existing = registry.putIfAbsent(sourceType, destinationSet);
             if (existing != null) {
                 destinationSet = existing;
@@ -1521,7 +1516,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
          * Combine the dynamically registered classes with the explicitly
          * registered
          */
-        TreeSet<Type<?>> mappedClasses = new TreeSet<Type<?>>();
+        var mappedClasses = new TreeSet<Type<?>>();
         Set<Type<? extends Object>> types = explicitAToBRegistry.get(type);
         if (types != null) {
             mappedClasses.addAll(types);
@@ -1650,43 +1645,7 @@ public class DefaultMapperFactory implements MapperFactory, Reportable {
         this.filtersRegistry.add((Filter<Object, Object>) filter);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ma.glasnost.orika.StateReporter.Reportable#reportCurrentState(java.lang
-     * .StringBuilder)
-     */
-    public void reportCurrentState(StringBuilder out) {
-        out.append(DIVIDER);
-        out.append("\nRegistered object factories: ")
-                .append(objectFactoryRegistry.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(objectFactoryRegistry))
-                .append(")");
-        for (Entry<Type<? extends Object>, ConcurrentHashMap<Type<? extends Object>, ObjectFactory<? extends Object>>> entry : objectFactoryRegistry.entrySet()) {
-            out.append("\n  [").append(entry.getKey()).append("] : ").append(entry.getValue());
-        }
-        out.append(DIVIDER);
-        out.append("\nRegistered mappers: ")
-                .append(mappersRegistry.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(mappersRegistry))
-                .append(")");
-        int index = 0;
-        for (Mapper<Object, Object> mapper : mappersRegistry) {
-            out.append("\n  [").append(index++).append("] : ").append(mapper);
-        }
-        out.append(DIVIDER);
-        out.append("\nRegistered concrete types: ")
-                .append(concreteTypeRegistry.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(concreteTypeRegistry))
-                .append(")");
-        for (Entry<java.lang.reflect.Type, Type<?>> entry : concreteTypeRegistry.entrySet()) {
-            out.append("\n  [").append(entry.getKey()).append("] : ").append(entry.getValue());
-        }
-    }
+
     
     /**
      * ConverterFactoryFacade is a nested intercepter class for ConverterFactory

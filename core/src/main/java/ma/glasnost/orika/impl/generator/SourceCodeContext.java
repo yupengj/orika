@@ -47,7 +47,6 @@ import static ma.glasnost.orika.impl.Specifications.aMultiOccurrenceElementMap;
 public class SourceCodeContext {
     
     private static final AtomicInteger UNIQUE_CLASS_INDEX = new AtomicInteger();
-    
     private StringBuilder sourceBuilder;
     private String classSimpleName;
     private String packageName;
@@ -56,7 +55,8 @@ public class SourceCodeContext {
     private List<String> methods;
     private List<String> fields;
     private Class<?> superClass;
-    
+    private final Class<?> neighbor;
+
     private final UsedTypesContext usedTypes;
     private final UsedConvertersContext usedConverters;
     private final UsedFiltersContext usedFilters;
@@ -79,7 +79,7 @@ public class SourceCodeContext {
      * @param logDetails
      */
     @SuppressWarnings("unchecked")
-    public SourceCodeContext(final String baseClassName, Class<?> superClass, MappingContext mappingContext, StringBuilder logDetails) {
+    public SourceCodeContext(final String baseClassName, Class<?> superClass, Class<?> neighbor, MappingContext mappingContext, StringBuilder logDetails) {
         
         this.mapperFactory = (MapperFactory) mappingContext.getProperty(Properties.MAPPER_FACTORY);
         this.codeGenerationStrategy = (CodeGenerationStrategy) mappingContext.getProperty(Properties.CODE_GENERATION_STRATEGY);
@@ -117,7 +117,9 @@ public class SourceCodeContext {
         this.usedMapperFacades = new UsedMapperFacadesContext();
         this.logDetails = logDetails;
         
-        this.aggregateFieldMaps = new LinkedHashMap<AggregateSpecification, List<FieldMap>>();
+        this.aggregateFieldMaps = new LinkedHashMap<>();
+
+        this.neighbor = neighbor;
     }
     
     private String makeUniqueClassName(String name) {
@@ -992,4 +994,7 @@ public class SourceCodeContext {
         return converter;
     }
 
+    public Class<?> getNeighbor() {
+        return neighbor;
+    }
 }

@@ -52,7 +52,7 @@ public class MappingContext {
     protected List<Object[]> fieldMappingStack;
     protected boolean capturesFieldContext;
     
-    public static enum StackElement {
+    public enum StackElement {
         SOURCE_NAME, SOURCE_TYPE, SOURCE, DEST_NAME, DEST_TYPE, DEST;
     }
     

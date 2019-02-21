@@ -17,20 +17,16 @@
  */
 package ma.glasnost.orika.converter;
 
-import static ma.glasnost.orika.StateReporter.DIVIDER;
-import static ma.glasnost.orika.StateReporter.humanReadableSizeInMemory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.StateReporter.Reportable;
 import ma.glasnost.orika.impl.util.ClassUtil;
 import ma.glasnost.orika.metadata.ConverterKey;
 import ma.glasnost.orika.metadata.Type;
@@ -42,7 +38,7 @@ import ma.glasnost.orika.metadata.TypeFactory;
  * @author mattdeboer
  * 
  */
-public class DefaultConverterFactory implements ConverterFactory, Reportable {
+public class DefaultConverterFactory implements ConverterFactory {
     
     private final Map<ConverterKey, Converter<Object, Object>> converterCache;
     private Collection<Converter<Object, Object>> converters;
@@ -56,8 +52,8 @@ public class DefaultConverterFactory implements ConverterFactory, Reportable {
     public DefaultConverterFactory(Map<ConverterKey, Converter<Object, Object>> converterCache, Set<Converter<Object, Object>> converters) {
         super();
         this.converterCache = converterCache;
-        this.converters = new CopyOnWriteArrayList<Converter<Object, Object>>();
-        this.convertersMap = new ConcurrentHashMap<String, Converter<Object, Object>>();
+        this.converters = new CopyOnWriteArrayList<>();
+        this.convertersMap = new ConcurrentHashMap<>();
     }
     
     /**
@@ -179,7 +175,7 @@ public class DefaultConverterFactory implements ConverterFactory, Reportable {
         }
         converters.add((Converter<Object, Object>) converter);
         if (converter instanceof BidirectionalConverter && !converter.getAType().equals(converter.getBType())) {
-            converters.add((Converter<Object, Object>) ((BidirectionalConverter<?, ?>) converter).reverse());
+            converters.add(((BidirectionalConverter<?, ?>) converter).reverse());
         }
     }
     
@@ -196,39 +192,5 @@ public class DefaultConverterFactory implements ConverterFactory, Reportable {
             throw new IllegalStateException("Cannot register converters after MapperFacade has been initialized");
         }
         convertersMap.put(converterId, (Converter<Object, Object>) converter);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ma.glasnost.orika.StateReporter.Reportable#reportCurrentState(java.lang
-     * .StringBuilder)
-     */
-    public void reportCurrentState(StringBuilder out) {
-        out.append(DIVIDER);
-        out.append("\nRegistered converters: ")
-                .append(converters.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(converters))
-                .append(")");
-        int index = 0;
-        for (Converter<Object, Object> converter : converters) {
-            out.append("\n  [").append(index++).append("]: ").append(converter);
-        }
-        out.append(DIVIDER);
-        out.append("\nConverter cache: ")
-                .append(converterCache.size())
-                .append(" (approximate size: ")
-                .append(humanReadableSizeInMemory(converterCache))
-                .append(")");
-        for (Entry<ConverterKey, Converter<Object, Object>> entry : converterCache.entrySet()) {
-            Type<?> srcType = TypeFactory.valueOf(entry.getKey().getSourceClass());
-            Type<?> dstType = TypeFactory.valueOf(entry.getKey().getDestinationClass());
-            String srcName = TypeFactory.nameOf(srcType, dstType);
-            String dstName = TypeFactory.nameOf(dstType, srcType);
-            
-            out.append("\n  [").append(srcName).append(" -> ").append(dstName).append("] : ").append(entry.getValue());
-        }
     }
 }
