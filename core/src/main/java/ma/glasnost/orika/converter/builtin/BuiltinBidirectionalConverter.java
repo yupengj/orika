@@ -15,13 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter.builtin;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
- * BidirectionalConverter which describes itself as builtin
+ * BidirectionalConverter which describes itself as builtin.
  *
  * @param <C>
  * @param <D>
@@ -55,9 +56,15 @@ abstract class BuiltinBidirectionalConverter<C, D> extends BidirectionalConverte
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
 
     BuiltinBidirectionalConverter<?, ?> that = (BuiltinBidirectionalConverter<?, ?>) o;
 

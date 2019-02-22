@@ -15,7 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.impl.generator;
+
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
@@ -23,17 +32,14 @@ import ma.glasnost.orika.MappingException;
 import ma.glasnost.orika.constructor.ConstructorResolverStrategy;
 import ma.glasnost.orika.constructor.ConstructorResolverStrategy.ConstructorMapping;
 import ma.glasnost.orika.impl.GeneratedObjectFactory;
-import ma.glasnost.orika.metadata.*;
+import ma.glasnost.orika.metadata.ClassMap;
+import ma.glasnost.orika.metadata.FieldMap;
+import ma.glasnost.orika.metadata.MapperKey;
+import ma.glasnost.orika.metadata.Type;
+import ma.glasnost.orika.metadata.TypeFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.List;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
 
 /**
  * ObjectFactoryGenerator generates source code which implements an ObjectFactory capable of
@@ -48,7 +54,7 @@ public class ObjectFactoryGenerator {
   private final String nameSuffix;
 
   /**
-   * Creates a new ObjectFactoryGenerator instance
+   * Creates a new ObjectFactoryGenerator instance.
    *
    * @param mapperFactory
    * @param constructorResolverStrategy
@@ -220,7 +226,8 @@ public class ObjectFactoryGenerator {
                   + "', an automatic mapping of the source type ('"
                   + sourceType
                   + "') to this constructor call could not be determined. Please "
-                  + "register a custom ObjectFactory implementation which is able to create an instance of '"
+                  + "register a custom ObjectFactory implementation which is able"
+                  + " to create an instance of '"
                   + destinationType
                   + "' from an instance of '"
                   + sourceType
@@ -315,7 +322,8 @@ public class ObjectFactoryGenerator {
 
       out.append(
           format(
-              "throw new %s(s.getClass().getCanonicalName() + \" is an unsupported source class for constructing instances of "
+              "throw new %s(s.getClass().getCanonicalName() + \" is an unsupported"
+              + " source class for constructing instances of "
                   + type.getCanonicalName()
                   + "\");",
               IllegalArgumentException.class.getCanonicalName()));

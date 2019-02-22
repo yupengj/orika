@@ -18,12 +18,12 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
 
 /**
  * MultiOccurrenceElementToObject handles the case where a multi-occurrence element is of type

@@ -18,16 +18,16 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.TypeFactory;
 
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
 /**
- * ObjectToMultiOccurrenceElement handles the case where the destination is a multi-occurrence
+ * ObjectToMultiOccurrenceElement handles the case where the destination is a multi-occurrence.
  * object of type Object
  */
 public class ObjectToMultiOccurrenceElement extends AbstractSpecification {

@@ -23,7 +23,7 @@ import ma.glasnost.orika.metadata.Type;
 
 /**
  * CopyByReferenceConverter handles conversion of Orika's built-in immutable types, as well as
- * anything-to-Object, and primitive to Wrapper conversions<br>
+ * anything-to-Object, and primitive to Wrapper conversions.<br>
  */
 public class CopyByReferenceConverter extends BuiltinCustomConverter<Object, Object> {
 

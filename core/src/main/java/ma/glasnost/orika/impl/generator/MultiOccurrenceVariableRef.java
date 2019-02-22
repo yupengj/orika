@@ -15,17 +15,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.impl.generator;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import ma.glasnost.orika.MapEntry;
 import ma.glasnost.orika.impl.DefaultConcreteTypeMap;
 import ma.glasnost.orika.metadata.Property;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 /**
  * VariableRef represents a reference to a given variable or property; it contains various helper
@@ -47,7 +48,7 @@ public class MultiOccurrenceVariableRef extends VariableRef {
   }
 
   /**
-   * up-converts the specified standard VariableRef into a MultiOccurrenceVariableRef
+   * up-converts the specified standard VariableRef into a MultiOccurrenceVariableRef.
    *
    * @param r
    * @return
@@ -150,7 +151,7 @@ public class MultiOccurrenceVariableRef extends VariableRef {
   }
 
   /**
-   * A convenience function for adding all of one multi-occurrence type to another
+   * A convenience function for adding all of one multi-occurrence type to another.
    *
    * @param value
    * @return
@@ -162,7 +163,7 @@ public class MultiOccurrenceVariableRef extends VariableRef {
 
   /**
    * A convenience function which adds all of one multi-occurence type to another variable, but
-   * without any assignment
+   * without any assignment.
    *
    * @param value
    * @return
@@ -224,7 +225,7 @@ public class MultiOccurrenceVariableRef extends VariableRef {
   }
 
   /**
-   * Generates java code for a reference to the "size" of this VariableRef
+   * Generates java code for a reference to the "size" of this VariableRef.
    *
    * @return
    */

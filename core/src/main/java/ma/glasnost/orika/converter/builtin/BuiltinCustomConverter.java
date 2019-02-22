@@ -15,15 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter.builtin;
 
 import ma.glasnost.orika.CustomConverter;
 
 /**
- * Custom converter which describes itself as builtin
+ * Custom converter which describes itself as builtin.
  *
- * @param <C>
- * @param <D>
+ * @param <C> SourceType
+ * @param <D> DestinationType
  */
 abstract class BuiltinCustomConverter<C, D> extends CustomConverter<C, D> {
 

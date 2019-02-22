@@ -27,7 +27,7 @@ package ma.glasnost.orika.cern.colt.map;
  * <p>Overrides many methods for performance reasons only.
  *
  * @author wolfgang.hoschek@cern.ch
- *     <p>Modified source to remove unused methods and combined superclass methods into single
+ *     <p>Modified source to remove unused methods and combined superclass methods into single</p>
  *     class.
  * @version 1.0, 09/24/99
  * @see java.util.HashMap
@@ -44,19 +44,19 @@ public class OpenIntObjectHashMap {
    *
    * @serial
    */
-  protected int table[];
+  protected int[] table;
   /**
    * The hash table values.
    *
    * @serial
    */
-  protected Object values[];
+  protected Object[] values;
   /**
    * The state of each hash table entry (FREE, FULL, REMOVED).
    *
    * @serial
    */
-  protected byte state[];
+  protected byte[] state;
   /**
    * The number of table entries in state==FREE.
    *
@@ -129,7 +129,9 @@ public class OpenIntObjectHashMap {
    */
   public Object get(int key) {
     int i = indexOfKey(key);
-    if (i < 0) return null; // not contained
+    if (i < 0) {
+      return null; // not contained
+    }
     return values[i];
   }
 
@@ -141,8 +143,8 @@ public class OpenIntObjectHashMap {
    *     it is NOT already contained and should be inserted at slot index.
    */
   protected int indexOfInsertion(int key) {
-    final int tab[] = table;
-    final byte stat[] = state;
+    final int[] tab = table;
+    final byte[] stat = state;
     final int length = tab.length;
 
     final int hash = key & 0x7FFFFFFF;
@@ -150,14 +152,18 @@ public class OpenIntObjectHashMap {
     int decrement = hash % (length - 2); // double hashing, see
     // http://www.eece.unm.edu/faculty/heileman/hash/node4.html
     // int decrement = (hash / length) % length;
-    if (decrement == 0) decrement = 1;
+    if (decrement == 0) {
+      decrement = 1;
+    }
 
     // stop if we find a removed or free slot, or if we find the key itself
     // do NOT skip over removed slots (yes, open addressing is like that...)
     while (stat[i] == FULL && tab[i] != key) {
       i -= decrement;
       // hashCollisions++;
-      if (i < 0) i += length;
+      if (i < 0) {
+        i += length;
+      }
     }
 
     if (stat[i] == REMOVED) {
@@ -168,9 +174,13 @@ public class OpenIntObjectHashMap {
       while (stat[i] != FREE && (stat[i] == REMOVED || tab[i] != key)) {
         i -= decrement;
         // hashCollisions++;
-        if (i < 0) i += length;
+        if (i < 0) {
+          i += length;
+        }
       }
-      if (stat[i] == FREE) i = j;
+      if (stat[i] == FREE) {
+        i = j;
+      }
     }
 
     if (stat[i] == FULL) {
@@ -189,8 +199,8 @@ public class OpenIntObjectHashMap {
    *     found.
    */
   protected int indexOfKey(int key) {
-    final int tab[] = table;
-    final byte stat[] = state;
+    final int[] tab = table;
+    final byte[] stat = state;
     final int length = tab.length;
 
     final int hash = key & 0x7FFFFFFF;
@@ -198,21 +208,27 @@ public class OpenIntObjectHashMap {
     int decrement = hash % (length - 2); // double hashing, see
     // http://www.eece.unm.edu/faculty/heileman/hash/node4.html
     // int decrement = (hash / length) % length;
-    if (decrement == 0) decrement = 1;
+    if (decrement == 0) {
+      decrement = 1;
+    }
 
     // stop if we find a free slot, or if we find the key itself.
     // do skip over removed slots (yes, open addressing is like that...)
     while (stat[i] != FREE && (stat[i] == REMOVED || tab[i] != key)) {
       i -= decrement;
       // hashCollisions++;
-      if (i < 0) i += length;
+      if (i < 0) {
+        i += length;
+      }
     }
 
-    if (stat[i] == FREE) return -1; // not found
+    if (stat[i] == FREE) {
+      return -1; // not found
+    }
     return i; // found, return index where key is contained
   }
 
-  /** Removes all entries from this map */
+  /** Removes all entries from this map. */
   public void clear() {
     setUp(highWaterMark, minLoadFactor, maxLoadFactor);
   }
@@ -277,7 +293,9 @@ public class OpenIntObjectHashMap {
 
     this.table[i] = key;
     this.values[i] = value;
-    if (this.state[i] == FREE) this.freeEntries--;
+    if (this.state[i] == FREE) {
+      this.freeEntries--;
+    }
     this.state[i] = FULL;
     this.distinct++;
 
@@ -296,24 +314,24 @@ public class OpenIntObjectHashMap {
    * mark or falls below the low water mark.
    */
   protected void rehash(int newCapacity) {
-    int oldCapacity = table.length;
+
     // if (oldCapacity == newCapacity) return;
-
-    int oldTable[] = table;
-    Object oldValues[] = values;
-    byte oldState[] = state;
-
-    int newTable[] = new int[newCapacity];
-    Object newValues[] = new Object[newCapacity];
-    byte newState[] = new byte[newCapacity];
-
     this.highWaterMark = chooseHighWaterMark(newCapacity, this.maxLoadFactor);
+    int[] oldTable = table;
+    Object[] oldValues = values;
+    byte[] oldState = state;
+
+    int[] newTable = new int[newCapacity];
+    Object[] newValues = new Object[newCapacity];
+    byte[] newState = new byte[newCapacity];
 
     this.table = newTable;
     this.values = newValues;
     this.state = newState;
     this.freeEntries = newCapacity - this.distinct; // delta
 
+    int oldCapacity = table.length;
+    
     for (int i = oldCapacity; i-- > 0; ) {
       if (oldState[i] == FULL) {
         int element = oldTable[i];
@@ -345,22 +363,29 @@ public class OpenIntObjectHashMap {
    *     >= maxLoadFactor)</tt> .
    */
   protected void setUp(int initialCapacity, double minLoadFactor, double maxLoadFactor) {
-    int capacity = initialCapacity;
 
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException(
           "Initial Capacity must not be less than zero: " + initialCapacity);
-    if (minLoadFactor < 0.0 || minLoadFactor >= 1.0)
+    }
+    if (minLoadFactor < 0.0 || minLoadFactor >= 1.0) {
       throw new IllegalArgumentException("Illegal minLoadFactor: " + minLoadFactor);
-    if (maxLoadFactor <= 0.0 || maxLoadFactor >= 1.0)
+    }
+    if (maxLoadFactor <= 0.0 || maxLoadFactor >= 1.0) {
       throw new IllegalArgumentException("Illegal maxLoadFactor: " + maxLoadFactor);
-    if (minLoadFactor >= maxLoadFactor)
+    }
+    if (minLoadFactor >= maxLoadFactor) {
       throw new IllegalArgumentException(
           "Illegal minLoadFactor: " + minLoadFactor + " and maxLoadFactor: " + maxLoadFactor);
+    }
 
+    int capacity = initialCapacity;
+    
     capacity = nextPrime(capacity);
-    if (capacity == 0) capacity = 1; // open addressing needs at least one FREE slot at any
-    // time.
+    if (capacity == 0) {
+      capacity = 1; // open addressing needs at least one FREE slot at any
+      // time.
+    }
 
     this.table = new int[capacity];
     this.values = new Object[capacity];
@@ -369,8 +394,11 @@ public class OpenIntObjectHashMap {
     // memory will be exhausted long before this pathological case happens,
     // anyway.
     this.minLoadFactor = minLoadFactor;
-    if (capacity == PrimeFinder.largestPrime) this.maxLoadFactor = 1.0;
-    else this.maxLoadFactor = maxLoadFactor;
+    if (capacity == PrimeFinder.largestPrime) {
+      this.maxLoadFactor = 1.0;
+    } else {
+      this.maxLoadFactor = maxLoadFactor;
+    }
 
     this.distinct = 0;
     this.freeEntries = capacity; // delta

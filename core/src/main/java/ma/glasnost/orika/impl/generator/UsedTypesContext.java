@@ -15,13 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package ma.glasnost.orika.impl.generator;
 
-import ma.glasnost.orika.metadata.Type;
+package ma.glasnost.orika.impl.generator;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import ma.glasnost.orika.metadata.Type;
 
 /** */
 public class UsedTypesContext {

@@ -18,11 +18,11 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
-
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
 
 /**
  * AnyTypeToString handles conversion of any non-String type to a String using a toString() or

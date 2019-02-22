@@ -15,13 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package ma.glasnost.orika.converter.builtin;
 
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.Type;
+package ma.glasnost.orika.converter.builtin;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.metadata.Type;
 
 /**
  * NumericConverters contains a set of common conversions between the "big" value types in the
@@ -159,7 +160,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between BigInteger and Integer */
+  /** Provides conversion between BigInteger and Integer. */
   public static class BigIntegerToIntegerConverter
       extends BuiltinBidirectionalConverter<BigInteger, Integer> {
 
@@ -213,7 +214,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Integer and Short */
+  /** Provides conversion between Integer and Short. */
   public static class IntegerToShortConverter
       extends BuiltinBidirectionalConverter<Integer, Short> {
 
@@ -262,7 +263,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Long and Short */
+  /** Provides conversion between Long and Short. */
   public static class LongToShortConverter extends BuiltinBidirectionalConverter<Long, Short> {
 
     private final boolean truncate;
@@ -309,7 +310,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Long and Integer */
+  /** Provides conversion between Long and Integer. */
   public static class LongToIntegerConverter extends BuiltinBidirectionalConverter<Long, Integer> {
 
     private final boolean truncate;
@@ -359,7 +360,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Long and Integer */
+  /** Provides conversion between Long and Integer. */
   public static class DoubleToLongConverter extends BuiltinBidirectionalConverter<Double, Long> {
 
     private final boolean truncate;
@@ -406,7 +407,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Integer and Integer */
+  /** Provides conversion between Integer and Integer. */
   public static class DoubleToIntegerConverter
       extends BuiltinBidirectionalConverter<Double, Integer> {
 
@@ -458,7 +459,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Short and Short */
+  /** Provides conversion between Short and Short. */
   public static class DoubleToShortConverter extends BuiltinBidirectionalConverter<Double, Short> {
 
     private final boolean truncate;
@@ -507,7 +508,7 @@ public class NumericConverters {
 
   // ~
 
-  /** Provides conversion between Long and Integer */
+  /** Provides conversion between Long and Integer. */
   public static class FloatToLongConverter extends BuiltinBidirectionalConverter<Float, Long> {
 
     private final boolean truncate;
@@ -554,7 +555,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Integer and Integer */
+  /** Provides conversion between Integer and Integer. */
   public static class FloatToIntegerConverter
       extends BuiltinBidirectionalConverter<Float, Integer> {
 
@@ -605,7 +606,7 @@ public class NumericConverters {
     }
   }
 
-  /** Provides conversion between Short and Short */
+  /** Provides conversion between Short and Short. */
   public static class FloatToShortConverter extends BuiltinBidirectionalConverter<Float, Short> {
 
     private final boolean truncate;

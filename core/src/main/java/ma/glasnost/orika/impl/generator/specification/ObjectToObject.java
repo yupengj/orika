@@ -18,15 +18,15 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.MultiOccurrenceVariableRef;
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
-/** ObjectToObject */
+/** ObjectToObject. */
 public class ObjectToObject extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

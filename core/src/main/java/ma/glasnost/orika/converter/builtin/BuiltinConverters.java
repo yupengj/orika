@@ -18,17 +18,17 @@
 
 package ma.glasnost.orika.converter.builtin;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import ma.glasnost.orika.BaseConverter;
 import ma.glasnost.orika.Converter;
-import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * BuiltinConverters is a utility class used to register common built-in converters.
@@ -139,9 +139,12 @@ public abstract class BuiltinConverters {
     /*
      * Register additional common "cloneable" types
      */
-    converterFactory.registerConverter(makeSimpleConverter(XMLGregorianCalendar.class, s -> (XMLGregorianCalendar) s.clone()));
-    converterFactory.registerConverter(makeSimpleConverter(Calendar.class, s -> (Calendar) s.clone()));
-    converterFactory.registerConverter(makeSimpleConverter(java.sql.Date.class, s -> (java.sql.Date) s.clone()));
+    converterFactory.registerConverter(makeSimpleConverter(
+        XMLGregorianCalendar.class, s -> (XMLGregorianCalendar) s.clone()));
+    converterFactory.registerConverter(makeSimpleConverter(
+        Calendar.class, s -> (Calendar) s.clone()));
+    converterFactory.registerConverter(makeSimpleConverter(
+        java.sql.Date.class, s -> (java.sql.Date) s.clone()));
     converterFactory.registerConverter(makeSimpleConverter(Date.class, s -> (Date) s.clone()));
 
     /*
@@ -155,9 +158,11 @@ public abstract class BuiltinConverters {
     Type<T> type = TypeFactory.valueOf(cls);
     return new BaseConverter<>(type, type) {
 
-      @Override public T convert(T source, Type<? extends T> destinationType, MappingContext mappingContext) {
-        if (source == null)
+      @Override public T convert(T source, Type<? extends T> destinationType,
+          MappingContext mappingContext) {
+        if (source == null) {
           return null;
+        }
         return fn.convert(source);
       }
 

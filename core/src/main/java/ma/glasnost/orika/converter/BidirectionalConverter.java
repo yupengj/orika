@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter;
 
 import ma.glasnost.orika.CustomConverter;
@@ -24,10 +25,10 @@ import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
- * A custom converter that can be extended for mapping from one type to another in both directions
+ * A custom converter that can be extended for mapping from one type to another in both directions.
  *
- * @param <S>
- * @param <D>
+ * @param <S> Source
+ * @param <D> Destination
  */
 public abstract class BidirectionalConverter<S, D> extends CustomConverter<Object, Object>
     implements ma.glasnost.orika.Converter<Object, Object> {
@@ -85,10 +86,10 @@ public abstract class BidirectionalConverter<S, D> extends CustomConverter<Objec
   }
 
   /**
-   * Provides a reversed facade to a given converter
+   * Provides a reversed facade to a given converter.
    *
-   * @param <S>
-   * @param <D>
+   * @param <S> Source
+   * @param <D> Destination
    */
   public static class Reversed<S, D> extends BidirectionalConverter<S, D> {
 

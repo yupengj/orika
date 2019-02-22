@@ -28,7 +28,7 @@ import ma.glasnost.orika.metadata.FieldMap;
  */
 public interface BaseSpecification {
   /**
-   * Tests whether this Specification applies to the specified MappedTypePair
+   * Tests whether this Specification applies to the specified MappedTypePair.
    *
    * @param fieldMap
    * @return true if this specification applies to the given MappedTypePair

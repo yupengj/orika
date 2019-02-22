@@ -15,13 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter.builtin;
 
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * EnumConverter is used to convert from one enum to another, based on exact name match
+ * EnumConverter is used to convert from one enum to another, based on exact name match.
  *
  * @author elaatifi@gmail.com
  */

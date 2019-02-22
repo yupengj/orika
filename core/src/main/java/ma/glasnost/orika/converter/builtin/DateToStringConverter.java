@@ -15,16 +15,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package ma.glasnost.orika.converter.builtin;
 
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
+package ma.glasnost.orika.converter.builtin;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.converter.BidirectionalConverter;
+import ma.glasnost.orika.metadata.Type;
 
 /**
  * DateToStringConverter provides custom conversion from String values to and from Date instances,
@@ -51,7 +52,7 @@ public class DateToStringConverter extends BidirectionalConverter<Date, String> 
     this(format, Locale.getDefault());
   }
 
-  /** Constructs a new instance of DateToStringConverter with given locale */
+  /** Constructs a new instance of DateToStringConverter with given locale. */
   public DateToStringConverter(final String format, final Locale locale) {
     this.pattern = format;
     this.locale = locale;
@@ -83,13 +84,21 @@ public class DateToStringConverter extends BidirectionalConverter<Date, String> 
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
 
     DateToStringConverter that = (DateToStringConverter) o;
 
-    if (pattern != null ? !pattern.equals(that.pattern) : that.pattern != null) return false;
+    if (pattern != null ? !pattern.equals(that.pattern) : that.pattern != null) {
+      return false;
+    }
     return locale != null ? locale.equals(that.locale) : that.locale == null;
   }
 }

@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter.builtin;
 
 import ma.glasnost.orika.CustomConverter;
@@ -22,7 +23,7 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 
 /**
- * Provides wrapper to primitives conversion
+ * Provides wrapper to primitives conversion.
  *
  * @author elaatifi@gmail.com
  */

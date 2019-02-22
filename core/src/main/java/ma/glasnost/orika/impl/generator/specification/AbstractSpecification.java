@@ -26,14 +26,14 @@ import ma.glasnost.orika.metadata.FieldMap;
 
 import static java.lang.String.format;
 
-/** AbstractSpecification provides the base implementation for Specification */
+/** AbstractSpecification provides the base implementation for Specification. */
 public abstract class AbstractSpecification implements Specification {
 
   /** */
   protected MapperFactory mapperFactory;
 
   /**
-   * Tests whether this fieldMap should map nulls;
+   * Tests whether this fieldMap should map nulls.
    *
    * @param fieldMap
    * @param context

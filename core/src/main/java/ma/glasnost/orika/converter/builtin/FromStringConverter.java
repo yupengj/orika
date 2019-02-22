@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter.builtin;
 
 import ma.glasnost.orika.MappingContext;
@@ -22,7 +23,7 @@ import ma.glasnost.orika.metadata.Type;
 
 /**
  * FromStringConverter provides conversion from String to one of the following categories of type,
- * depending on the destination:
+ * depending on the destination.:
  *
  * <ul>
  *   <li>enum

@@ -18,6 +18,12 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
+import java.util.Map;
+
 import ma.glasnost.orika.MapEntry;
 import ma.glasnost.orika.impl.generator.MapEntryRef;
 import ma.glasnost.orika.impl.generator.MapEntryRef.EntryPart;
@@ -28,13 +34,7 @@ import ma.glasnost.orika.impl.util.StringUtil;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.Type;
 
-import java.util.Map;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
-/** ArrayOrCollectionToMap handles mapping of an Array or Collection to a Map field */
+/** ArrayOrCollectionToMap handles mapping of an Array or Collection to a Map field. */
 public class ArrayOrCollectionToMap extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

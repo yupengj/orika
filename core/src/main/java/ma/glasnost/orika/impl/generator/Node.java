@@ -18,17 +18,17 @@
 
 package ma.glasnost.orika.impl.generator;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
+
 import ma.glasnost.orika.MapEntry;
 import ma.glasnost.orika.impl.util.StringUtil;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.Property;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Node {
 

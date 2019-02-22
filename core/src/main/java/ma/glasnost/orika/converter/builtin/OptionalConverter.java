@@ -18,13 +18,13 @@
 
 package ma.glasnost.orika.converter.builtin;
 
+import java.util.Optional;
+
 import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import java.util.Optional;
 
 /**
  * Converter which will convert one {@linkplain Optional} field into another optional field.
