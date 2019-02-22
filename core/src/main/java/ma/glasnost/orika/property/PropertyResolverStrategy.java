@@ -40,18 +40,6 @@ public interface PropertyResolverStrategy {
   Map<String, Property> getProperties(java.lang.reflect.Type type);
 
   /**
-   * Resolves a nested property for the provided type, based on the specified property expression (a
-   * sequence property names qualified by '.').
-   *
-   * @param type
-   * @param propertyExpression
-   * @return the NestedProperty instance defined by the provided expression
-   * @deprecated use {@link #getProperty(java.lang.reflect.Type, String)} instead
-   */
-  @Deprecated
-  NestedProperty getNestedProperty(java.lang.reflect.Type type, String propertyExpression);
-
-  /**
    * Resolves a property for the specified type; nested and dynamically defined properties should be
    * handled automatically.
    *

@@ -22,19 +22,17 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.metadata.ClassMapBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class UserProvidedInheritanceTestCase {
 
-  @SuppressWarnings("deprecation")
   @Test
   public void testFail() {
     MapperFactory factory = new DefaultMapperFactory.Builder().build();
 
     factory.registerClassMap(
-        ClassMapBuilder.map(Base.class, BaseDto.class)
+        factory.classMap(Base.class, BaseDto.class)
             .customize(
                 new CustomMapper<Base, BaseDto>() {
                   @Override
@@ -44,9 +42,7 @@ public class UserProvidedInheritanceTestCase {
                 })
             .toClassMap());
     factory.registerClassMap(
-        ClassMapBuilder.map(Child.class, ChildDto.class).byDefault().toClassMap());
-
-    factory.build();
+        factory.classMap(Child.class, ChildDto.class).byDefault().toClassMap());
 
     Child child = new Child();
     child.setChildField("CHILD FIELD");

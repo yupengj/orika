@@ -511,16 +511,6 @@ public class DefaultMapperFactory implements MapperFactory {
     }
   }
 
-  @Deprecated
-  public void registerMappingHint(ma.glasnost.orika.MappingHint... hints) {
-
-    DefaultFieldMapper[] mappers = new DefaultFieldMapper[hints.length];
-    for (int i = 0, len = hints.length; i < len; ++i) {
-      mappers[i] = new ma.glasnost.orika.MappingHint.DefaultFieldMappingConverter(hints[i]);
-    }
-    registerDefaultFieldMapper(mappers);
-  }
-
   public void registerDefaultFieldMapper(DefaultFieldMapper... mappers) {
     this.defaultFieldMappers.addAll(Arrays.asList(mappers));
   }
@@ -1499,19 +1489,6 @@ public class DefaultMapperFactory implements MapperFactory {
      * @return a reference to <code>this</code> MapperFactoryBuilder
      */
     public B useBuiltinConverters(boolean useBuiltinConverters) {
-      this.useBuiltinConverters = useBuiltinConverters;
-      return self();
-    }
-
-    /**
-     * Mis-spelled method signature
-     *
-     * @param useBuiltinConverters
-     * @return true if the built-in converters should be used
-     * @deprecated use {@link #useBuiltinConverters(boolean)} instead
-     */
-    @Deprecated
-    public B usedBuiltinConverters(boolean useBuiltinConverters) {
       this.useBuiltinConverters = useBuiltinConverters;
       return self();
     }
