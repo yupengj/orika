@@ -45,7 +45,7 @@ public class Issue18TestCase {
 
     MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
     mapperFactory.registerClassMap(
-        ClassMapBuilder.map(Object.class, Object.class).byDefault().toClassMap());
+        mapperFactory.classMap(Object.class, Object.class).byDefault().toClassMap());
     List<Object> listA = new ArrayList<Object>();
     List<Object> listB = mapperFactory.getMapperFacade().mapAsList(listA, Object.class);
 

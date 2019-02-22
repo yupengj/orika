@@ -100,19 +100,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
     this.usedMappers = new LinkedHashSet<MapperKey>();
   }
 
-  /**
-   * @param aType
-   * @param bType
-   * @deprecated Use of this method instantiates a new PropertyResolverStrategy instance each time;
-   *     instead, {@link ma.glasnost.orika.MapperFactory#classMap(Type, Type)} should be used which
-   *     will leverage the PropertyResolverStrategy instance associated with the factory.
-   */
-  @Deprecated
-  private ClassMapBuilder(Type<A> aType, Type<B> bType) {
-
-    this(aType, bType, null, getDefaultPropertyResolver());
-  }
-
   private static PropertyResolverStrategy getDefaultPropertyResolver() {
     if (defaultPropertyResolver == null || defaultPropertyResolver.get() == null) {
       synchronized (ClassMapBuilder.class) {
@@ -124,49 +111,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
       }
     }
     return defaultPropertyResolver.get();
-  }
-
-  /**
-   * Creates a new ClassMapBuilder configuration for mapping between <code>aType</code> and <code>
-   * bType</code>.
-   *
-   * @param aType
-   * @param bType
-   * @return
-   * @deprecated use {@link ma.glasnost.orika.MapperFactory#classMap(Class, Class)} instead
-   */
-  public static final <A, B> ClassMapBuilder<A, B> map(Class<A> aType, Class<B> bType) {
-    return new ClassMapBuilder<A, B>(TypeFactory.<A>valueOf(aType), TypeFactory.<B>valueOf(bType));
-  }
-
-  /**
-   * @param aType
-   * @param bType
-   * @return
-   * @deprecated use {@link ma.glasnost.orika.MapperFactory#classMap(Type, Type)} instead
-   */
-  public static final <A, B> ClassMapBuilder<A, B> map(Type<A> aType, Type<B> bType) {
-    return new ClassMapBuilder<A, B>(aType, bType);
-  }
-
-  /**
-   * @param aType
-   * @param bType
-   * @return
-   * @deprecated use {@link ma.glasnost.orika.MapperFactory#classMap(Class, Type)} instead
-   */
-  public static final <A, B> ClassMapBuilder<A, B> map(Class<A> aType, Type<B> bType) {
-    return new ClassMapBuilder<A, B>(TypeFactory.<A>valueOf(aType), bType);
-  }
-
-  /**
-   * @param aType
-   * @param bType
-   * @return
-   * @deprecated use {@link ma.glasnost.orika.MapperFactory#classMap(Type, Class)} instead
-   */
-  public static final <A, B> ClassMapBuilder<A, B> map(Type<A> aType, Class<B> bType) {
-    return new ClassMapBuilder<A, B>(aType, TypeFactory.<B>valueOf(bType));
   }
 
   /**
@@ -537,20 +481,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
   /**
    * Set the custom mapper to use for this mapping.
    *
-   * @param legacyCustomizedMapper
-   * @return this ClassMapBuilder
-   * @deprecated use {@link #customize(Mapper)} instead
-   */
-  @Deprecated
-  public final ClassMapBuilder<A, B> customize(
-      ma.glasnost.orika.MapperBase<A, B> legacyCustomizedMapper) {
-    customize(new ma.glasnost.orika.MapperBase.MapperBaseAdapter<A, B>(legacyCustomizedMapper));
-    return this;
-  }
-
-  /**
-   * Set the custom mapper to use for this mapping.
-   *
    * @param customizedMapper
    * @return this ClassMapBuilder
    */
@@ -659,62 +589,6 @@ public class ClassMapBuilder<A, B> implements MappedTypePair<A, B> {
             if (suggestion != null && getPropertiesForTypeB().contains(suggestion)) {
               if (!getMappedPropertiesForTypeB().contains(suggestion)) {
                 fieldMap(propertyName, suggestion, true).direction(direction).add();
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return this;
-  }
-
-  /**
-   * @deprecated use {@link #byDefault(DefaultFieldMapper...)} instead
-   * @param hint0 first hint
-   * @param mappingHints remaining hints
-   * @return
-   */
-  @Deprecated
-  public final ClassMapBuilder<A, B> byDefault(
-      ma.glasnost.orika.MappingHint hint0, ma.glasnost.orika.MappingHint... mappingHints) {
-    ma.glasnost.orika.MappingHint[] hints =
-        new ma.glasnost.orika.MappingHint[mappingHints.length + 1];
-    hints[0] = hint0;
-    if (mappingHints.length > 0) {
-      System.arraycopy(mappingHints, 0, hints, 1, mappingHints.length);
-    }
-    return byDefault(hints);
-  }
-
-  /**
-   * @deprecated use {@link #byDefault(DefaultFieldMapper...)} instead
-   * @param mappingHints
-   * @return
-   */
-  @Deprecated
-  public final ClassMapBuilder<A, B> byDefault(ma.glasnost.orika.MappingHint[] mappingHints) {
-
-    for (final String propertyName : aProperties.keySet()) {
-      if (!propertiesCacheA.contains(propertyName)) {
-        if (bProperties.containsKey(propertyName)) {
-          if (!propertiesCacheB.contains(propertyName)) {
-            /*
-             * Don't include the default mapping of Class to Class;
-             * this property is resolved for all types, but can't be
-             * mapped in either direction.
-             */
-            if (!propertyName.equals("class")) {
-              fieldMap(propertyName).add();
-            }
-          }
-        } else {
-          Property prop = aProperties.get(propertyName);
-          for (ma.glasnost.orika.MappingHint hint : mappingHints) {
-            String suggestion = hint.suggestMappedField(propertyName, prop.getType().getRawType());
-            if (suggestion != null && bProperties.containsKey(suggestion)) {
-              if (!propertiesCacheB.contains(suggestion)) {
-                fieldMap(propertyName, suggestion).add();
               }
             }
           }
