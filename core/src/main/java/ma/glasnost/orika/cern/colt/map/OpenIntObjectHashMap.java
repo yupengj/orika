@@ -314,24 +314,24 @@ public class OpenIntObjectHashMap {
    * mark or falls below the low water mark.
    */
   protected void rehash(int newCapacity) {
-
+    int oldCapacity = table.length;
     // if (oldCapacity == newCapacity) return;
-    this.highWaterMark = chooseHighWaterMark(newCapacity, this.maxLoadFactor);
-    int[] oldTable = table;
-    Object[] oldValues = values;
-    byte[] oldState = state;
 
-    int[] newTable = new int[newCapacity];
-    Object[] newValues = new Object[newCapacity];
-    byte[] newState = new byte[newCapacity];
+    int oldTable[] = table;
+    Object oldValues[] = values;
+    byte oldState[] = state;
+
+    int newTable[] = new int[newCapacity];
+    Object newValues[] = new Object[newCapacity];
+    byte newState[] = new byte[newCapacity];
+
+    this.highWaterMark = chooseHighWaterMark(newCapacity, this.maxLoadFactor);
 
     this.table = newTable;
     this.values = newValues;
     this.state = newState;
     this.freeEntries = newCapacity - this.distinct; // delta
 
-    int oldCapacity = table.length;
-    
     for (int i = oldCapacity; i-- > 0; ) {
       if (oldState[i] == FULL) {
         int element = oldTable[i];

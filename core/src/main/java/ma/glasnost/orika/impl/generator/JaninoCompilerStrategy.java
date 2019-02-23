@@ -18,6 +18,8 @@
 
 package ma.glasnost.orika.impl.generator;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
@@ -88,6 +90,8 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
   public Class<?> compileClass(SourceCodeContext sourceCode) throws SourceCodeGenerationException {
     Scanner scanner;
     try {
+      writeSourceFile(sourceCode);
+
       scanner = new Scanner(sourceCode.getClassName(), new StringReader(sourceCode.toSourceFile()));
       Java.CompilationUnit localCompilationUnit = new Parser(scanner).parseCompilationUnit();
       UnitCompiler unitCompile = new UnitCompiler(localCompilationUnit, iClassLoader);
@@ -149,6 +153,26 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
             throw new SourceCodeGenerationException(type + " is not accessible", e);
           }
         }
+      }
+    }
+  }
+
+  /**
+   * Produces the requested source file for debugging purposes.
+   *
+   * @throws IOException
+   */
+  protected void writeSourceFile(SourceCodeContext sourceCode) throws IOException {
+    if (writeSourceFiles) {
+      File parentDir = preparePackageOutputPath(this.pathToWriteSourceFiles, sourceCode.getPackageName());
+      File sourceFile = new File(parentDir, sourceCode.getClassSimpleName() + ".java");
+      if (!sourceFile.exists() && !sourceFile.createNewFile()) {
+        throw new IOException("Could not write source file for " + sourceCode.getClassName());
+      }
+
+      try (FileWriter fw = new FileWriter(sourceFile)) {
+        fw.append(sourceCode.toSourceFile());
+        LOG.debug("Source file written to {}", sourceFile);
       }
     }
   }
@@ -274,4 +298,6 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
       }
     }
   }
+
+
 }

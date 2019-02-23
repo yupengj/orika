@@ -53,7 +53,7 @@ public class MappingContext {
    * @param globalProperties
    */
   public MappingContext(Map<Object, Object> globalProperties) {
-    this.mapping = new HashMap<Type<?>, Type<?>>();
+    this.mapping = new HashMap<>();
     this.typeCache = new OpenIntObjectHashMap();
     this.globalProperties = globalProperties;
     Boolean capture =
