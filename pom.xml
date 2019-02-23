@@ -75,7 +75,7 @@
         <javassist.version>3.24.1-GA</javassist.version>
         <springframework.version>5.1.5.RELEASE</springframework.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>5.4.0</junit.version>
         <easymock.version>4.0.2</easymock.version>
         <h2.version>1.4.197</h2.version>
         <slf4j.version>1.7.26</slf4j.version>
@@ -101,12 +101,24 @@
                 <scope>compile</scope>
             </dependency>
 
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
-            </dependency>
+				    <dependency>
+				      <groupId>org.junit.jupiter</groupId>
+				      <artifactId>junit-jupiter-api</artifactId>
+				      <version>${junit.version}</version>
+				      <scope>test</scope>
+				    </dependency>
+				    <dependency>
+				      <groupId>org.junit.vintage</groupId>
+				      <artifactId>junit-vintage-engine</artifactId>
+				      <version>${junit.version}</version>
+				      <scope>test</scope>
+                <exclusions>
+                  <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                  </exclusion>
+                </exclusions>
+				    </dependency>
 
             <dependency>
                 <groupId>org.easymock</groupId>
