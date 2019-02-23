@@ -18,8 +18,30 @@
 
 package ma.glasnost.orika.impl.generator;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.Specifications.aMultiOccurrenceElementMap;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import ma.glasnost.orika.BoundMapperFacade;
+import ma.glasnost.orika.Converter;
+import ma.glasnost.orika.Filter;
+import ma.glasnost.orika.MapEntry;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.Properties;
-import ma.glasnost.orika.*;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.AggregateFilter;
 import ma.glasnost.orika.impl.GeneratedObjectBase;
@@ -28,15 +50,12 @@ import ma.glasnost.orika.impl.generator.Node.NodeList;
 import ma.glasnost.orika.impl.generator.UsedMapperFacadesContext.UsedMapperFacadesIndex;
 import ma.glasnost.orika.impl.generator.specification.AbstractSpecification;
 import ma.glasnost.orika.impl.util.ClassUtil;
-import ma.glasnost.orika.metadata.*;
+import ma.glasnost.orika.metadata.FieldMap;
+import ma.glasnost.orika.metadata.NestedProperty;
+import ma.glasnost.orika.metadata.Property;
+import ma.glasnost.orika.metadata.Type;
+import ma.glasnost.orika.metadata.TypeFactory;
 import ma.glasnost.orika.property.PropertyResolverStrategy;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.Specifications.aMultiOccurrenceElementMap;
 
 /**
  * SourceCodeContext contains the state information necessary while generating source code for a
@@ -69,7 +88,7 @@ public class SourceCodeContext {
   private Class<?> superClass;
 
   /**
-   * Constructs a new instance of SourceCodeContext
+   * Constructs a new instance of SourceCodeContext.
    *
    * @param baseClassName
    * @param superClass
@@ -164,7 +183,7 @@ public class SourceCodeContext {
   }
 
   /**
-   * Appends all of the String values provided to the StringBuilder in order, as "statements"
+   * Appends all of the String values provided to the StringBuilder in order, as "statements".
    *
    * @param out
    * @param statements
@@ -176,7 +195,7 @@ public class SourceCodeContext {
   }
 
   /**
-   * Join the items in the list together in a String, separated by the provided separator
+   * Join the items in the list together in a String, separated by the provided separator.
    *
    * @param list
    * @param separator
@@ -192,7 +211,7 @@ public class SourceCodeContext {
 
   /**
    * Creates a VariableRef representing a Set<Map.Entry> for the provided VariableRef (which should
-   * be a Map)
+   * be a Map).
    *
    * @param s the Map type variable ref
    * @return a new VariableRef corresponding to an EntrySet for the provided variable ref, which
@@ -460,7 +479,7 @@ public class SourceCodeContext {
   }
 
   /**
-   * Generates a code snippet to generate a new instance of the destination type from a mapper
+   * Generates a code snippet to generate a new instance of the destination type from a mapper.
    *
    * @param source
    * @param destinationType
@@ -474,7 +493,7 @@ public class SourceCodeContext {
   }
 
   /**
-   * Generate usedType array index code for the provided variable
+   * Generate usedType array index code for the provided variable.
    *
    * @param r
    * @return the code snippet for referencing a used type by it's array index
@@ -604,7 +623,7 @@ public class SourceCodeContext {
   }
 
   /**
-   * Resolves a VariableRef instance to be used for comparison;
+   * Resolves a VariableRef instance to be used for comparison.
    *
    * @param fieldMap
    * @param nodes
@@ -1034,7 +1053,7 @@ public class SourceCodeContext {
 
   /**
    * Generates source code for an "equality" comparison of two variables, based on the FieldMap
-   * passed
+   * passed.
    *
    * @param fieldMap
    * @param sourceProperty

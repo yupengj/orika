@@ -18,18 +18,30 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.join;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.generator.AggregateSpecification;
 import ma.glasnost.orika.impl.generator.Node;
 import ma.glasnost.orika.impl.generator.Node.NodeList;
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
-import ma.glasnost.orika.metadata.*;
-
-import java.util.*;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.*;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.FieldMap;
+import ma.glasnost.orika.metadata.MapperKey;
+import ma.glasnost.orika.metadata.Property;
+import ma.glasnost.orika.metadata.Type;
+import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
  * MultiOccurrenceToMultiOccurrence handles the mapping of one or more multi-occurrence source
@@ -37,7 +49,7 @@ import static ma.glasnost.orika.impl.generator.SourceCodeContext.*;
  */
 public class MultiOccurrenceToMultiOccurrence implements AggregateSpecification {
 
-  /** The MapperFactory relevant to this code generation request */
+  /** The MapperFactory relevant to this code generation request. */
   protected MapperFactory mapperFactory;
 
   /**
@@ -442,7 +454,7 @@ public class MultiOccurrenceToMultiOccurrence implements AggregateSpecification 
   }
 
   /**
-   * Creates the looping constructs for nested source variables
+   * Creates the looping constructs for nested source variables.
    *
    * @param nodes
    * @param out

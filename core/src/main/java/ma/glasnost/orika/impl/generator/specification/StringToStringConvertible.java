@@ -18,14 +18,14 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
-/** StringToStringConvertible handles conversion of String to primitive types */
+/** StringToStringConvertible handles conversion of String to primitive types. */
 public class StringToStringConvertible extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

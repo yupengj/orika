@@ -18,6 +18,9 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+
 import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.impl.generator.MultiOccurrenceVariableRef;
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
@@ -25,12 +28,9 @@ import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 import ma.glasnost.orika.metadata.Type;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
-
 /**
  * ConvertArrayOrCollectionToCollection handles mapping of an Array or Collection to a Collection
- * using a Converter which has been specified at the element level
+ * using a Converter which has been specified at the element level.
  */
 public class ConvertArrayOrCollectionToCollection extends AbstractSpecification {
 

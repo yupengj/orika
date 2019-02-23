@@ -15,14 +15,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.impl.generator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.metadata.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** */
 public class UsedMapperFacadesContext {

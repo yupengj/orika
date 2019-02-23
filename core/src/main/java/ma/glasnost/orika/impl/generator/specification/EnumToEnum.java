@@ -18,14 +18,14 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
-/** EnumToEnum handles conversion of one enumeration to another */
+/** EnumToEnum handles conversion of one enumeration to another. */
 public class EnumToEnum extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

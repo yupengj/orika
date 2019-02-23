@@ -18,21 +18,22 @@
 
 package ma.glasnost.orika.converter.builtin;
 
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.Type;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.metadata.Type;
+
 /**
  * DateAndTimeConverters provides a set of individual converters for conversion between the below
- * listed enumeration of commonly used data/time representations:
+ * listed enumeration of commonly used data/time representations.:
  *
  * <ul>
  *   <li>java.util.Date
@@ -112,7 +113,7 @@ public class DateAndTimeConverters {
     return _polyCanConvert(a, b, c, d) || _polyCanConvert(b, a, c, d);
   }
 
-  /** Provides conversion between Timestamp and Calendar */
+  /** Provides conversion between Timestamp and Calendar. */
   public static class TimestampToCalendarConverter
       extends BuiltinBidirectionalConverter<Timestamp, Calendar> {
 
@@ -146,7 +147,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Timestamp and Time */
+  /** Provides conversion between Timestamp and Time. */
   public static class TimestampToTimeConverter
       extends BuiltinBidirectionalConverter<Timestamp, Time> {
 
@@ -179,7 +180,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Date and Calendar */
+  /** Provides conversion between Date and Calendar. */
   public static class DateToCalendarConverter
       extends BuiltinBidirectionalConverter<Date, Calendar> {
 
@@ -211,7 +212,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Date and Time */
+  /** Provides conversion between Date and Time. */
   public static class DateToTimeConverter extends BuiltinBidirectionalConverter<Date, Time> {
 
     @Override
@@ -229,7 +230,7 @@ public class DateAndTimeConverters {
   public static class XmlGregorianCalendarToSqlDateConverter
       extends BuiltinBidirectionalConverter<XMLGregorianCalendar, java.sql.Date> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -258,11 +259,11 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between XMLGregorianCalendar and Time */
+  /** Provides conversion between XMLGregorianCalendar and Time. */
   public static class XmlGregorianCalendarToTimeConverter
       extends BuiltinBidirectionalConverter<XMLGregorianCalendar, Time> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -308,7 +309,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Calendar and Time */
+  /** Provides conversion between Calendar and Time. */
   public static class CalendarToTimeConverter
       extends BuiltinBidirectionalConverter<Calendar, Time> {
 
@@ -324,11 +325,11 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Date and XMLGregorianCalendar */
+  /** Provides conversion between Date and XMLGregorianCalendar. */
   public static class DateToXmlGregorianCalendarConverter
       extends BuiltinBidirectionalConverter<Date, XMLGregorianCalendar> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -357,11 +358,11 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Calendar and XMLGregorianCalendar */
+  /** Provides conversion between Calendar and XMLGregorianCalendar. */
   public static class CalendarToXmlGregorianCalendarConverter
       extends BuiltinBidirectionalConverter<Calendar, XMLGregorianCalendar> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -390,7 +391,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Date */
+  /** Provides conversion between Long and Date. */
   public static class LongToDateConverter extends BuiltinBidirectionalConverter<Long, Date> {
 
     @Override
@@ -404,7 +405,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Date */
+  /** Provides conversion between Long and Date. */
   public static class LongToSqlDateConverter
       extends BuiltinBidirectionalConverter<Long, java.sql.Date> {
 
@@ -421,7 +422,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Date */
+  /** Provides conversion between Long and Date. */
   public static class LongToTimeConverter extends BuiltinBidirectionalConverter<Long, Time> {
 
     @Override
@@ -435,7 +436,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Calendar */
+  /** Provides conversion between Long and Calendar. */
   public static class LongToCalendarConverter
       extends BuiltinBidirectionalConverter<Long, Calendar> {
 
@@ -455,11 +456,11 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Calendar */
+  /** Provides conversion between Long and Calendar. */
   public static class LongToXmlGregorianCalendarConverter
       extends BuiltinBidirectionalConverter<Long, XMLGregorianCalendar> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -488,7 +489,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Long and Timestamp */
+  /** Provides conversion between Long and Timestamp. */
   public static class LongToTimestampConverter
       extends BuiltinBidirectionalConverter<Long, Timestamp> {
 
@@ -504,11 +505,11 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Calendar and Time */
+  /** Provides conversion between Calendar and Time. */
   public static class XmlGregorianCalendarToTimestampConverter
       extends BuiltinBidirectionalConverter<XMLGregorianCalendar, Timestamp> {
 
-    /** To create XMLGregorianCalendar instances */
+    /** To create XMLGregorianCalendar instances. */
     private static DatatypeFactory factory;
 
     {
@@ -537,7 +538,7 @@ public class DateAndTimeConverters {
     }
   }
 
-  /** Provides conversion between Calendar and Time */
+  /** Provides conversion between Calendar and Time. */
   public static class DateToTimestampConverter
       extends BuiltinBidirectionalConverter<Date, Timestamp> {
 

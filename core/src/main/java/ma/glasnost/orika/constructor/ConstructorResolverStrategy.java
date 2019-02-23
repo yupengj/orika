@@ -15,15 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package ma.glasnost.orika.constructor;
 
-import ma.glasnost.orika.metadata.ClassMap;
-import ma.glasnost.orika.metadata.FieldMap;
-import ma.glasnost.orika.metadata.Type;
+package ma.glasnost.orika.constructor;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+
+import ma.glasnost.orika.metadata.ClassMap;
+import ma.glasnost.orika.metadata.FieldMap;
+import ma.glasnost.orika.metadata.Type;
 
 /**
  * ConstructorResolverStrategy defines a contract for resolving a constructor which may be used to
@@ -52,6 +53,7 @@ public interface ConstructorResolverStrategy {
     public Type<?>[] getParameterTypes() {
       return parameterTypes;
     }
+    
     /** @param parameterTypes the parameterTypes to set */
     public void setParameterTypes(Type<?>[] parameterTypes) {
       this.parameterTypes = parameterTypes;

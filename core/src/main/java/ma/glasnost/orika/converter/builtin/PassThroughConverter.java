@@ -18,13 +18,13 @@
 
 package ma.glasnost.orika.converter.builtin;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * PassThroughConverter allows configuration of a number of specific types which should be passed
@@ -119,7 +119,7 @@ public class PassThroughConverter extends CustomConverter<Object, Object> {
     return true;
   }
 
-  /** Extends PassThroughConverter for use as a built-in Converter */
+  /** Extends PassThroughConverter for use as a built-in Converter. */
   static class Builtin extends PassThroughConverter {
 
     private final String description;

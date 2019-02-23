@@ -18,19 +18,24 @@
 
 package ma.glasnost.orika.impl.generator;
 
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.MappingException;
-import ma.glasnost.orika.impl.GeneratedMapperBase;
-import ma.glasnost.orika.metadata.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.MappingException;
+import ma.glasnost.orika.impl.GeneratedMapperBase;
+import ma.glasnost.orika.metadata.ClassMap;
+import ma.glasnost.orika.metadata.FieldMap;
+import ma.glasnost.orika.metadata.MapperKey;
+import ma.glasnost.orika.metadata.Type;
+import ma.glasnost.orika.metadata.TypeFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MapperGenerator {
 

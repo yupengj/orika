@@ -357,16 +357,18 @@ public class PrimeFinder extends Object {
 
   /** Makes this class non instantiable, but still let's others inherit from it. */
   protected PrimeFinder() {}
+  
   /**
    * Tests correctness. Try from=1000, to=10000 from=200, to=1000 from=16, to=1000 from=1000,
    * to=Integer.MAX_VALUE
    */
-  protected static void main(String args[]) {
+  protected static void main(String[] args) {
     int from = Integer.parseInt(args[0]);
     int to = Integer.parseInt(args[1]);
 
     statistics(from, to);
   }
+  
   /**
    * Returns a prime number which is <code>&gt;= desiredCapacity</code> and very close to <code>
    * desiredCapacity</code> (within 11% if <code>desiredCapacity &gt;= 1000</code>).
@@ -384,16 +386,18 @@ public class PrimeFinder extends Object {
     }
     return primeCapacities[i];
   }
+  
   /** Tests correctness. */
   protected static void statistics(int from, int to) {
     // check that primes contain no accidental errors
     for (int i = 0; i < primeCapacities.length - 1; i++) {
-      if (primeCapacities[i] >= primeCapacities[i + 1])
+      if (primeCapacities[i] >= primeCapacities[i + 1]) {
         throw new RuntimeException(
             "primes are unsorted or contain duplicates; detected at "
                 + i
                 + "@"
                 + primeCapacities[i]);
+      }
     }
 
     double accDeviation = 0.0;

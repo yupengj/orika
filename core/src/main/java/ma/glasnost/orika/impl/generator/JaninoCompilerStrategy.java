@@ -18,13 +18,6 @@
 
 package ma.glasnost.orika.impl.generator;
 
-import ma.glasnost.orika.MappingException;
-import ma.glasnost.orika.util.WeakList;
-import org.codehaus.janino.*;
-import org.codehaus.janino.util.ClassFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
@@ -33,6 +26,19 @@ import java.util.AbstractSet;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+
+import ma.glasnost.orika.MappingException;
+import ma.glasnost.orika.util.WeakList;
+
+import org.codehaus.janino.ClassLoaderIClassLoader;
+import org.codehaus.janino.IClassLoader;
+import org.codehaus.janino.Java;
+import org.codehaus.janino.Parser;
+import org.codehaus.janino.Scanner;
+import org.codehaus.janino.UnitCompiler;
+import org.codehaus.janino.util.ClassFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JaninoCompilerStrategy extends CompilerStrategy {
 
@@ -89,10 +95,13 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
 
       Class<?> neighbor = sourceCode.getNeighbor();
 
-      if (neighbor == null)
+      if (neighbor == null) {
         return aggregatedClassLoader.defineClass(
             classes[0].getThisClassName(), classes[0].toByteArray());
-      if (neighbor.isArray()) neighbor = neighbor.getComponentType();
+      }
+      if (neighbor.isArray()) {
+        neighbor = neighbor.getComponentType();
+      }
       return toClass(neighbor, classes[0].toByteArray());
     } catch (Exception e) {
       LOG.error("Can not compile {0}", sourceCode.getClassName(), e);
@@ -157,7 +166,9 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
     public boolean addClassLoader(ClassLoader classLoader) {
       classLoader.hashCode();
       synchronized (this) {
-        if (classLoader == null || individualClassLoaders == null) return false;
+        if (classLoader == null || individualClassLoaders == null) {
+          return false;
+        }
         return individualClassLoaders.add(classLoader);
       }
     }
@@ -223,7 +234,9 @@ public class JaninoCompilerStrategy extends CompilerStrategy {
 
     @Override
     public boolean add(ClassLoader classLoader) {
-      if (arrayList.has(classLoader)) return false;
+      if (arrayList.has(classLoader)) {
+        return false;
+      }
       arrayList.add(classLoader);
       return false;
     }

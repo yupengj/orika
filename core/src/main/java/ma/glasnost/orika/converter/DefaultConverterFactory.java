@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter;
 
 import ma.glasnost.orika.Converter;
@@ -32,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * DefaultConverterFactory is the base implementation of ConverterFactory
+ * DefaultConverterFactory is the base implementation of ConverterFactory.
  *
  * @author mattdeboer
  */
@@ -113,14 +114,18 @@ public class DefaultConverterFactory implements ConverterFactory {
     // Step verify if converter exists for sourceClass and destination
     Converter<Object, Object> converter = _converter(sourceClass, destinationClass);
 
-    if (converter != null) return converter;
+    if (converter != null) {
+      return converter;
+    }
 
     // Apply auto-boxing in converter lookup
     if (sourceClass.isPrimitive()) {
       sourceClass = TypeFactory.valueOf(ClassUtil.getWrapperType(sourceClass.getRawType()));
       converter = _converter(sourceClass, destinationClass);
     }
-    if (converter != null) return converter;
+    if (converter != null) {
+      return converter;
+    }
 
     // Destination
     if (destinationClass.isPrimitive()) {
@@ -128,7 +133,9 @@ public class DefaultConverterFactory implements ConverterFactory {
           TypeFactory.valueOf(ClassUtil.getWrapperType(destinationClass.getRawType()));
       converter = _converter(sourceClass, destinationClass);
     }
-    if (converter != null) return converter;
+    if (converter != null) {
+      return converter;
+    }
     return null;
   }
 

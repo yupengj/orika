@@ -18,11 +18,11 @@
 
 package ma.glasnost.orika.impl.generator;
 
-import ma.glasnost.orika.Filter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import ma.glasnost.orika.Filter;
 
 /** */
 public class UsedFiltersContext {

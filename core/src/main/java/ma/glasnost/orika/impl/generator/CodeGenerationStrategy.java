@@ -15,11 +15,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.impl.generator;
 
-import ma.glasnost.orika.MapperFactory;
-
 import java.util.List;
+
+import ma.glasnost.orika.MapperFactory;
 
 /**
  * CodeGenerationStrategy is an encapsulation of the collection of individual field mapping
@@ -29,7 +30,7 @@ import java.util.List;
 public interface CodeGenerationStrategy {
 
   /**
-   * Set the MapperFactory on this CodeGenerationStrategy
+   * Set the MapperFactory on this CodeGenerationStrategy.
    *
    * @param mapperFactory the MapperFactory to apply
    */
@@ -37,7 +38,7 @@ public interface CodeGenerationStrategy {
 
   /**
    * Convenience method to add a specification at a relative position with respect to another
-   * Specification, or the list in general
+   * Specification, or the list in general.
    *
    * @param spec the specification to add
    * @param relativePosition the relative position
@@ -51,7 +52,7 @@ public interface CodeGenerationStrategy {
 
   /**
    * Convenience method to add an AggregateSpecification at a relative position with respect to
-   * another AggregateSpecification, or the list in general
+   * another AggregateSpecification, or the list in general.
    *
    * @param spec the specification to add
    * @param relativePosition the relative position
@@ -67,7 +68,7 @@ public interface CodeGenerationStrategy {
 
   /**
    * Position represents the relative position of a specification in the chain of mapping
-   * specifications
+   * specifications.
    */
   enum Position {
     BEFORE,

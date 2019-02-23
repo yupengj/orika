@@ -15,12 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package ma.glasnost.orika.converter.builtin;
 
-import ma.glasnost.orika.CustomConverter;
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.Type;
-import ma.glasnost.orika.metadata.TypeFactory;
+package ma.glasnost.orika.converter.builtin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,6 +26,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import ma.glasnost.orika.CustomConverter;
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.metadata.Type;
+import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
  * CloneableConverter allows configuration of a number of specific types which should be cloned
@@ -176,7 +177,9 @@ public class CloneableConverter extends CustomConverter<Object, Object> {
     return true;
   }
 
-  /** CloneAction provides privileged access to the clone method in presence of a SecurityManager */
+  /**
+   * CloneAction provides privileged access to the clone method in presence of a SecurityManager.
+   */
   private static final class CloneAction implements PrivilegedAction<Object> {
 
     private final Method method;
@@ -206,7 +209,7 @@ public class CloneableConverter extends CustomConverter<Object, Object> {
     }
   }
 
-  /** Extends CloneableConverter for use as a built-in Converter */
+  /** Extends CloneableConverter for use as a built-in Converter. */
   static class Builtin extends CloneableConverter {
 
     private final String description;

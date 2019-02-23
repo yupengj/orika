@@ -25,7 +25,7 @@ import ma.glasnost.orika.metadata.FieldMap;
 
 /**
  * UnmappableEnum is a place-holder specification to catch types which cannot be mapped (and which
- * shouldn't fall through to some other specification)
+ * shouldn't fall through to some other specification).
  *
  * @author mattdeboer
  */

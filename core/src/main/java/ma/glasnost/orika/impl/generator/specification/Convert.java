@@ -18,13 +18,13 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.converter.builtin.CopyByReferenceConverter;
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
 
 /**
  * Convert applies the conversion operation between two properties. There is a special shortcut case

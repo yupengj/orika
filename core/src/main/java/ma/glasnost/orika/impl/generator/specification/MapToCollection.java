@@ -18,13 +18,13 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.entrySetRef;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.entrySetRef;
-
-/** MapToCollection handles mapping of Map to Collection */
+/** MapToCollection handles mapping of Map to Collection. */
 public class MapToCollection extends ArrayOrCollectionToCollection {
 
   public boolean appliesTo(FieldMap fieldMap) {

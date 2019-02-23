@@ -18,14 +18,14 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
+import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.append;
-import static ma.glasnost.orika.impl.generator.SourceCodeContext.statement;
-
-/** CopyByReference handles mapping of immutable types by reference */
+/** CopyByReference handles mapping of immutable types by reference. */
 public class CopyByReference extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

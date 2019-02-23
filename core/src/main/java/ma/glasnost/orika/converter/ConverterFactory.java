@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.converter;
 
 import ma.glasnost.orika.Converter;
@@ -32,7 +33,7 @@ public interface ConverterFactory {
   void setMapperFacade(MapperFacade mapperFacade);
 
   /**
-   * Lookup for an anonymous converter that can handle the conversion between these two types
+   * Lookup for an anonymous converter that can handle the conversion between these two types.
    *
    * @param sourceType
    * @param destinationType
@@ -41,7 +42,7 @@ public interface ConverterFactory {
   Converter<Object, Object> getConverter(Type<?> sourceType, Type<?> destinationType);
 
   /**
-   * Lookup a converter by id
+   * Lookup a converter by id.
    *
    * @param converterId
    * @return
@@ -64,7 +65,7 @@ public interface ConverterFactory {
   <S, D> void registerConverter(String converterId, Converter<S, D> converter);
 
   /**
-   * Check if an identified converter exists
+   * Check if an identified converter exists.
    *
    * @param converterId
    * @return
@@ -72,7 +73,7 @@ public interface ConverterFactory {
   boolean hasConverter(String converterId);
 
   /**
-   * Verify if there is an anonymous converter that can handle the conversion between two types
+   * Verify if there is an anonymous converter that can handle the conversion between two types.
    *
    * @param sourceType
    * @param destinationType

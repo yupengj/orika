@@ -18,13 +18,13 @@
 
 package ma.glasnost.orika.impl.generator.specification;
 
+import static java.lang.String.format;
+
 import ma.glasnost.orika.impl.generator.SourceCodeContext;
 import ma.glasnost.orika.impl.generator.VariableRef;
 import ma.glasnost.orika.metadata.FieldMap;
 
-import static java.lang.String.format;
-
-/** ArrayOrCollectionToArray handles mapping of an Array or Collection to an Array */
+/** ArrayOrCollectionToArray handles mapping of an Array or Collection to an Array. */
 public class ArrayOrCollectionToArray extends AbstractSpecification {
 
   public boolean appliesTo(FieldMap fieldMap) {

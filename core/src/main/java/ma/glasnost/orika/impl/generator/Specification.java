@@ -22,7 +22,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.metadata.FieldMap;
 
 /**
- * Specification encapsulates the logic to generate code for mapping and comparing a pair of types
+ * Specification encapsulates the logic to generate code for mapping and comparing a pair of types.
  *
  */
 public interface Specification extends BaseSpecification {
@@ -43,7 +43,7 @@ public interface Specification extends BaseSpecification {
       FieldMap fieldMap, VariableRef source, VariableRef destination, SourceCodeContext code);
 
   /**
-   * Generates code to map the provided field map
+   * Generates code to map the provided field map.
    *
    * @param fieldMap the fieldMap for which source code should be generated
    * @param source a convenience wrapper around the source field which can be used facilitate code

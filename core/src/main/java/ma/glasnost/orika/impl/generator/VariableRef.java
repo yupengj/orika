@@ -15,7 +15,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package ma.glasnost.orika.impl.generator;
+
+import static java.lang.String.format;
+import static ma.glasnost.orika.impl.util.StringUtil.toValidVariableName;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.Filter;
@@ -26,13 +39,6 @@ import ma.glasnost.orika.metadata.NestedProperty;
 import ma.glasnost.orika.metadata.Property;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.property.PropertyResolverStrategy;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.lang.String.format;
-import static ma.glasnost.orika.impl.util.StringUtil.toValidVariableName;
 
 /**
  * VariableRef represents a reference to a given variable or property; it contains various helper
@@ -88,7 +94,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns Java code which provides a cast of the specified value to the type of this property ref
+   * Returns Java code which provides a cast of the specified value to the type of this property ref.
    *
    * @param value
    * @return
@@ -120,7 +126,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns Java code which provides a cast of the specified value to the type of this property ref
+   * Returns Java code which provides a cast of the specified value to the type of this property ref.
    *
    * @param value
    * @return
@@ -151,7 +157,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns the Java code which represents the default value for the specified type
+   * Returns the Java code which represents the default value for the specified type.
    *
    * @param clazz
    * @return
@@ -164,7 +170,7 @@ public class VariableRef {
   }
 
   /**
-   * Removes the outermost property from a nested getter expression
+   * Removes the outermost property from a nested getter expression.
    *
    * @param expression
    * @return
@@ -233,7 +239,9 @@ public class VariableRef {
   }
 
   protected static String getGetter(final Property property, String variableExpression) {
-    if (property.getGetter() == null) return null;
+    if (property.getGetter() == null) {
+      return null;
+    }
     String var = variableExpression;
     if (property.hasPath()) {
       for (final Property p : property.getPath()) {
@@ -260,7 +268,9 @@ public class VariableRef {
    * @return
    */
   protected static String getSetter(final Property property, final String variableExpression) {
-    if (property.getSetter() == null) return null;
+    if (property.getSetter() == null) {
+      return null;
+    }
 
     String var = variableExpression;
     if (property.hasPath()) {
@@ -511,7 +521,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns java code which assigns the value of the provided PropertyRef to this PropertyRef
+   * Returns java code which assigns the value of the provided PropertyRef to this PropertyRef.
    *
    * @param value
    * @return
@@ -556,7 +566,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns Java code which provides a cast of the specified value to the type of this property ref
+   * Returns Java code which provides a cast of the specified value to the type of this property ref.
    *
    * @param value
    * @return
@@ -740,7 +750,7 @@ public class VariableRef {
   }
 
   /**
-   * Generates java code for a reference to the "size" of this VariableRef
+   * Generates java code for a reference to the "size" of this VariableRef.
    *
    * @return
    */
@@ -761,7 +771,7 @@ public class VariableRef {
 
   /**
    * Used to mark that this variable can not possibly be null at the current state within code
-   * (because null has already been checked)
+   * (because null has already been checked).
    */
   public void setNullImpossible() {
     this.nullPossible = false;
@@ -776,7 +786,7 @@ public class VariableRef {
 
   /**
    * Used to mark that this variable can not possibly be null at the current state within code
-   * (because null has already been checked)
+   * (because null has already been checked).
    */
   public void setNullPathImpossible() {
     this.nullPathPossible = false;
@@ -911,7 +921,7 @@ public class VariableRef {
   }
 
   /**
-   * Returns true if this VariableRef represents a valid property reference, or is not a property
+   * Returns true if this VariableRef represents a valid property reference, or is not a property.
    *
    * @param resolver
    * @return true if this VariableRef is simply a variable, or if it is a property reference and the
