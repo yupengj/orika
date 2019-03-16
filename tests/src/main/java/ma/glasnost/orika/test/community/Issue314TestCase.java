@@ -52,5 +52,5 @@ public class Issue314TestCase {
 			this.b = b;
 		}
 	}
-
+	
 }
