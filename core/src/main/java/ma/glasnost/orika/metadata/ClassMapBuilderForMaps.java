@@ -161,7 +161,6 @@ public class ClassMapBuilderForMaps<A, B> extends ClassMapBuilder<A,B> {
         StringBuilder name = new StringBuilder();
         for (int i=0; i < parts.length - 1; ++i) {
             name.append(parts[i] + ".");
-            
         }
         return name.substring(0, name.length()-1);
     }
