@@ -134,6 +134,23 @@ public class ClassMapBuilderForMaps<A, B> extends ClassMapBuilder<A,B> {
     }
 
     /**
+     * Exclude the specified field from bean mapping
+     * 
+     * @param fieldName
+     *            the name of the field/property to exclude
+     * @return this ClassMapBuilder
+     */
+    @Override
+    public ClassMapBuilder<A, B> exclude(String fieldName) {
+    	Type<?> type = isATypeBean() ? getAType() : getBType();
+    	if(getPropertyResolver().existsProperty(type, fieldName)) {
+    		 return fieldMap(fieldName).exclude().add();
+    	}else {
+    		return this;
+    	}
+    }
+    
+    /**
      * Gets the parent expression from this nested expression
      * 
      * @param epxression
@@ -144,6 +161,7 @@ public class ClassMapBuilderForMaps<A, B> extends ClassMapBuilder<A,B> {
         StringBuilder name = new StringBuilder();
         for (int i=0; i < parts.length - 1; ++i) {
             name.append(parts[i] + ".");
+            
         }
         return name.substring(0, name.length()-1);
     }
